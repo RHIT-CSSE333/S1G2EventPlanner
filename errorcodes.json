@@ -1,0 +1,13 @@
+{
+    "errorCodes": [
+        {
+            "50001": "Parameters cannot be null"
+        },
+        {
+            "50002": "Referenced object does not exist"
+        },
+        {
+            "50003": "Record for provided values not found"
+        }
+    ]
+}
