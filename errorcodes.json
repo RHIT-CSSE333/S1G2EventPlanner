@@ -8,6 +8,9 @@
         },
         {
             "50003": "Record for provided values not found"
+        },
+        {
+            "50004": "Value must be unique"
         }
     ]
 }
