@@ -2,6 +2,6 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/CSSE333-Databases-Final-Project" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/SQL scripts" vcs="Git" />
   </component>
 </project>
