@@ -1,8 +1,6 @@
 package eventplanner.services;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class DatabaseConnectionService {
 
@@ -42,6 +40,19 @@ public class DatabaseConnectionService {
             }
         } catch (SQLException e) {
             System.err.println("Error while closing connection: " + e.getMessage());
+        }
+    }
+
+    public ResultSet executeQuery(String query, Object... params) {
+        try {
+            PreparedStatement stmt = this.connection.prepareStatement(query);
+            for (int i = 0; i < params.length; i++) {
+                stmt.setObject(i + 1, params[i]);
+            }
+            return stmt.executeQuery();
+        } catch (SQLException e) {
+            System.err.println("Query execution failed: " + e.getMessage());
+            return null;
         }
     }
 }
