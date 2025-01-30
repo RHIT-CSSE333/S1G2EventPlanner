@@ -44,7 +44,7 @@
             </div>
             <div>
                 <label for="ccNum">Credit Card Number (Optional):</label>
-                <input type="text" id="ccNum">
+                <input type="password" id="ccNum" pattern="\d{16}">
             </div>
         </div>
 
@@ -55,7 +55,7 @@
             </div>
             <div>
                 <label for="cvv">CVV (Optional):</label>
-                <input type="text" id="cvv" maxlength="5">
+                <input type="password" id="cvv" pattern="\d{3,4}" maxlength="4" minlength="3">
             </div>
         </div>
 
