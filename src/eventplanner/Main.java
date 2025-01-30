@@ -5,6 +5,7 @@ import java.util.Properties;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Scanner;
 
 import eventplanner.services.AvailableEventsService;
 import eventplanner.services.UserService;
@@ -35,7 +36,52 @@ public class Main {
 
         try {
             // TODO: test login and register on webpage (API required)
+            // test register and login in command-line
+            Scanner scanner = new Scanner(System.in);
             UserService userService = new UserService(dbService);
+
+            System.out.println("\n=== USER REGISTRATION ===");
+            System.out.print("Enter Email: ");
+            String email = scanner.nextLine();
+            System.out.print("Enter Phone Number: ");
+            String phoneNo = scanner.nextLine();
+            System.out.print("Enter First Name: ");
+            String firstName = scanner.nextLine();
+            System.out.print("Enter Middle Initial (or press Enter to skip): ");
+            String middleInit = scanner.nextLine();
+            System.out.print("Enter Last Name: ");
+            String lastName = scanner.nextLine();
+            System.out.print("Enter Date of Birth (YYYY-MM-DD): ");
+            String dob = scanner.nextLine();
+            System.out.print("Enter Credit Card Number (or press Enter to skip): ");
+            String ccNum = scanner.nextLine();
+            System.out.print("Enter CC Expiry Date (YYYY-MM-DD, or press Enter to skip): ");
+            String ccExpDate = scanner.nextLine();
+            System.out.print("Enter CVV (or press Enter to skip): ");
+            String cvv = scanner.nextLine();
+            System.out.print("Enter Password: ");
+            String password = scanner.nextLine();
+
+            boolean registered = userService.registerUser(email, phoneNo, firstName, middleInit, lastName, dob, ccNum, ccExpDate, cvv, password);
+
+            if (registered) {
+                System.out.println("Registration successful!");
+            } else {
+                System.out.println("Registration failed.");
+            }
+
+            System.out.println("\n=== USER LOGIN ===");
+            System.out.print("Enter Email: ");
+            String loginEmail = scanner.nextLine();
+            System.out.print("Enter Password: ");
+            String loginPassword = scanner.nextLine();
+
+            boolean loginSuccess = userService.loginUser(loginEmail, loginPassword);
+            if (loginSuccess) {
+                System.out.println("Login successful!");
+            } else {
+                System.out.println("Login failed. Invalid email or password.");
+            }
 
             // test AvailableEventsService in command line
             // TODO: test AvailableEventsService on webpage (API required)
