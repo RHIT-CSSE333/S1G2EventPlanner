@@ -35,13 +35,16 @@ public class Main {
 
 
         try {
-            // TODO: test login and register on webpage (API required)
-            // test register and login in command-line
+            // TODO: test login and register on webpage (API needed)
+            // TODO: show available events on webpage (API needed)
+
+            // test register, login, show available events in command-line
             Scanner scanner = new Scanner(System.in);
             UserService userService = new UserService(dbService);
+            AvailableEventsService availableEventsService = new AvailableEventsService(dbService);
             
             while(true) {
-            	System.out.println("Login or Register? l to login, r to register, c to close,\nand lr to leave a review");
+            	System.out.println("Login or Register? l to login, r to register,s to show all available events, c to close,\nand lre to leave a review for event");
                 String choice = scanner.nextLine().trim();
                 System.out.println(choice);
 	            if(choice.equals("l")) {
@@ -50,26 +53,11 @@ public class Main {
 	            	register(scanner,userService); 
 	            } else if(choice.equals("lr")) {
 	            	leaveReview(scanner,userService);
-	            } else if(choice.equals("c")) {
+	            } else if(choice.equals("s")) {
+                    showAvailableEvents(scanner, availableEventsService);
+                } else if(choice.equals("c")) {
 	            	break;
 	            }
-            }
-            
-
-           
-
-            // test AvailableEventsService in command line
-            // TODO: test AvailableEventsService on webpage (API required)
-            AvailableEventsService availableEventsService = new AvailableEventsService(dbService);
-            List<String> availableEvents = availableEventsService.getAvailableEvents();
-
-            System.out.println("\n=== Available Public Events ===");
-            if (availableEvents.isEmpty()) {
-                System.out.println("No public events available.");
-            } else {
-                for (String event : availableEvents) {
-                    System.out.println(event);
-                }
             }
 
         } catch (Exception e) {
@@ -81,19 +69,19 @@ public class Main {
         }
     }
 
-    private static void leaveReview(Scanner scanner, UserService userService) {
+    /*private static void leaveEventReview(Scanner scanner, UserService userService) {
     	System.out.println("\n=== LEAVE REVIEW ===");
-    	System.out.print("Enter PersonID: ");
-    	int personID = scanner.nextInt();
-    	scanner.nextLine();  
+    	System.out.print("Enter Email: ");
+    	String email = scanner.nextLine();
 
-    	System.out.print("Enter VenueID: ");
-    	Integer venueID = scanner.nextInt();
-    	scanner.nextLine();  
+    	System.out.print("Enter Event Name: ");
+    	String eventName = scanner.nextLine();
 
-    	System.out.print("Enter EventID: ");
-    	Integer eventID = scanner.nextInt();
-    	scanner.nextLine();  
+        System.out.print("Enter Event Start Time (YYYY-MM-DD HH:MM): ");
+        String eventStartDate = scanner.nextLine();
+
+        System.out.print("Enter Venue Name: ");
+        String venueName = scanner.nextLine();
 
     	System.out.print("Enter Title (Can be empty): ");
     	String title = scanner.nextLine();
@@ -105,8 +93,48 @@ public class Main {
     	System.out.print("Enter Description (Can be empty): ");
     	String desc = scanner.nextLine();
 
-    	System.out.print("Enter PostedOn (MM-DD-YYYY HH:MM:SS.DDD): ");
-    	String postedOn = scanner.nextLine();
+        boolean registered = userService.leaveEventReview(email, eventStartDate, eventStartDate, venueName, title, rating, desc);
+        if (registered) {
+            System.out.println("Review successful!");
+        } else {
+            System.out.println("Review failed.");
+        }
+	}*/
+
+    private static void showAvailableEvents(Scanner scanner, AvailableEventsService availableEventsService) {
+        System.out.println("\n=== Available Public Events ===");
+        List<String> availableEvents = availableEventsService.getAvailableEvents();
+        for (String event : availableEvents) {
+            System.out.println(event);
+        }
+    }
+
+    private static void leaveReview(Scanner scanner, UserService userService) {
+        System.out.println("\n=== LEAVE REVIEW ===");
+        System.out.print("Enter PersonID: ");
+        int personID = scanner.nextInt();
+        scanner.nextLine();
+
+        System.out.print("Enter VenueID: ");
+        Integer venueID = scanner.nextInt();
+        scanner.nextLine();
+
+        System.out.print("Enter EventID: ");
+        Integer eventID = scanner.nextInt();
+        scanner.nextLine();
+
+        System.out.print("Enter Title (Can be empty): ");
+        String title = scanner.nextLine();
+
+        System.out.print("Enter Rating (1-5): ");
+        int rating = scanner.nextInt();
+        scanner.nextLine();
+
+        System.out.print("Enter Description (Can be empty): ");
+        String desc = scanner.nextLine();
+
+        System.out.print("Enter PostedOn (MM-DD-YYYY HH:MM:SS.DDD): ");
+        String postedOn = scanner.nextLine();
 
         boolean registered = userService.leaveReview(personID, venueID, eventID, title, rating, desc, postedOn);
         if (registered) {
@@ -114,8 +142,8 @@ public class Main {
         } else {
             System.out.println("Review failed.");
         }
-		
-	}
+
+    }
 
 	private static void login(Scanner scanner, UserService userService) {
     	 System.out.println("\n=== USER LOGIN ===");
