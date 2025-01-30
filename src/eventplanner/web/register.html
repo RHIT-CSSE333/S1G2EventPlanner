@@ -7,19 +7,63 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<div class="container">
+<div class="container container-register">
     <h2>Create an Account</h2>
 
     <!-- Register Form -->
     <form id="registerForm">
         <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required>
+        <input type="email" id="email" class="full-width" required>
+
+        <div class="form-group">
+            <div>
+                <label for="phoneNo">Phone Number:</label>
+                <input type="text" id="phoneNo">
+            </div>
+            <div>
+                <label for="firstName">First Name:</label>
+                <input type="text" id="firstName">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div>
+                <label for="middleInit">Middle Initial (Optional):</label>
+                <input type="text" id="middleInit" maxlength="1">
+            </div>
+            <div>
+                <label for="lastName">Last Name:</label>
+                <input type="text" id="lastName">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div>
+                <label for="dob">Date of Birth:</label>
+                <input type="date" id="dob">
+            </div>
+            <div>
+                <label for="ccNum">Credit Card Number (Optional):</label>
+                <input type="text" id="ccNum">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div>
+                <label for="ccExpDate">CC Expiry Date (Optional):</label>
+                <input type="date" id="ccExpDate">
+            </div>
+            <div>
+                <label for="cvv">CVV (Optional):</label>
+                <input type="text" id="cvv" maxlength="5">
+            </div>
+        </div>
 
         <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
+        <input type="password" id="password" class="full-width" required>
 
         <label for="confirmPassword">Confirm Password:</label>
-        <input type="password" id="confirmPassword" name="confirmPassword" required>
+        <input type="password" id="confirmPassword" class="full-width" required>
 
         <button type="submit" class="submit-btn">Register</button>
     </form>
