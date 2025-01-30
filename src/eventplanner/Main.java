@@ -1,10 +1,13 @@
 package eventplanner;
 
+import java.util.List;
 import java.util.Properties;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import eventplanner.services.AvailableEventsService;
+import eventplanner.services.UserService;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.jasypt.properties.EncryptableProperties;
 
@@ -29,9 +32,32 @@ public class Main {
             System.exit(1);
         }
 
-        System.out.println("Successfully connected to database.");
 
-        dbService.closeConnection();
+        try {
+            // TODO: test login and register on webpage (API required)
+            UserService userService = new UserService(dbService);
+
+            // test AvailableEventsService in command line
+            // TODO: test AvailableEventsService on webpage (API required)
+            AvailableEventsService availableEventsService = new AvailableEventsService(dbService);
+            List<String> availableEvents = availableEventsService.getAvailableEvents();
+
+            System.out.println("\n=== Available Public Events ===");
+            if (availableEvents.isEmpty()) {
+                System.out.println("No public events available.");
+            } else {
+                for (String event : availableEvents) {
+                    System.out.println(event);
+                }
+            }
+
+        } catch (Exception e) {
+            System.err.println("An error occurred: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            dbService.closeConnection();
+            System.out.println("\nDatabase connection closed.");
+        }
     }
 
     public static Properties loadProperties() {
