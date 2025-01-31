@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.Scanner;
 
 import eventplanner.models.Event;
+import eventplanner.models.Venue;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 import io.javalin.http.staticfiles.Location;
@@ -16,6 +17,7 @@ import io.javalin.rendering.template.JavalinFreemarker;
 import io.javalin.rendering.template.JavalinThymeleaf;
 import eventplanner.services.EventsService;
 import eventplanner.services.UserService;
+import eventplanner.services.VenuesService;
 import freemarker.template.TemplateExceptionHandler;
 import freemarker.template.Configuration;
 
@@ -50,6 +52,7 @@ public class Main {
             app.get("/event/{id}/register", Main::handleEventRegister);
             app.get("/event/{id}/cancel", Main::handleCancelEventRegistration);
             app.get("/myevents", Main::handleMyEvents);
+            app.get("/venue/{id}", Main::handleVenuePage);
 
             app.post("/login", Main::handleLogin);
             app.post("/signup", Main::handleSignup);
@@ -177,7 +180,7 @@ public class Main {
 
     private static void handleMyEvents(Context ctx) {
         Integer user = ctx.sessionAttribute("userId");
-        if (user == null) {
+        if (user == null) {        // TODO: refirect doesn't work
             ctx.redirect("/login");
         }
 
@@ -188,6 +191,18 @@ public class Main {
         ctx.render("events.ftl", Map.of("events", events, 
                                         "message", events.isEmpty() ? "You haven't signed up for any events yet" : "",
                                         "userSpecific", true));
+    }
+
+    private static void handleVenuePage(Context ctx) {
+        int venueId = Integer.parseInt(ctx.pathParam("id"));
+        VenuesService venuesService = new VenuesService(dbService);
+
+        Venue venue = venuesService.getVenue(venueId);
+        List<Event> eventsForVenue = venuesService.getEventsForVenue(venueId);
+
+        ctx.render("venue.ftl", Map.of("venue", venue,
+                                        "events", eventsForVenue, 
+                                        "message", eventsForVenue.isEmpty() ? "This venue doesn't have any events posted yet" : ""));
     }
 
     private static void setUpDatabase() {
