@@ -8,8 +8,13 @@
 </head>
 <body>
     <div class="nav">
-        <a href="index.ftl">Home</a>
-        <a href="login.ftl">Login</a>
+        <a href="/">Home</a>
+        <#if userSpecific>
+            <a href="/events">Events</a>
+        <#else>
+            <a href="/myevents">My events</a>
+        </#if>
+        <a href="/logout">Log out</a>
     </div>
 
     <h2>Available Public Events</h2>
@@ -18,27 +23,45 @@
             <table >
                 <thead>
                 <tr>
-                    <th>Name</th>
-                    <th>Start Time</th>
-                    <th>End Time</th>
-                    <th>Price</th>
-                    <th>Venue</th>
-                    <th>Address</th>
-                    <th>Max Capacity</th>
-                    <th>Registration Deadline</th>
+                    <#if userSpecific>
+                        <th>Name</th>
+                        <th>Start Time</th>
+                        <th>Venue</th>
+                        <th>Address</th>
+                        <th></th>
+                    <#else>
+                        <th>Name</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                        <th>Price</th>
+                        <th>Venue</th>
+                        <th>Address</th>
+                        <th>Max Capacity</th>
+                        <th>Registration Deadline</th>
+                        <th></th>
+                    </#if>
                 </tr>
                 </thead>
                 <tbody>
                 <#list events as event>
                     <tr>
-                        <td>${event.name}</td>
-                        <td>${event.startTime}</td>
-                        <td>${event.endTime}</td>
-                        <td>$${event.price}</td>
-                        <td>${event.venueName}</td>
-                        <td>${event.venueAddress}</td>
-                        <td>${event.maxCapacity}</td>
-                        <td>${event.registrationDeadline}</td>
+                        <#if userSpecific>
+                            <td>${event.name}</td>
+                            <td>${event.startTime}</td>
+                            <td>${event.venueName}</td>
+                            <td>${event.venueAddress}</td>
+                            <td><a href="/event/${event.id}/cancel">Cancel registration</a></td>
+                        <#else>
+                            <td>${event.name}</td>
+                            <td>${event.startTime}</td>
+                            <td>${event.endTime}</td>
+                            <td>$${event.price}</td>
+                            <td>${event.venueName}</td>
+                            <td>${event.venueAddress}</td>
+                            <td>${event.maxCapacity}</td>
+                            <td>${event.registrationDeadline}</td>
+                            <td><a href="/event/${event.id}/register">Register</a></td>
+                        </#if>
                     </tr>
                 </#list>
                 </tbody>

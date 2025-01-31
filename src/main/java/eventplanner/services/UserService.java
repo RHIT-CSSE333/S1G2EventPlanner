@@ -44,6 +44,7 @@ public class UserService { ;
         try {
             String storedProcedure = "{CALL CreateOrUpdatePerson(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}";
             stmt = conn.prepareCall(storedProcedure);
+
             stmt.setString(1, email);
             stmt.setString(2, phoneNo);
             stmt.setString(3, firstName);
@@ -83,6 +84,7 @@ public class UserService { ;
         try {
             String storedProcedure = "{CALL ValidateUserLogin(?)}";
             stmt = conn.prepareCall(storedProcedure);
+
             stmt.setString(1, email);
             rs = stmt.executeQuery();
 

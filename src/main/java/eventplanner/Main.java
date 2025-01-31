@@ -14,7 +14,7 @@ import io.javalin.http.Context;
 import io.javalin.http.staticfiles.Location;
 import io.javalin.rendering.template.JavalinFreemarker;
 import io.javalin.rendering.template.JavalinThymeleaf;
-import eventplanner.services.AvailableEventsService;
+import eventplanner.services.EventsService;
 import eventplanner.services.UserService;
 import freemarker.template.TemplateExceptionHandler;
 import freemarker.template.Configuration;
@@ -45,7 +45,11 @@ public class Main {
             app.get("/", ctx -> ctx.render("/index.ftl"));
             app.get("/login", ctx -> ctx.render("/login.ftl", Map.of("error", "")));
             app.get("/signup", ctx -> ctx.render("/register.ftl", Map.of("error", "")));
+            app.get("/logout", Main::handleLogout);
             app.get("/events", Main::handleEvents);
+            app.get("/event/{id}/register", Main::handleEventRegister);
+            app.get("/event/{id}/cancel", Main::handleCancelEventRegistration);
+            app.get("/myevents", Main::handleMyEvents);
 
             app.post("/login", Main::handleLogin);
             app.post("/signup", Main::handleSignup);
@@ -59,7 +63,6 @@ public class Main {
             e.printStackTrace();
         }
 
-
     }
 
     private static void handleLogin(Context ctx) {
@@ -69,7 +72,7 @@ public class Main {
         UserService userService = new UserService(dbService);
 
         if (userService.loginUser(email, password)) {
-            ctx.sessionAttribute("user", email);
+            ctx.sessionAttribute("userId", userService.getUserIdByEmail(email));
             ctx.redirect("/events");
 
         } else {
@@ -116,14 +119,75 @@ public class Main {
         }
     }
 
+    private static void handleLogout(Context ctx) {
+        ctx.req().getSession().invalidate();
+        ctx.redirect("/");
+    }
+
     private static void handleEvents(Context ctx) {
-        AvailableEventsService availableEventsService = new AvailableEventsService(dbService);
-        List<Event> events = availableEventsService.getAvailableEvents();
+        Integer user = ctx.sessionAttribute("userId");
+        if (user == null) {
+            ctx.redirect("/login");
+        }
+
+        EventsService eventsService = new EventsService(dbService);
+        List<Event> events = eventsService.getAvailableEvents();
 
         System.out.println("Handling /events request...");
 
-        ctx.render("events.ftl", Map.of("events", events, "message", events.isEmpty() ? "No available events at the moment." : ""));
+        ctx.render("events.ftl", Map.of("events", events, 
+                                        "message", events.isEmpty() ? "No available events at the moment." : "",
+                                        "userSpecific", false));
 
+    }
+
+    private static void handleEventRegister(Context ctx) {
+        Integer user = ctx.sessionAttribute("userId");
+        if (user == null) {
+            ctx.redirect("/login");
+        }
+
+        int eventId = Integer.parseInt(ctx.pathParam("id"));
+        int userId = user.intValue();
+        EventsService eventsService = new EventsService(dbService);
+
+        if (eventsService.registerForEvent(userId, eventId)) {
+            ctx.render("success.ftl");
+        } else {
+            ctx.result("error");
+        }
+    }
+
+    private static void handleCancelEventRegistration(Context ctx) {
+        Integer user = ctx.sessionAttribute("userId");
+        if (user == null) {
+            ctx.redirect("/login");
+        }
+
+        int eventId = Integer.parseInt(ctx.pathParam("id"));
+        int userId = user.intValue();
+        EventsService eventsService = new EventsService(dbService);
+
+        if (eventsService.cancelEventRegistration(userId, eventId)) {
+            ctx.render("success.ftl");
+        } else {
+            ctx.result("error");
+        }
+    }
+
+    private static void handleMyEvents(Context ctx) {
+        Integer user = ctx.sessionAttribute("userId");
+        if (user == null) {
+            ctx.redirect("/login");
+        }
+
+        int userId = user.intValue();
+        EventsService eventsService = new EventsService(dbService);
+        List<Event> events = eventsService.getEventsForUser(userId);
+
+        ctx.render("events.ftl", Map.of("events", events, 
+                                        "message", events.isEmpty() ? "You haven't signed up for any events yet" : "",
+                                        "userSpecific", true));
     }
 
     private static void setUpDatabase() {

@@ -1,6 +1,7 @@
 package eventplanner.models;
 
 public class Event {
+    private int id;
     private String name;
     private String startTime;
     private String endTime;
@@ -10,8 +11,9 @@ public class Event {
     private int maxCapacity;
     private String registrationDeadline;
 
-    public Event(String name, String startTime, String endTime, int price,
+    public Event(int id, String name, String startTime, String endTime, int price,
                  String venueName, String venueAddress, int maxCapacity, String registrationDeadline) {
+        this.id = id;
         this.name = name;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -20,6 +22,10 @@ public class Event {
         this.venueAddress = venueAddress;
         this.maxCapacity = maxCapacity;
         this.registrationDeadline = registrationDeadline;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getName() {
@@ -52,5 +58,11 @@ public class Event {
 
     public String getRegistrationDeadline() {
         return registrationDeadline;
+    }
+
+    @Override
+    public String toString() {
+        return "Event(" + id + ", " + name + ", " + startTime + ", " + endTime + ", " + price
+                    + ", " + venueName + ", " + venueAddress + ", " + maxCapacity + ", " + registrationDeadline;
     }
 }

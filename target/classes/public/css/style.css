@@ -102,7 +102,6 @@ input {
     gap: 20px;
     font-size: 18px;
     margin-bottom: 20px;
-    position: absolute;
     top: 20px;
     width: 100%;
 }
@@ -127,4 +126,16 @@ input {
 .error {
     color: red;
     font-size: smaller;
+}
+
+td, th {
+    border: 1px solid black;
+    text-align: center;
+    padding: .5em;
+}
+
+th {
+    background-color: #800000;
+    color: white;
+    font-weight: 700;
 }
