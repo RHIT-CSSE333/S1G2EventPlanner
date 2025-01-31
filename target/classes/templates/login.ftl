@@ -24,7 +24,7 @@
     </form>
 
     <!-- Register Link -->
-    <p class="register-link">Don't have an account? <a href="register.html">Register here.</a></p>
+    <p class="register-link">Don't have an account? <a href="/signup">Register here.</a></p>
 </div>
 <script src="js/script.js"></script>
 </body>

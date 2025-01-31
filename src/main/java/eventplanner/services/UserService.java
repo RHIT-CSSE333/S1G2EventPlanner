@@ -47,12 +47,12 @@ public class UserService { ;
             stmt.setString(1, email);
             stmt.setString(2, phoneNo);
             stmt.setString(3, firstName);
-            stmt.setString(4, middleInit.isEmpty() ? null : middleInit);   // Nullable field
+            stmt.setString(4, middleInit == null || middleInit.isEmpty() ? null : middleInit);   // Nullable field
             stmt.setString(5, lastName);
             stmt.setString(6, dob);
-            stmt.setString(7, ccNum.isEmpty() ? null : ccNum);        // Nullable field
-            stmt.setString(8, ccExpDate.isEmpty() ? null : ccExpDate);   // Nullable field
-            stmt.setString(9, cvv.isEmpty() ? null : cvv);         // Nullable field
+            stmt.setString(7, ccNum == null || ccNum.isEmpty() ? null : ccNum);        // Nullable field
+            stmt.setString(8, ccExpDate == null || ccExpDate.isEmpty() ? null : ccExpDate);   // Nullable field
+            stmt.setString(9, cvv == null || cvv.isEmpty() ? null : cvv);         // Nullable field
             stmt.setString(10, hashedPassword);
             stmt.setString(11, saltString);
 

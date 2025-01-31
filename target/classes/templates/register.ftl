@@ -61,7 +61,7 @@
     </p>
 
     <!-- Back to Login -->
-    <p class="register-link">Already have an account? <a href="login.html">Login here.</a></p>
+    <p class="register-link">Already have an account? <a href="/login">Login here.</a></p>
 </div>
 <script src="js/script.js"></script>
 </body>
