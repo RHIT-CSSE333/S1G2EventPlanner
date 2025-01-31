@@ -98,6 +98,33 @@ public class UserService { ;
         return false;
     }
 
+    public int getUserIdByEmail(String email) {
+        System.out.println(email);
+        if (email == null || email.isBlank()) {
+            return -1;
+        }
+
+        Connection conn = dbService.getConnection();
+        if (conn == null) {
+            return -1;
+        }
+
+        try {
+            CallableStatement stmt = conn.prepareCall("{call GetPersonIDByEmail(?, ?)}");
+            stmt.setString(1, email);
+            stmt.registerOutParameter(2, Types.INTEGER);
+
+            stmt.execute();
+
+            return stmt.getInt(2);
+
+        } catch (SQLException e) {
+            System.err.println("Error logging in: " + e.getMessage());
+            return -1;
+        }
+
+    }
+
     public byte[] getNewSalt() {
         byte[] salt = new byte[16];
         RANDOM.nextBytes(salt);
