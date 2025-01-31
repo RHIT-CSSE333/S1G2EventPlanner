@@ -1,17 +1,20 @@
 package eventplanner.services;
 
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
-import javax.swing.*;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
-import java.sql.*;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Types;
 import java.util.Base64;
 import java.util.Random;
+
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
+import javax.swing.JOptionPane;
 
 public class UserService { ;
     private static final Random RANDOM = new SecureRandom();
@@ -259,7 +262,7 @@ public class UserService { ;
      * @return true if registration succeeds, false otherwise.
      */
 	public boolean leaveReview(int PersonID, Integer VenueID, Integer EventID, String Title, int Rating,
-	                            String Desc, String PostedOn) {
+	                            String Desc) {
 	    Connection conn = dbService.getConnection();
 	    if (conn == null) {
 	        JOptionPane.showMessageDialog(null, "Database connection failed.");
@@ -267,7 +270,7 @@ public class UserService { ;
 	    }
 
 	    try {
-	        String query = "{? = call dbo.AddReview(?, ?, ?, ?, ?, ?, ?)}";
+	        String query = "{? = call dbo.AddReview(?, ?, ?, ?, ?, ?)}";
 	        CallableStatement stmt = conn.prepareCall(query);
 
 	        stmt.registerOutParameter(1, Types.INTEGER);
@@ -286,7 +289,6 @@ public class UserService { ;
 	        stmt.setString(5, Title.isEmpty() ? null : Title);   // Nullable field
 	        stmt.setInt(6, Rating);
 	        stmt.setString(7, Desc.isEmpty() ? null : Desc); // Nullable field
-	        stmt.setString(8, PostedOn);
 
 	        stmt.execute();
 
@@ -302,8 +304,6 @@ public class UserService { ;
  	        	JOptionPane.showMessageDialog(null, "ERROR: Specified Person, Venue, and/or Event do not exist.");
  	        } else if (returnCode == 3) {
  	        	JOptionPane.showMessageDialog(null, "ERROR: Same user cannot leave more than 1 review per Event or Venue.");
- 	        } else if (returnCode == 4) {
- 	        	JOptionPane.showMessageDialog(null, "ERROR: Date is not a valid date.");
  	        } else if (returnCode == 5) {
  	        	JOptionPane.showMessageDialog(null, "ERROR: Rating must be between 1 and 5.");
  	        } else

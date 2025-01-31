@@ -1,16 +1,16 @@
 package eventplanner.services;
 
-import eventplanner.models.Event;
-
-import java.sql.Connection;
 import java.sql.CallableStatement;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.ArrayList;
-import java.util.List;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
+import eventplanner.models.Event;
 
 public class EventsService {
     private DatabaseConnectionService dbService;
@@ -87,7 +87,7 @@ public class EventsService {
                     dateFormat.format(new Date(rs.getTimestamp("StartTime").getTime())),
                     null,
                     -1,
-                    -1,
+                    rs.getInt("VenueId"),
                     rs.getString("VenueName"),
                     rs.getString("VenueAddress"),
                     -1,
@@ -143,5 +143,44 @@ public class EventsService {
             System.err.println("Error logging in: " + e.getMessage());
             return false;
         }
+    }
+
+    public List<Event> getUserAttended(int userId) {
+        List<Event> events = new ArrayList<>();
+        String query = "{CALL ShowAttendedEvents(?)}";
+
+        Connection conn = null;
+        CallableStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = dbService.getConnection();
+            stmt = conn.prepareCall(query);
+            stmt.setInt(1, userId);
+            rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm a, MMM d, yyyy");
+
+                Event event = new Event(
+                    rs.getInt("Id"),
+                    rs.getString("Name"),
+                    dateFormat.format(new Date(rs.getTimestamp("StartTime").getTime())),
+                    null,
+                    -1,
+                    -1,
+                    rs.getString("VenueName"),
+                    rs.getString("VenueAddress"),
+                    -1,
+                    null
+                );
+
+                events.add(event);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching available events: " + e.getMessage());
+        }
+
+        return events;
     }
 }

@@ -1,31 +1,26 @@
 package eventplanner;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Scanner;
-
-import eventplanner.models.Event;
-import eventplanner.models.Venue;
-import io.javalin.Javalin;
-import io.javalin.http.Context;
-import io.javalin.http.staticfiles.Location;
-import io.javalin.rendering.template.JavalinFreemarker;
-import io.javalin.rendering.template.JavalinThymeleaf;
-import eventplanner.services.EventsService;
-import eventplanner.services.UserService;
-import eventplanner.services.VenuesService;
-import freemarker.template.TemplateExceptionHandler;
-import freemarker.template.Configuration;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.jasypt.properties.EncryptableProperties;
 
+import eventplanner.models.Event;
+import eventplanner.models.Venue;
 import eventplanner.services.DatabaseConnectionService;
 import eventplanner.services.EncryptionServices;
+import eventplanner.services.EventsService;
+import eventplanner.services.UserService;
+import eventplanner.services.VenuesService;
+import freemarker.template.Configuration;
+import io.javalin.Javalin;
+import io.javalin.http.Context;
+import io.javalin.rendering.template.JavalinFreemarker;
 
 public class Main {
 
@@ -53,9 +48,13 @@ public class Main {
             app.get("/event/{id}/cancel", Main::handleCancelEventRegistration);
             app.get("/myevents", Main::handleMyEvents);
             app.get("/venue/{id}", Main::handleVenuePage);
+            app.get("/event/{id}/review", ctx -> ctx.render("/review.ftl", Map.of("error", "")));
+            app.get("/venue/{id}/review", ctx -> ctx.render("/review.ftl", Map.of("error", "")));
 
             app.post("/login", Main::handleLogin);
             app.post("/signup", Main::handleSignup);
+            app.post("/event/{id}/review", Main::handleAddReview);
+            app.post("/venue/{id}/review", Main::handleAddVenue);
 
             app.events(event -> {
                 event.handlerAdded(handler -> {
@@ -155,6 +154,48 @@ public class Main {
         EventsService eventsService = new EventsService(dbService);
 
         if (eventsService.registerForEvent(userId, eventId)) {
+            ctx.render("success.ftl");
+        } else {
+            ctx.result("error");
+        }
+    }
+
+    private static void handleAddReview(Context ctx) {
+        Integer user = ctx.sessionAttribute("userId");
+        if (user == null) {
+            ctx.redirect("/login");
+        }
+
+        int eventId = Integer.parseInt(ctx.pathParam("id"));
+        int userId = user.intValue();
+        UserService userService = new UserService(dbService);
+
+        String title = ctx.formParam("title");
+        int rating = Integer.parseInt(ctx.formParam("rating"));
+        String desc = ctx.formParam("description");
+
+        if (userService.leaveReview(userId, -1, eventId, title, rating, desc)) {
+            ctx.render("success.ftl");
+        } else {
+            ctx.result("error");
+        }
+    }
+
+    private static void handleAddVenue(Context ctx) {
+        Integer user = ctx.sessionAttribute("userId");
+        if (user == null) {
+            ctx.redirect("/login");
+        }
+
+        int venueId = Integer.parseInt(ctx.pathParam("id"));
+        int userId = user.intValue();
+        UserService userService = new UserService(dbService);
+
+        String title = ctx.formParam("title");
+        int rating = Integer.parseInt(ctx.formParam("rating"));
+        String desc = ctx.formParam("description");
+
+        if (userService.leaveReview(userId, venueId, -1, title, rating, desc)) {
             ctx.render("success.ftl");
         } else {
             ctx.result("error");
