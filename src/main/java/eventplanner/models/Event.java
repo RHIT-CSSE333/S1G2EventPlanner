@@ -6,18 +6,20 @@ public class Event {
     private String startTime;
     private String endTime;
     private int price;
+    private int venueId;
     private String venueName;
     private String venueAddress;
     private int maxCapacity;
     private String registrationDeadline;
 
-    public Event(int id, String name, String startTime, String endTime, int price,
+    public Event(int id, String name, String startTime, String endTime, int price, int venueId,
                  String venueName, String venueAddress, int maxCapacity, String registrationDeadline) {
         this.id = id;
         this.name = name;
         this.startTime = startTime;
         this.endTime = endTime;
         this.price = price;
+        this.venueId = venueId;
         this.venueName = venueName;
         this.venueAddress = venueAddress;
         this.maxCapacity = maxCapacity;
@@ -42,6 +44,10 @@ public class Event {
 
     public int getPrice() {
         return price;
+    }
+
+    public int getVenueId() {
+        return venueId;
     }
 
     public String getVenueName() {
