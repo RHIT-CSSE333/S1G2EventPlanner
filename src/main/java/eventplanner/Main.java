@@ -166,6 +166,7 @@ public class Main {
         Integer user = ctx.sessionAttribute("userId");
         if (user == null) {
             ctx.redirect("/login");
+            return;
         }
 
         int eventId = Integer.parseInt(ctx.pathParam("id"));
@@ -187,6 +188,7 @@ public class Main {
         Integer user = ctx.sessionAttribute("userId");
         if (user == null) {
             ctx.redirect("/login");
+            return;
         }
 
         int venueId = Integer.parseInt(ctx.pathParam("id"));

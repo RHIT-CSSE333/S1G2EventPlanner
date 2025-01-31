@@ -1,6 +1,5 @@
-eventplanner\services\AvailableEventsService.class
-eventplanner\models\Event.class
 eventplanner\Main.class
 eventplanner\services\EncryptionServices.class
 eventplanner\services\UserService.class
 eventplanner\services\DatabaseConnectionService.class
+eventplanner\models\Event.class
