@@ -19,20 +19,20 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 
-document.addEventListener("DOMContentLoaded", function () {
-    const loginForm = document.getElementById("loginForm");
+// document.addEventListener("DOMContentLoaded", function () {
+//     const loginForm = document.getElementById("loginForm");
 
-    loginForm.addEventListener("submit", function (event) {
-        event.preventDefault();
+//     loginForm.addEventListener("submit", function (event) {
+//         event.preventDefault();
 
-        const email = document.getElementById("email").value;
-        const password = document.getElementById("password").value;
+//         const email = document.getElementById("email").value;
+//         const password = document.getElementById("password").value;
 
-        // TODO: validation check
-        if (email && password) {
-            window.location.href = "index.html"; // Redirect to index.html
-        } else {
-            alert("Please fill out both fields.");
-        }
-    });
-});
+//         // TODO: validation check
+//         if (email && password) {
+//             window.location.href = "index.html"; // Redirect to index.html
+//         } else {
+//             alert("Please fill out both fields.");
+//         }
+//     });
+// });

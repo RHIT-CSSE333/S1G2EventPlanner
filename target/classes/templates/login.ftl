@@ -11,14 +11,16 @@
     <h2>Welcome to Event Planner</h2>
 
     <!-- Login Form -->
-    <form id="loginForm">
+    <form id="loginForm" action="/login" method="post">
         <label for="email">Email:</label>
-        <input type="email" id="email" required>
+        <input type="email" id="email" name="email" required>
 
         <label for="password">Password:</label>
-        <input type="password" id="password" required>
+        <input type="password" id="password" name="password" required>
 
         <button type="submit" class="submit-btn">Login</button>
+
+        <p class="error">${error}</p>
     </form>
 
     <!-- Register Link -->

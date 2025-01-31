@@ -123,3 +123,8 @@ input {
     width: 350px;
     margin-top: 80px;
 }
+
+.error {
+    color: red;
+    font-size: smaller;
+}
