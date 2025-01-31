@@ -56,7 +56,7 @@
                             <td>${event.startTime}</td>
                             <td>${event.endTime}</td>
                             <td>$${event.price}</td>
-                            <td>${event.venueName}</td>
+                            <td><a href="/venue/${event.venueId}">${event.venueName}</a></td>
                             <td>${event.venueAddress}</td>
                             <td>${event.maxCapacity}</td>
                             <td>${event.registrationDeadline}</td>
