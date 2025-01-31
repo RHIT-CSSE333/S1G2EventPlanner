@@ -53,9 +53,11 @@ public class Main {
             app.get("/event/{id}/cancel", Main::handleCancelEventRegistration);
             app.get("/myevents", Main::handleMyEvents);
             app.get("/venue/{id}", Main::handleVenuePage);
+            app.get("/venue/{id}/addpublic", Main::handleAddPublicEvent);
 
             app.post("/login", Main::handleLogin);
             app.post("/signup", Main::handleSignup);
+            app.post("/venue/{id}/addpublic", Main::handleAddPublicEventPost);
 
             app.events(event -> {
                 event.handlerAdded(handler -> {
@@ -194,6 +196,7 @@ public class Main {
     }
 
     private static void handleVenuePage(Context ctx) {
+        // TODO: convert to UTC on server when adding event
         int venueId = Integer.parseInt(ctx.pathParam("id"));
         VenuesService venuesService = new VenuesService(dbService);
 
@@ -203,6 +206,28 @@ public class Main {
         ctx.render("venue.ftl", Map.of("venue", venue,
                                         "events", eventsForVenue, 
                                         "message", eventsForVenue.isEmpty() ? "This venue doesn't have any events posted yet" : ""));
+    }
+
+    private static void handleAddPublicEvent(Context ctx) {
+        int venueId = Integer.parseInt(ctx.pathParam("id"));
+        ctx.render("addevent.ftl", Map.of("error", ""));
+    }
+
+    private static void handleAddPublicEventPost(Context ctx) {
+        int venueId = Integer.parseInt(ctx.pathParam("id"));
+        String name = ctx.formParam("name");
+        String startTime = ctx.formParam("startTime");
+        String endTime = ctx.formParam("endTime");
+        String registrationDeadline = ctx.formParam("registrationDeadline");
+        int price = Integer.parseInt(ctx.formParam("price"));
+        
+        VenuesService venuesService = new VenuesService(dbService);
+
+        if (venuesService.addPublicEvent(venueId, name, startTime, endTime, registrationDeadline, price)) {
+            ctx.render("success.ftl");
+        } else {
+            ctx.render("addevent.ftl", Map.of("error", "Error creating an event"));
+        }
     }
 
     private static void setUpDatabase() {
