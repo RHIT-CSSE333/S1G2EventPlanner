@@ -8,6 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Scanner;
 
+import eventplanner.models.Event;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 import io.javalin.http.staticfiles.Location;
@@ -32,19 +33,33 @@ public class Main {
     private static EncryptionServices es = new EncryptionServices();
 
     public static void main(String[] args) {
-        setUpDatabase();
+        try {
+            setUpDatabase();
+            System.out.println("Starting server.");
 
-        Javalin app = Javalin.create(config -> {
-            config.staticFiles.add("/public");
-            config.fileRenderer(new JavalinFreemarker(getFreemarkerConfiguration()));
-        }).start(7070);
+            Javalin app = Javalin.create(config -> {
+                config.staticFiles.add("/public");
+                config.fileRenderer(new JavalinFreemarker(getFreemarkerConfiguration()));
+            }).start(7070);
 
-        app.get("/", ctx -> ctx.redirect("/login"));
-        app.get("/login", ctx -> ctx.render("/login.ftl", Map.of("error", "")));
-        app.get("/signup", ctx -> ctx.render("/register.ftl", Map.of("error", "")));
+            app.get("/", ctx -> ctx.render("/index.ftl"));
+            app.get("/login", ctx -> ctx.render("/login.ftl", Map.of("error", "")));
+            app.get("/signup", ctx -> ctx.render("/register.ftl", Map.of("error", "")));
+            app.get("/events", Main::handleEvents);
 
-        app.post("/login", Main::handleLogin);
-        app.post("/signup", Main::handleSignup);
+            app.post("/login", Main::handleLogin);
+            app.post("/signup", Main::handleSignup);
+
+            app.events(event -> {
+                event.handlerAdded(handler -> {
+                    System.out.println("Registered route: " + handler.getHttpMethod() + " " + handler.getPath());
+                });
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
     }
 
     private static void handleLogin(Context ctx) {
@@ -101,6 +116,16 @@ public class Main {
         }
     }
 
+    private static void handleEvents(Context ctx) {
+        AvailableEventsService availableEventsService = new AvailableEventsService(dbService);
+        List<Event> events = availableEventsService.getAvailableEvents();
+
+        System.out.println("Handling /events request...");
+
+        ctx.render("events.ftl", Map.of("events", events, "message", events.isEmpty() ? "No available events at the moment." : ""));
+
+    }
+
     private static void setUpDatabase() {
         Properties props = loadProperties();
         serverUsername = props.getProperty("serverUsername");
@@ -150,6 +175,8 @@ public class Main {
         }
         return props;
     }
+
+
 
     // public static void main(String[] args) {
     //     Properties props = loadProperties();

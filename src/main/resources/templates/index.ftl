@@ -8,18 +8,13 @@
 </head>
 <body>
 <div class="nav">
-    <a href="index.html">Home</a>
-    <a href="login.html">Login</a>
+    <a href="/">Home</a>
+    <a href="/login">Login</a>
+    <a href="/signup">Sign Up</a>
 </div>
 
 <div class="container container-index">
     <h1>Welcome to Event Planner</h1>
-
-    <h2>Available Public Events</h2>
-    <div id="events-container">
-        <!-- TODO: Complete Available Event lists when API is done.-->
-        <p>Loading events...</p>
-    </div>
 </div>
 </body>
 </html>

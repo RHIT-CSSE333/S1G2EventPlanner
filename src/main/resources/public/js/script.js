@@ -30,7 +30,7 @@
 
 // //         // TODO: validation check
 // //         if (email && password) {
-// //             window.location.href = "index.html"; // Redirect to index.html
+// //             window.location.href = "index.ftl"; // Redirect to index.ftl
 // //         } else {
 // //             alert("Please fill out both fields.");
 // //         }

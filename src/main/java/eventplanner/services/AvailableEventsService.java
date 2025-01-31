@@ -1,5 +1,7 @@
 package eventplanner.services;
 
+import eventplanner.models.Event;
+
 import java.sql.Connection;
 import java.sql.CallableStatement;
 import java.sql.ResultSet;
@@ -14,8 +16,8 @@ public class AvailableEventsService {
         this.dbService = dbService;
     }
 
-    public List<String> getAvailableEvents() {
-        List<String> events = new ArrayList<>();
+    public List<Event> getAvailableEvents() {
+        List<Event> events = new ArrayList<>();
         String query = "{CALL ShowAvailableEvents}"; // Stored procedure call
 
         Connection conn = null;
@@ -28,15 +30,16 @@ public class AvailableEventsService {
             rs = stmt.executeQuery();
 
             while (rs.next()) {
-                String event = String.format("Name: %s, Start: %s, End: %s, Price: $%d, Venue: %s, Address: %s, Max Capacity: %d, Registration Deadline: %s",
-                        rs.getString("Name"),
-                        rs.getTimestamp("StartTime"),
-                        rs.getTimestamp("EndTime"),
-                        rs.getInt("Price"),
-                        rs.getString("VenueName"),
-                        rs.getString("VenueAddress"),
-                        rs.getInt("MaxCapacity"),
-                        rs.getTimestamp("RegistrationDeadline"));
+                Event event = new Event(
+                    rs.getString("Name"),
+                    rs.getTimestamp("StartTime").toString(),
+                    rs.getTimestamp("EndTime").toString(),
+                    rs.getInt("Price"),
+                    rs.getString("VenueName"),
+                    rs.getString("VenueAddress"),
+                    rs.getInt("MaxCapacity"),
+                    rs.getTimestamp("RegistrationDeadline").toString()
+                );
                 events.add(event);
             }
         } catch (SQLException e) {
@@ -50,6 +53,7 @@ public class AvailableEventsService {
                 System.err.println("Error closing resources: " + e.getMessage());
             }
         }
+        System.out.println("Database returned " + events.size() + " events.");
         return events;
     }
 }
