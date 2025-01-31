@@ -95,7 +95,7 @@ input {
     text-decoration: underline;
 }
 
-/*index.html*/
+/*index.ftl*/
 .nav {
     display: flex;
     justify-content: center;
