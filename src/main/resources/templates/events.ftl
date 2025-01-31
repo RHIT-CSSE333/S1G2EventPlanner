@@ -29,6 +29,8 @@
                         <th>Venue</th>
                         <th>Address</th>
                         <th></th>
+                        <th></th>
+                        <th></th>
                     <#else>
                         <th>Name</th>
                         <th>Start Time</th>
@@ -51,6 +53,9 @@
                             <td>${event.venueName}</td>
                             <td>${event.venueAddress}</td>
                             <td><a href="/event/${event.id}/cancel">Cancel registration</a></td>
+                            <td><a href="/event/${event.id}/review">Add Event Review</a></td>
+                            <td><a href="/venue/${event.venueId}/review">Add Venue Review</a></td>
+
                         <#else>
                             <td>${event.name}</td>
                             <td>${event.startTime}</td>
