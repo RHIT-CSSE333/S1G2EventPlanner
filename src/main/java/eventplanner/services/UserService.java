@@ -39,11 +39,11 @@ public class UserService { ;
         byte[] salt = getNewSalt();
         String hashedPassword = hashPassword(salt, password);
         String saltString = getStringFromBytes(salt);
+        CallableStatement stmt = null;
 
         try {
-            String query = "INSERT INTO Person (Email, PhoneNo, FirstName, MInit, LastName, DOB, CCNum, CCExpDate, CVV, PasswordHash, PasswordSalt) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            PreparedStatement stmt = conn.prepareStatement(query);
+            String storedProcedure = "{CALL CreateOrUpdatePerson(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}";
+            stmt = conn.prepareCall(storedProcedure);
             stmt.setString(1, email);
             stmt.setString(2, phoneNo);
             stmt.setString(3, firstName);
@@ -77,11 +77,14 @@ public class UserService { ;
             return false;
         }
 
+        CallableStatement stmt = null;
+        ResultSet rs = null;
+
         try {
-            String query = "SELECT PasswordHash, PasswordSalt FROM Person WHERE Email = ?";
-            PreparedStatement stmt = conn.prepareStatement(query);
+            String storedProcedure = "{CALL ValidateUserLogin(?)}";
+            stmt = conn.prepareCall(storedProcedure);
             stmt.setString(1, email);
-            ResultSet rs = stmt.executeQuery();
+            rs = stmt.executeQuery();
 
             if (rs.next()) {
                 String storedHash = rs.getString("PasswordHash");
