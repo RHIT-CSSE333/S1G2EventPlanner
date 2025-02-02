@@ -44,6 +44,7 @@ public class Main {
             app.get("/signup", ctx -> ctx.render("/register.ftl", Map.of("error", "")));
             app.get("/logout", Main::handleLogout);
             app.get("/events", Main::handleEvents);
+            app.get("/venues", Main::handleVenues);
             app.get("/event/{id}/register", Main::handleEventRegister);
             app.get("/event/{id}/cancel", Main::handleCancelEventRegistration);
             app.get("/myevents", Main::handleMyEvents);
@@ -254,8 +255,6 @@ public class Main {
     private static void handlePublicEvent(Context ctx) {
         int venueId = Integer.parseInt(ctx.pathParam("id"));
         ctx.render("addevent.ftl", Map.of("error", ""));
-        // debugging
-        System.out.println("Add Event Page.");
     }
 
     private static void handleAddEventPost(Context ctx) {
@@ -263,7 +262,6 @@ public class Main {
         String name = ctx.formParam("name");
         String eventType = ctx.formParam("event-type");
         String startTime = ctx.formParam("startTime");
-        System.out.println("Debugging placeholder starttime");
         String endTime = ctx.formParam("endTime");
         String registrationDeadline = ctx.formParam("registrationDeadline");
         double price = Double.parseDouble(ctx.formParam("price"));
@@ -347,7 +345,15 @@ public class Main {
         return props;
     }
 
+    private static void handleVenues(Context ctx) {
+        VenuesService venuesService = new VenuesService(dbService);
+        List<Venue> venues = venuesService.getAllVenues();
 
+        ctx.render("venues.ftl", Map.of(
+                "venues", venues,
+                "message", venues.isEmpty() ? "No available venues." : ""
+        ));
+    }
 
 
 }

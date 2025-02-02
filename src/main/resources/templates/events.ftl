@@ -14,6 +14,7 @@
         <#else>
             <a href="/myevents">My events</a>
         </#if>
+        <a href="/venues">Venues</a>
         <a href="/logout">Log out</a>
     </div>
 
@@ -76,4 +77,5 @@
         </#if>
 
     </div>
+
 </body>

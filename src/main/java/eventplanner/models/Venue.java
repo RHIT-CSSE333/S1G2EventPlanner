@@ -4,8 +4,8 @@ public class Venue {
     private int id;
     private String name;
     private int maxCapacity;
-    private PricingType pricingType;
-    private int price;
+    private int pricingType;
+    private double price;
     private String state;
     private String city;
     private String streetAddress;
@@ -16,11 +16,11 @@ public class Venue {
         Daily
     }
 
-    public Venue(int id, String name, int maxCapacity, int pricingType, int price, String state, String city, String streetAddress, int zipCode) {
+    public Venue(int id, String name, int maxCapacity, int pricingType, double price, String state, String city, String streetAddress, int zipCode) {
         this.id = id;
         this.name = name;
         this.maxCapacity = maxCapacity;
-        this.pricingType = fromInt(pricingType);
+        this.pricingType = pricingType;
         this.price = price;
         this.state = state;
         this.city = city;
@@ -51,11 +51,11 @@ public class Venue {
         return maxCapacity;
     }
 
-    public PricingType getPricingType() {
+    public int getPricingType() {
         return pricingType;
     }
 
-    public int getPrice() {
+    public double getPrice() {
         return price;
     }
 

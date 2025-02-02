@@ -162,6 +162,33 @@ public class VenuesService {
         }
     }
 
+    public List<Venue> getAllVenues() {
+        String query = "{call GetAllVenues}";
+        List<Venue> venues = new ArrayList<>();
 
+        try {
+            Connection conn = dbService.getConnection();
+            CallableStatement stmt = conn.prepareCall(query);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Venue venue = new Venue(rs.getInt("ID"),
+                        rs.getString("Name"),
+                        rs.getInt("MaxCapacity"),
+                        rs.getInt("PricingType"),
+                        rs.getDouble("Price"),
+                        rs.getString("State"),
+                        rs.getString("City"),
+                        rs.getString("StreetAddress"),
+                        rs.getInt("ZipCode")
+
+                );
+                venues.add(venue);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching venues: " + e.getMessage());
+        }
+        return venues;
+    }
 
 }
