@@ -19,6 +19,9 @@ public class EventsService {
         this.dbService = dbService;
     }
 
+    // This method is for getting all available public events
+    // For now, we can assume all available events are already payed
+    // If we need improvement in the future, we can modify this method and related stored procedures
     public List<Event> getAvailableEvents() {
         List<Event> events = new ArrayList<>();
         String query = "{CALL ShowAvailableEvents}"; // Stored procedure call
@@ -45,7 +48,9 @@ public class EventsService {
                     rs.getString("VenueName"),
                     rs.getString("VenueAddress"),
                     rs.getInt("MaxCapacity"),
-                    dateFormat.format(new Date(rs.getTimestamp("RegistrationDeadline").getTime()))
+                    dateFormat.format(new Date(rs.getTimestamp("RegistrationDeadline").getTime())),
+            true,
+       true
                 );
                 events.add(event);
             }
@@ -64,6 +69,8 @@ public class EventsService {
         return events;
     }
 
+    // This method is used for getting all public events a user is registered
+    // Again, we can still assume all events are already paied
     public List<Event> getEventsForUser(int userId) {
         List<Event> events = new ArrayList<>();
         String query = "{CALL GetEventsByPerson(?)}";
@@ -91,7 +98,9 @@ public class EventsService {
                     rs.getString("VenueName"),
                     rs.getString("VenueAddress"),
                     -1,
-                    null
+                    null,
+                        true,
+                        true
                 );
 
                 events.add(event);
@@ -172,7 +181,9 @@ public class EventsService {
                     rs.getString("VenueName"),
                     rs.getString("VenueAddress"),
                     -1,
-                    null
+                    null,
+                        true,
+                        true
                 );
 
                 events.add(event);

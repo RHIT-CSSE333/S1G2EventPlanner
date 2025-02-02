@@ -83,7 +83,9 @@ public class VenuesService {
                     rs.getString("VenueName"),
                     rs.getString("VenueAddress"),
                     rs.getInt("MaxCapacity"),
-                    dateFormat.format(new Date(rs.getTimestamp("RegistrationDeadline").getTime()))
+                    dateFormat.format(new Date(rs.getTimestamp("RegistrationDeadline").getTime())),
+                        rs.getInt("isPublic") == 0 ? false : true,
+                        rs.getInt("PaymentStatus") == 0 ? false : true
                 );
                 events.add(event);
             }
@@ -94,7 +96,7 @@ public class VenuesService {
         return events;
     }
 
-    public boolean addPublicEvent(int venueId, String name, String startTime, String endTime, String registrationDeadline, int price) {
+    public boolean addPublicEvent(int venueId, String name, String startTime, String endTime, String registrationDeadline, double price) {
         String query = "{call addEvent(?, ?, ?, ?, ?, ?, ?)}";
 
         Connection conn = null;
@@ -103,15 +105,15 @@ public class VenuesService {
         try {
             conn = dbService.getConnection();
             stmt = conn.prepareCall(query);
-            
+
+            SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
+
             stmt.setString(1, name);
-            SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            // TODO: real date integration with HTML
-            stmt.setTimestamp(2, new Timestamp(inputFormat.parse("2025-02-25 12:35:00").getTime()));
-            stmt.setTimestamp(3, new Timestamp(inputFormat.parse("2025-02-25 17:00:00").getTime()));
-            stmt.setTimestamp(4, new Timestamp(inputFormat.parse("2025-02-17 00:00:00").getTime()));
+            stmt.setTimestamp(2, new Timestamp(inputFormat.parse(startTime).getTime()));
+            stmt.setTimestamp(3, new Timestamp(inputFormat.parse(endTime).getTime()));
+            stmt.setTimestamp(4, new Timestamp(inputFormat.parse(registrationDeadline).getTime()));
             stmt.setInt(5, venueId);
-            stmt.setInt(6, price);
+            stmt.setDouble(6, price);
             stmt.setBoolean(7, true);
 
             int rowsInserted = stmt.executeUpdate();
@@ -125,4 +127,41 @@ public class VenuesService {
             return false;
         }
     }
+
+    public boolean addPrivateEvent(int personId, int venueId, String name, String startTime, String endTime, String registrationDeadline, double price) {
+        String query = "{call CreatePrivateEvent(?, ?, ?, ?, ?, ?, ?, ?, ?)}";
+
+        Connection conn = null;
+        CallableStatement stmt = null;
+
+        try {
+            conn = dbService.getConnection();
+            stmt = conn.prepareCall(query);
+
+            stmt.setString(1, name);
+            SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
+            stmt.setTimestamp(2, new Timestamp(inputFormat.parse(startTime).getTime()));
+            stmt.setTimestamp(3, new Timestamp(inputFormat.parse(endTime).getTime()));
+            stmt.setInt(4, venueId);
+            stmt.setDouble(5, price);
+            stmt.setTimestamp(6, new Timestamp(inputFormat.parse(registrationDeadline).getTime()));
+            stmt.setInt(7, personId);
+            stmt.setInt(8,0); // set payment status as 0
+
+            stmt.registerOutParameter(9, Types.INTEGER);  // For output EventID
+
+            stmt.execute();
+
+            int eventId = stmt.getInt(9);
+            System.out.println("Created Private Event with ID: " + eventId);
+            return eventId > 0;
+
+        } catch (SQLException | ParseException e) {
+            System.err.println("Error creating private event: " + e.getMessage());
+            return false;
+        }
+    }
+
+
+
 }
