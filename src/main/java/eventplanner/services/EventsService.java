@@ -194,4 +194,71 @@ public class EventsService {
 
         return events;
     }
+
+    public List<Event> getHostedEvents(int userId) {
+        List<Event> events = new ArrayList<>();
+        String query = "{CALL GetHostedEvents(?)}"; // call stored procedure
+
+        try {
+            Connection conn = dbService.getConnection();
+            CallableStatement stmt = conn.prepareCall(query);
+            stmt.setInt(1, userId);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Event event = new Event(
+                        rs.getInt("Id"),
+                        rs.getString("Name"),
+                        rs.getTimestamp("StartTime").toString(),
+                        rs.getTimestamp("EndTime").toString(),
+                        rs.getDouble("Price"),
+                        rs.getInt("VenueId"),
+                        rs.getString("VenueName"),
+                        rs.getString("VenueAddress"),
+                        rs.getInt("MaxCapacity"),
+                        rs.getTimestamp("RegistrationDeadline").toString(),
+                        rs.getBoolean("isPublic"),
+                        rs.getBoolean("PaymentStatus")
+                );
+                events.add(event);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching active hosted events: " + e.getMessage());
+        }
+        return events;
+    }
+
+    public Event getEventById(int eventId) {
+        String query = "{CALL GetEventById(?)}";
+        Event event = null;
+
+        try (Connection conn = dbService.getConnection();
+             CallableStatement stmt = conn.prepareCall(query)) {
+
+            stmt.setInt(1, eventId);  // 设置参数
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                event = new Event(
+                        rs.getInt("ID"),
+                        rs.getString("Name"),
+                        rs.getTimestamp("StartTime").toString(),
+                        rs.getTimestamp("EndTime").toString(),
+                        rs.getDouble("Price"),
+                        rs.getInt("VenueId"),
+                        rs.getString("VenueName"),
+                        rs.getString("VenueAddress"),
+                        rs.getInt("MaxCapacity"),
+                        rs.getTimestamp("RegistrationDeadline").toString(),
+                        rs.getBoolean("isPublic"),
+                        rs.getBoolean("PaymentStatus")
+                );
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching event by ID: " + e.getMessage());
+        }
+        return event;
+    }
+
+
 }

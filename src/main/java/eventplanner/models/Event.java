@@ -1,5 +1,7 @@
 package eventplanner.models;
 
+import java.util.Date;
+
 public class Event {
     private int id;
     private String name;
@@ -71,20 +73,16 @@ public class Event {
         return registrationDeadline;
     }
 
-    public boolean isPaymentCompleted() {
+    public boolean isPaymentStatus() {
         return paymentStatus;
     }
 
-    public boolean isPublic() {
+    public boolean getIsPublic() {
         return isPublic;
     }
 
     public void setPublic(boolean aPublic) {
         isPublic = aPublic;
-    }
-
-    public boolean isPaymentStatus() {
-        return paymentStatus;
     }
 
     public void setPaymentStatus(boolean paymentStatus) {
@@ -96,4 +94,9 @@ public class Event {
         return "Event(" + id + ", " + name + ", " + startTime + ", " + endTime + ", " + price
                     + ", " + venueName + ", " + venueAddress + ", " + maxCapacity + ", " + registrationDeadline;
     }
+
+    public Date getRegistrationDeadlineDate() {
+        return registrationDeadline != null ? java.sql.Timestamp.valueOf(registrationDeadline) : null;
+    }
+
 }

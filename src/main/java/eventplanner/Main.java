@@ -3,6 +3,7 @@ package eventplanner;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -21,6 +22,7 @@ import freemarker.template.Configuration;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 import io.javalin.rendering.template.JavalinFreemarker;
+import org.jetbrains.annotations.NotNull;
 
 public class Main {
 
@@ -47,7 +49,9 @@ public class Main {
             app.get("/venues", Main::handleVenues);
             app.get("/event/{id}/register", Main::handleEventRegister);
             app.get("/event/{id}/cancel", Main::handleCancelEventRegistration);
+            app.get("/event/${event.id}/invite", Main::handleInvitePage);
             app.get("/myevents", Main::handleMyEvents);
+            app.get("/hostedevents", Main::handleHostedEvents);
             app.get("/venue/{id}", Main::handleVenuePage);
             app.get("/event/{id}/review", ctx -> ctx.render("/review.ftl", Map.of("error", "")));
             app.get("/venue/{id}/review", ctx -> ctx.render("/review.ftl", Map.of("error", "")));
@@ -68,6 +72,45 @@ public class Main {
             e.printStackTrace();
         }
 
+    }
+
+    private static void handleInvitePage(Context ctx) {
+        Integer userId = ctx.sessionAttribute("userId");
+        if (userId == null) {
+            ctx.redirect("/login");
+            return;
+        }
+
+        int eventId = Integer.parseInt(ctx.pathParam("id"));
+        EventsService eventsService = new EventsService(dbService);
+        Event event = eventsService.getEventById(eventId);
+        String errorMessage = null;
+
+        if (event.getIsPublic()) {
+            errorMessage = "Invitations are only allowed for private events.";
+        }
+
+        // check registration date
+        if (errorMessage == null && event.getRegistrationDeadlineDate().before(new Date())) {
+            errorMessage = "The registration deadline has passed. You cannot invite users anymore.";
+        }
+        ctx.render("invite.ftl", Map.of("event", event));
+    }
+
+    private static void handleHostedEvents(Context ctx) {
+        Integer userId = ctx.sessionAttribute("userId");
+        if (userId == null) {
+            ctx.redirect("/login");
+            return;
+        }
+
+        EventsService eventsService = new EventsService(dbService);
+        List<Event> activeEvents = eventsService.getHostedEvents(userId);
+
+        ctx.render("hosted_events.ftl", Map.of(
+                "events", activeEvents,
+                "message", activeEvents.isEmpty() ? "You have no hosted events." : ""
+        ));
     }
 
     private static void handleLogin(Context ctx) {

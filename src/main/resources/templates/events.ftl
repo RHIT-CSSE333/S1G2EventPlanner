@@ -15,6 +15,7 @@
             <a href="/myevents">My events</a>
         </#if>
         <a href="/venues">Venues</a>
+        <a href="hostedevents">My Hosted Events</a>
         <a href="/logout">Log out</a>
     </div>
 
