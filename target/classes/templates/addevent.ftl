@@ -12,9 +12,19 @@
 
     <!-- Create Event Form -->
     <form id="createEventForm" method="post">
-        <div class="fullwidth">
-            <label for="name">Event Name:</label>
-            <input type="text" id="name" name="name" pattern=".*\S.*" title="Field cannot be blank or contain only spaces" required>
+        <div class="form-group">
+            <div>
+                <label for="name">Event Name:</label>
+                <input type="text" id="name" name="name" pattern=".*\S.*" title="Field cannot be blank or contain only spaces" required>
+            </div>
+            <div>
+                <span>Pirvate or public:</span>
+                <input type="radio" id="private" name="event-type" value="private" />
+                <label for="private">Private</label>
+
+                <input type="radio" id="public" name="event-type" value="public" />
+                <label for="public">Public</label>
+            </div>
         </div>
 
         <div class="form-group">
@@ -39,7 +49,7 @@
             </div>
             <div>
                 <label for="registrationDeadline">Registration Deadline:</label>
-                <input type="date" id="registrationDeadline" name="registrationDeadline" required>
+                <input type="datetime-local" id="registrationDeadline" name="registrationDeadline" required>
             </div>
         </div>
 
