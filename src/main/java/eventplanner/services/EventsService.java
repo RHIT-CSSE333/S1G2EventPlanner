@@ -260,5 +260,44 @@ public class EventsService {
         return event;
     }
 
+    public boolean inviteUserToEvent(int eventId, int personId) {
+        String sql = "{CALL InviteUserToEvent(?, ?)}";
+
+        try {
+            Connection conn = dbService.getConnection();
+            CallableStatement stmt = conn.prepareCall(sql);
+            stmt.setInt(1, eventId);
+            stmt.setInt(2, personId);
+            stmt.execute();
+
+            return true;
+        } catch (SQLException e) {
+            System.err.println("Error inviting user: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public int getUserIdByEmail(String email) {
+        String sql = "{CALL GetPersonIDByEmail(?, ?)}";
+        int personId = -1;
+
+        try {
+            Connection conn = dbService.getConnection();
+            CallableStatement stmt = conn.prepareCall(sql);
+            stmt.setString(1, email);
+            stmt.registerOutParameter(2, Types.INTEGER);
+
+            stmt.execute();
+
+            personId = stmt.getInt(2);
+
+        } catch (SQLException e) {
+            System.err.println("Error fetching PersonID: " + e.getMessage());
+        }
+
+        return personId;
+    }
+
+
 
 }

@@ -63,6 +63,7 @@ public class Main {
             app.post("/venue/{id}/addevent", Main::handleAddEventPost);
             app.post("/event/{id}/review", Main::handleAddReview);
             app.post("/venue/{id}/review", Main::handleAddVenue);
+            app.post("/event/{id}/invite", Main::handleInvite);
 
             app.events(event -> {
                 event.handlerAdded(handler -> {
@@ -73,6 +74,35 @@ public class Main {
             e.printStackTrace();
         }
 
+    }
+
+    private static void handleInvite(Context ctx) {
+        Integer userId = ctx.sessionAttribute("userId");
+        if (userId == null) {
+            ctx.redirect("/login");
+            return;
+        }
+
+        int eventId = Integer.parseInt(ctx.pathParam("id"));
+        String email = ctx.formParam("email");
+
+        UserService userService = new UserService(dbService);
+        EventsService eventsService = new EventsService(dbService);
+
+        int personId = userService.getUserIdByEmail(email);
+
+        if (personId == -1) {
+            ctx.render("invite.ftl", Map.of("error", "User not found.", "eventId", eventId));
+            return;
+        }
+
+        boolean success = eventsService.inviteUserToEvent(eventId, personId);
+
+        if (success) {
+            ctx.render("success.ftl", Map.of("message", "Invitation sent successfully."));
+        } else {
+            ctx.render("invite.ftl", Map.of("error", "Failed to send invitation.", "eventId", eventId));
+        }
     }
 
     private static void handleInvitePage(Context ctx) {
