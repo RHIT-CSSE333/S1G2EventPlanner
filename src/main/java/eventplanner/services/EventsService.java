@@ -232,10 +232,10 @@ public class EventsService {
         String query = "{CALL GetEventById(?)}";
         Event event = null;
 
-        try (Connection conn = dbService.getConnection();
-             CallableStatement stmt = conn.prepareCall(query)) {
-
-            stmt.setInt(1, eventId);  // 设置参数
+        try {
+            Connection conn = dbService.getConnection();
+            CallableStatement stmt = conn.prepareCall(query);
+            stmt.setInt(1, eventId);
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {

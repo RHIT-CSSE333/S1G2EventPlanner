@@ -38,7 +38,13 @@
                         <td><a href="/venue/${venue.id}">${venue.name}</a></td>
                         <td>${venue.address}</td>
                         <td>${venue.maxCapacity}</td>
-                        <td>${venue.pricingType}</td>
+                        <td>
+                            <#if venue.pricingType == 0>
+                                Hourly
+                            <#elseif venue.pricingType == 1>
+                                Daily
+                            </#if>
+                        </td>
                         <td>${venue.price}</td>
                         <td>${venue.state}</td>
                         <td>${venue.city}</td>

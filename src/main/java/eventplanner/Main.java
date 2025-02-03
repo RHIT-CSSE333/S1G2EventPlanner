@@ -11,6 +11,8 @@ import java.util.Properties;
 
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.jasypt.properties.EncryptableProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import eventplanner.models.Event;
 import eventplanner.models.Venue;
@@ -23,7 +25,6 @@ import freemarker.template.Configuration;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 import io.javalin.rendering.template.JavalinFreemarker;
-import org.jetbrains.annotations.NotNull;
 
 public class Main {
 
@@ -31,6 +32,7 @@ public class Main {
     private static String serverPassword = null;
     private static DatabaseConnectionService dbService = null;
     private static EncryptionServices es = new EncryptionServices();
+    private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) {
         try {
@@ -84,12 +86,11 @@ public class Main {
         }
 
         int eventId = Integer.parseInt(ctx.pathParam("id"));
-        String email = ctx.formParam("email");
 
         UserService userService = new UserService(dbService);
         EventsService eventsService = new EventsService(dbService);
 
-        int personId = userService.getUserIdByEmail(email);
+        int personId = userService.getUserIdByEmail(ctx.formParam("email"));
 
         if (personId == -1) {
             ctx.render("invite.ftl", Map.of("error", "User not found.", "eventId", eventId));
@@ -114,20 +115,20 @@ public class Main {
             }
 
             int eventId = Integer.parseInt(ctx.pathParam("id"));
-            System.out.println("Debugging PlaceHolder1");
             EventsService eventsService = new EventsService(dbService);
-            System.out.println("Debugging PlaceHolder2");
             Event event = eventsService.getEventById(eventId);
-            System.out.println("Debugging PlaceHolder3");
-            String errorMessage = null;
 
             if (!dbService.isConnected()) {
-                System.out.println("Debugging: database connection failed.");
+                logger.error("Debugging: Database connection lost while handling invite page");
+                ctx.status(500).result("Database connection error");
+                return;
             }
 
-            System.out.println("Event data: " + event);
+            String errorMessage = null;
             if (event == null) {
-                System.err.println("Event not found for ID: " + eventId);
+                logger.error("Event not found with ID: {}", eventId);
+                ctx.status(404).result("Event not found");
+                return;
             }
 
             if (event.getIsPublic()) {
@@ -149,12 +150,11 @@ public class Main {
                     "event", event,
                     "error", errorMessage == null ? "" : errorMessage
             ));
+            System.out.println("Handling event/{id}/invite request");
         } catch (Exception e) {
-            System.err.println("Exception caught in handleInvitePage: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error in handleInvitePage: ", e);
             ctx.status(500).result("Internal Server Error");
         }
-
     }
 
     private static void handleHostedEvents(Context ctx) {
@@ -171,6 +171,7 @@ public class Main {
                 "events", activeEvents,
                 "message", activeEvents.isEmpty() ? "You have no hosted events." : ""
         ));
+        System.out.println("Handling /hostedevents request");
     }
 
     private static void handleLogin(Context ctx) {
@@ -329,8 +330,9 @@ public class Main {
 
     private static void handleMyEvents(Context ctx) {
         Integer user = ctx.sessionAttribute("userId");
-        if (user == null) {        // TODO: refirect doesn't work
+        if (user == null) {
             ctx.redirect("/login");
+            return;
         }
 
         int userId = user.intValue();
