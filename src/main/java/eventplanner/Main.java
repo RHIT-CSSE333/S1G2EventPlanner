@@ -3,6 +3,7 @@ package eventplanner;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +50,7 @@ public class Main {
             app.get("/venues", Main::handleVenues);
             app.get("/event/{id}/register", Main::handleEventRegister);
             app.get("/event/{id}/cancel", Main::handleCancelEventRegistration);
-            app.get("/event/${event.id}/invite", Main::handleInvitePage);
+            app.get("/event/{id}/invite", Main::handleInvitePage);
             app.get("/myevents", Main::handleMyEvents);
             app.get("/hostedevents", Main::handleHostedEvents);
             app.get("/venue/{id}", Main::handleVenuePage);
@@ -75,26 +76,55 @@ public class Main {
     }
 
     private static void handleInvitePage(Context ctx) {
-        Integer userId = ctx.sessionAttribute("userId");
-        if (userId == null) {
-            ctx.redirect("/login");
-            return;
+        try {
+            Integer userId = ctx.sessionAttribute("userId");
+            if (userId == null) {
+                ctx.redirect("/login");
+                return;
+            }
+
+            int eventId = Integer.parseInt(ctx.pathParam("id"));
+            System.out.println("Debugging PlaceHolder1");
+            EventsService eventsService = new EventsService(dbService);
+            System.out.println("Debugging PlaceHolder2");
+            Event event = eventsService.getEventById(eventId);
+            System.out.println("Debugging PlaceHolder3");
+            String errorMessage = null;
+
+            if (!dbService.isConnected()) {
+                System.out.println("Debugging: database connection failed.");
+            }
+
+            System.out.println("Event data: " + event);
+            if (event == null) {
+                System.err.println("Event not found for ID: " + eventId);
+            }
+
+            if (event.getIsPublic()) {
+                errorMessage = "Invitations are only allowed for private events.";
+            }
+
+            // check registration date
+            if (errorMessage == null) {
+                Date registrationDeadline = event.getRegistrationDeadlineDate();
+                Instant instant = Instant.now();
+                Date currentUtcTime = Date.from(instant);
+
+                if (registrationDeadline.before(currentUtcTime)) {
+                    errorMessage = "The registration deadline has passed. You cannot invite users anymore.";
+                }
+            }
+
+            ctx.render("invite.ftl", Map.of(
+                    "event", event,
+                    "error", errorMessage == null ? "" : errorMessage
+            ));
+        } catch (Exception e) {
+            System.err.println("Exception caught in handleInvitePage: " + e.getMessage());
+            e.printStackTrace();
+            ctx.status(500).result("Internal Server Error");
         }
 
-        int eventId = Integer.parseInt(ctx.pathParam("id"));
-        EventsService eventsService = new EventsService(dbService);
-        Event event = eventsService.getEventById(eventId);
-        String errorMessage = null;
-
-        if (event.getIsPublic()) {
-            errorMessage = "Invitations are only allowed for private events.";
-        }
-
-        // check registration date
-        if (errorMessage == null && event.getRegistrationDeadlineDate().before(new Date())) {
-            errorMessage = "The registration deadline has passed. You cannot invite users anymore.";
-        }
-        ctx.render("invite.ftl", Map.of("event", event));
     }
 
     private static void handleHostedEvents(Context ctx) {

@@ -43,6 +43,15 @@ public class DatabaseConnectionService {
         }
     }
 
+    public boolean isConnected() {
+        try {
+            return connection != null && !connection.isClosed();
+        } catch (SQLException e) {
+            return false;
+        }
+    }
+
+
     public ResultSet executeQuery(String query, Object... params) {
         try {
             PreparedStatement stmt = this.connection.prepareStatement(query);

@@ -23,5 +23,14 @@
         </form>
     </#if>
 
+    <script>
+        window.addEventListener("pageshow", function(event) {
+            if (event.persisted) {
+                console.log("BFCache detected. Reloading page...");
+                window.location.reload();
+            }
+        });
+    </script>
+
 </body>
 
