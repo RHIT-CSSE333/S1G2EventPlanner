@@ -11,6 +11,7 @@ import java.util.Properties;
 
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.jasypt.properties.EncryptableProperties;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,6 +60,8 @@ public class Main {
             app.get("/event/{id}/review", ctx -> ctx.render("/review.ftl", Map.of("error", "")));
             app.get("/venue/{id}/review", ctx -> ctx.render("/review.ftl", Map.of("error", "")));
             app.get("/venue/{id}/addevent", Main::handlePublicEvent);
+            app.get("/event/{id}/invitees-rsvp-status", Main::handleInviteesRSVPStatus);
+
 
             app.post("/login", Main::handleLogin);
             app.post("/signup", Main::handleSignup);
@@ -76,6 +79,30 @@ public class Main {
             e.printStackTrace();
         }
 
+    }
+
+    private static void handleInviteesRSVPStatus(@NotNull Context ctx) {
+        Integer userId = ctx.sessionAttribute("userId");
+        if (userId == null) {
+            ctx.redirect("/login");
+            return;
+        }
+
+        int eventId = Integer.parseInt(ctx.pathParam("id"));
+        EventsService eventsService = new EventsService(dbService);
+        Event event = eventsService.getEventById(eventId);
+
+        if (event.getIsPublic()) {
+            ctx.result("Public events do not have RSVP status to display.");
+            return;
+        }
+
+        List<Map<String, Object>> invitees = eventsService.getInviteesRSVPStatus(eventId);
+
+        ctx.render("rsvp_status.ftl", Map.of(
+                "event", event,
+                "invitees", invitees
+        ));
     }
 
     private static void handleInvite(Context ctx) {

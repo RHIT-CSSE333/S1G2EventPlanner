@@ -25,12 +25,12 @@
                 <th>End Time</th>
                 <th>Price</th>
                 <th>Venue Name</th>
-                <th>Venue Address</th>
                 <th>Max Capacity</th>
                 <th>Registration deadline</th>
                 <th>Event Type</th>
                 <th>Payment Status</th>
                 <th>Actions</th>
+                <th>Invitees RSVP Status</th>
             </tr>
             </thead>
             <tbody>
@@ -41,7 +41,6 @@
                     <td>${event.endTime}</td>
                     <td>${event.price}</td>
                     <td>${event.venueName}</td>
-                    <td>${event.venueAddress}</td>
                     <td>${event.maxCapacity}</td>
                     <td>${event.registrationDeadline}</td>
                     <td>
@@ -65,6 +64,14 @@
                             <a href="/event/${event.id}/invite" class="invite-btn">Invite</a>
                         </#if>
                     </td>
+
+                    <td>
+                        <#if !event.isPublic>
+                            <a href="/event/${event.id}/invitees-rsvp-status" class="rsvp-status-btn">View RSVP Status</a>
+                        <#else>
+                            N/A
+                        </#if>
+                    </td>
                 </tr>
             </#list>
             </tbody>
@@ -74,3 +81,4 @@
     </#if>
 </div>
 </body>
+</html>

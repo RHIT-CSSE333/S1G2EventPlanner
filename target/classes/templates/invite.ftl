@@ -22,6 +22,6 @@
             <button type="submit">Send Invite</button>
         </form>
     </#if>
-
+    <a href="/hostedevents">Back to Hosted Events</a>
 </body>
 

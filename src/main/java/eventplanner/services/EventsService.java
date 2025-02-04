@@ -6,9 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import eventplanner.models.Event;
 
@@ -298,6 +296,30 @@ public class EventsService {
         return personId;
     }
 
+    public List<Map<String, Object>> getInviteesRSVPStatus(int eventId) {
+        List<Map<String, Object>> invitees = new ArrayList<>();
+        String sql = "{CALL GetInviteesRSVPStatus(?)}";
+
+        try {
+            Connection conn = dbService.getConnection();
+            CallableStatement stmt = conn.prepareCall(sql);
+            stmt.setInt(1, eventId);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Map<String, Object> invitee = new HashMap<>();
+                invitee.put("personId", rs.getInt("PersonID"));
+                invitee.put("firstName", rs.getString("FirstName"));
+                invitee.put("lastName", rs.getString("LastName"));
+                invitee.put("email", rs.getString("Email"));
+                invitee.put("rsvpStatus", rs.getInt("RSVPStatus"));
+                invitees.add(invitee);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching invitees: " + e.getMessage());
+        }
+        return invitees;
+    }
 
 
 }
