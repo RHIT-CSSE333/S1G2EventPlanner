@@ -152,6 +152,27 @@ public class EventsService {
         }
     }
 
+    public boolean cancelPrivateEventRegistration(int personId, int eventId) {
+        Connection conn = dbService.getConnection();
+        if (conn == null) {
+            return false;
+        }
+
+        try {
+            CallableStatement stmt = conn.prepareCall("{? = call CancelPrivateRegistration(?, ?)}");
+            stmt.registerOutParameter(1, Types.INTEGER);
+            stmt.setInt(2, personId);
+            stmt.setInt(3, eventId);
+            stmt.execute();
+
+            return true;
+        } catch (SQLException e) {
+            System.err.println("Error cancelling private event registration: " + e.getMessage());
+            return false;
+        }
+    }
+
+
     public List<Event> getUserAttended(int userId) {
         List<Event> events = new ArrayList<>();
         String query = "{CALL ShowAttendedEvents(?)}";
@@ -365,6 +386,5 @@ public class EventsService {
             return false;
         }
     }
-
 
 }

@@ -408,11 +408,21 @@ public class Main {
         int eventId = Integer.parseInt(ctx.pathParam("id"));
         int userId = user.intValue();
         EventsService eventsService = new EventsService(dbService);
+        Event event = eventsService.getEventById(eventId);
 
-        if (eventsService.cancelEventRegistration(userId, eventId)) {
+        boolean success;
+        if (event.getIsPublic()) {
+            // cancel public event
+            success = eventsService.cancelEventRegistration(userId, eventId);
+        } else {
+            // cancel private event
+            success = eventsService.cancelPrivateEventRegistration(userId, eventId);
+        }
+
+        if (success) {
             ctx.render("success.ftl");
         } else {
-            ctx.result("error");
+            ctx.result("Failed to cancel registration.");
         }
     }
 
