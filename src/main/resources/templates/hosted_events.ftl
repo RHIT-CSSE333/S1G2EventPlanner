@@ -53,9 +53,9 @@
 
                     <td>
                         <#if event.paymentStatus>
-                            Unpaid
-                        <#else>
                             Paid
+                        <#else>
+                            Unpaid
                         </#if>
                     </td>
 

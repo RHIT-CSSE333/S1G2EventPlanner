@@ -230,6 +230,10 @@ public class Main {
                 }
             }
 
+            if (errorMessage == null && !event.isPaymentStatus()) { // check if host has paid venue fees
+                errorMessage = "You need to pay first before inviting people.";
+            }
+
             ctx.render("invite.ftl", Map.of(
                     "event", event,
                     "error", errorMessage == null ? "" : errorMessage
