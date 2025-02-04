@@ -338,6 +338,7 @@ public class EventsService {
                 invitation.put("startTime", rs.getTimestamp("StartTime").toString());
                 invitation.put("endTime", rs.getTimestamp("EndTime").toString());
                 invitation.put("registrationDeadline", rs.getTimestamp("RegistrationDeadline").toString());
+                invitation.put("rsvpStatus", rs.getInt("RSVPStatus"));
 
                 invitations.add(invitation);
             }
@@ -346,5 +347,24 @@ public class EventsService {
         }
         return invitations;
     }
+
+    public boolean updateRSVPStatus(int personId, int eventId, int rsvpStatus) {
+        String sql = "{CALL UpdateRSVPStatus(?, ?, ?)}";
+
+        try {
+            Connection conn = dbService.getConnection();
+            CallableStatement stmt = conn.prepareCall(sql);
+            stmt.setInt(1, personId);
+            stmt.setInt(2, eventId);
+            stmt.setInt(3, rsvpStatus);
+
+            stmt.execute();
+            return true;
+        } catch (SQLException e) {
+            System.err.println("Error updating RSVP status: " + e.getMessage());
+            return false;
+        }
+    }
+
 
 }

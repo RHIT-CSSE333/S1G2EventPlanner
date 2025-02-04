@@ -62,7 +62,8 @@ public class Main {
             app.get("/venue/{id}/addevent", Main::handlePublicEvent);
             app.get("/event/{id}/invitees-rsvp-status", Main::handleInviteesRSVPStatus);
             app.get("/inbox", Main::handleInbox);
-//            app.post("/invitation/{id}/rsvp", Main::handleRSVPResponse);
+            app.get("/payment", Main::handlePayment);
+
 
             app.post("/login", Main::handleLogin);
             app.post("/signup", Main::handleSignup);
@@ -70,6 +71,7 @@ public class Main {
             app.post("/event/{id}/review", Main::handleAddReview);
             app.post("/venue/{id}/review", Main::handleAddVenue);
             app.post("/event/{id}/invite", Main::handleInvite);
+            app.post("/privateevent/{id}/rsvp", Main::handleRSVP);
 
             app.events(event -> {
                 event.handlerAdded(handler -> {
@@ -80,6 +82,47 @@ public class Main {
             e.printStackTrace();
         }
 
+    }
+
+    private static void handlePayment(@NotNull Context ctx) {
+
+    }
+
+    private static void handleRSVP(@NotNull Context ctx) {
+        Integer userId = ctx.sessionAttribute("userId");
+        if (userId == null) {
+            ctx.redirect("/login");
+            return;
+        }
+
+        int eventId = Integer.parseInt(ctx.pathParam("id"));
+        int rsvpStatus = Integer.parseInt(ctx.formParam("rsvpStatus")); // 0 = Yes, 1 = No
+
+        EventsService eventsService = new EventsService(dbService);
+        Event event = eventsService.getEventById(eventId);
+
+        if (rsvpStatus == 0) {  // User accepted the invitation
+            if (event.getPrice() > 0) {
+                // Paid Event, so redirect to payment age
+                ctx.redirect("/payment?eventId=" + eventId);
+            } else {
+                // Free Event, so register the event directly
+                boolean success = eventsService.updateRSVPStatus(userId, eventId, rsvpStatus);
+                if (success) {
+                    ctx.render("success.ftl");
+                } else {
+                    ctx.result("Failed to update RSVP status.");
+                }
+            }
+        } else {
+            // User rejected the invitation
+            boolean success = eventsService.updateRSVPStatus(userId, eventId, rsvpStatus);
+            if (success) {
+                ctx.render("success.ftl");
+            } else {
+                ctx.result("Failed to update RSVP status.");
+            }
+        }
     }
 
     private static void handleInbox(@NotNull Context ctx) {
