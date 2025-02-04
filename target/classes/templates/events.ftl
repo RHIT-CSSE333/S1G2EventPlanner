@@ -16,6 +16,7 @@
         </#if>
         <a href="/venues">Venues</a>
         <a href="hostedevents">My Hosted Events</a>
+        <a href="/inbox">Inbox</a>
         <a href="/logout">Log out</a>
     </div>
 
@@ -62,7 +63,7 @@
                             <td>${event.name}</td>
                             <td>${event.startTime}</td>
                             <td>${event.endTime}</td>
-                            <td>$${event.price}</td>
+                            <td>${event.price}</td>
                             <td><a href="/venue/${event.venueId}">${event.venueName}</a></td>
                             <td>${event.venueAddress}</td>
                             <td>${event.maxCapacity}</td>

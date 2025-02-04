@@ -61,7 +61,8 @@ public class Main {
             app.get("/venue/{id}/review", ctx -> ctx.render("/review.ftl", Map.of("error", "")));
             app.get("/venue/{id}/addevent", Main::handlePublicEvent);
             app.get("/event/{id}/invitees-rsvp-status", Main::handleInviteesRSVPStatus);
-
+            app.get("/inbox", Main::handleInbox);
+//            app.post("/invitation/{id}/rsvp", Main::handleRSVPResponse);
 
             app.post("/login", Main::handleLogin);
             app.post("/signup", Main::handleSignup);
@@ -79,6 +80,19 @@ public class Main {
             e.printStackTrace();
         }
 
+    }
+
+    private static void handleInbox(@NotNull Context ctx) {
+        Integer userId = ctx.sessionAttribute("userId");
+        if (userId == null) {
+            ctx.redirect("/login");
+            return;
+        }
+
+        EventsService eventsService = new EventsService(dbService);
+        List<Map<String, Object>> invitations = eventsService.getInvitationsForUser(userId);
+
+        ctx.render("inbox.ftl", Map.of("invitations", invitations));
     }
 
     private static void handleInviteesRSVPStatus(@NotNull Context ctx) {

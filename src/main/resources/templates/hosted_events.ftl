@@ -11,6 +11,8 @@
     <a href="/">Home</a>
     <a href="/events">Events</a>
     <a href="/venues">Venues</a>
+    <a href="hostedevents">My Hosted Events</a>
+    <a href="/inbox">Inbox</a>
     <a href="/logout">Log out</a>
 </div>
 
@@ -23,7 +25,6 @@
                 <th>Event Name</th>
                 <th>Start Time</th>
                 <th>End Time</th>
-                <th>Price</th>
                 <th>Venue Name</th>
                 <th>Max Capacity</th>
                 <th>Registration deadline</th>
@@ -39,7 +40,6 @@
                     <td>${event.name}</td>
                     <td>${event.startTime}</td>
                     <td>${event.endTime}</td>
-                    <td>${event.price}</td>
                     <td>${event.venueName}</td>
                     <td>${event.maxCapacity}</td>
                     <td>${event.registrationDeadline}</td>

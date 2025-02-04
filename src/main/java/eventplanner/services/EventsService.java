@@ -321,5 +321,30 @@ public class EventsService {
         return invitees;
     }
 
+    public List<Map<String, Object>> getInvitationsForUser(int personId) {
+        List<Map<String, Object>> invitations = new ArrayList<>();
+        String sql = "{CALL GetInvitationsForUser(?)}";
+
+        try {
+            Connection conn = dbService.getConnection();
+            CallableStatement stmt = conn.prepareCall(sql);
+            stmt.setInt(1, personId);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Map<String, Object> invitation = new HashMap<>();
+                invitation.put("eventId", rs.getInt("EventID"));
+                invitation.put("eventName", rs.getString("EventName"));
+                invitation.put("startTime", rs.getTimestamp("StartTime").toString());
+                invitation.put("endTime", rs.getTimestamp("EndTime").toString());
+                invitation.put("registrationDeadline", rs.getTimestamp("RegistrationDeadline").toString());
+
+                invitations.add(invitation);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching invitations: " + e.getMessage());
+        }
+        return invitations;
+    }
 
 }
