@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eventplanner.models.Event;
+import eventplanner.models.User;
 import eventplanner.models.Venue;
 import eventplanner.services.DatabaseConnectionService;
 import eventplanner.services.EncryptionServices;
@@ -63,6 +64,7 @@ public class Main {
             app.get("/event/{id}/invitees-rsvp-status", Main::handleInviteesRSVPStatus);
             app.get("/inbox", Main::handleInbox);
             app.get("/payment", Main::handlePayment);
+            app.get("/personalinfo", Main::handlePersonalInfo);
 
 
             app.post("/login", Main::handleLogin);
@@ -82,6 +84,23 @@ public class Main {
             e.printStackTrace();
         }
 
+    }
+
+    private static void handlePersonalInfo(@NotNull Context ctx) {
+        Integer userId = ctx.sessionAttribute("userId");
+        if (userId == null) {
+            ctx.redirect("/login");
+            return;
+        }
+    
+        UserService userService = new UserService(dbService);
+        User user = userService.getUserData(userId);
+    
+        if (user == null) {
+            ctx.render("personalinfo.ftl", Map.of("message", "Create an account to get started!"));
+        } else {
+            ctx.render("personalinfo.ftl", Map.of("user", user, "message", ""));
+        }
     }
 
     private static void handlePayment(@NotNull Context ctx) {

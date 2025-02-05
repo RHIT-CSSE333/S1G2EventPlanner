@@ -16,6 +16,8 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.swing.JOptionPane;
 
+import eventplanner.models.User;
+
 public class UserService { ;
     private static final Random RANDOM = new SecureRandom();
     private static final Base64.Encoder enc = Base64.getEncoder();
@@ -162,6 +164,40 @@ public class UserService { ;
         return getStringFromBytes(hash);
     }
 
+    public User getUserData(Integer userID) {
+        if (userID == null || userID == 0) {
+            return null;
+        }
+
+        Connection conn = dbService.getConnection();
+        if (conn == null) {
+            return null;
+        }
+        User user = null;
+        try {
+            CallableStatement stmt = conn.prepareCall("{call GetUserInfo(?)}");
+            stmt.setInt(1, userID);
+
+            ResultSet rs = stmt.executeQuery();
+            rs.next();
+
+            System.out.println(rs.getString("FirstName"));
+            user = new User (
+                userID,
+                rs.getString("Email"),
+                rs.getString("PhoneNo"),
+                rs.getString("FirstName"),
+                rs.getString("Minit"),
+                rs.getString("LastName"),
+                rs.getString("DOB")
+            );
+
+        } catch (SQLException e) {
+            System.err.println("Error logging in: " + e.getMessage());
+            return null;
+        }
+        return user;
+    }
 
 
     /**
