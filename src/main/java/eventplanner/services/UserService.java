@@ -259,4 +259,96 @@ public class UserService { ;
 	        return false;
 	    }
 	}
+
+    public boolean updateEmail(int userID, String newEmail) {
+        Connection conn = dbService.getConnection();
+	    if (conn == null) {
+	        JOptionPane.showMessageDialog(null, "Database connection failed.");
+	        return false;
+	    }
+
+	    try {
+	        String query = "{? = call dbo.updateEmail(?, ?)}";
+	        CallableStatement stmt = conn.prepareCall(query);
+
+	        stmt.registerOutParameter(1, Types.INTEGER);
+	        stmt.setInt(2, userID);
+
+	        stmt.setString(3, newEmail); 
+
+            stmt.execute();
+
+	        // Get the return code
+ 			int returnCode = stmt.getInt(1);
+
+ 		
+	        return returnCode == 0;
+	    } catch (SQLException e) {
+	        System.err.println("Error leaving review: " + e.getMessage());
+	        e.printStackTrace();
+	        return false;
+	    }
+    }
+
+    public boolean updateName(int userID, String firstName, String Minit, String lastName) {
+        Connection conn = dbService.getConnection();
+	    if (conn == null) {
+	        JOptionPane.showMessageDialog(null, "Database connection failed.");
+	        return false;
+	    }
+
+	    try {
+	        String query = "{? = call dbo.updateName(?, ?, ?, ?)}";
+	        CallableStatement stmt = conn.prepareCall(query);
+
+	        stmt.registerOutParameter(1, Types.INTEGER);
+	        stmt.setInt(2, userID);
+
+	        stmt.setString(3, firstName); 
+            stmt.setString(4, Minit.isEmpty() ? null : Minit); 
+            stmt.setString(5, lastName); 
+
+            stmt.execute();
+
+	        // Get the return code
+ 			int returnCode = stmt.getInt(1);
+
+ 		
+	        return returnCode == 0;
+	    } catch (SQLException e) {
+	        System.err.println("Error leaving review: " + e.getMessage());
+	        e.printStackTrace();
+	        return false;
+	    }
+    }
+
+    public boolean updatePhoneNo(int userID, String newPhoneNo) {
+        Connection conn = dbService.getConnection();
+	    if (conn == null) {
+	        JOptionPane.showMessageDialog(null, "Database connection failed.");
+	        return false;
+	    }
+
+	    try {
+	        String query = "{? = call dbo.updatePhoneNo(?, ?)}";
+	        CallableStatement stmt = conn.prepareCall(query);
+
+	        stmt.registerOutParameter(1, Types.INTEGER);
+	        stmt.setInt(2, userID);
+
+	        stmt.setString(3, newPhoneNo); 
+
+            stmt.execute();
+
+	        // Get the return code
+ 			int returnCode = stmt.getInt(1);
+
+ 		
+	        return returnCode == 0;
+	    } catch (SQLException e) {
+	        System.err.println("Error leaving review: " + e.getMessage());
+	        e.printStackTrace();
+	        return false;
+	    }
+    }
 }

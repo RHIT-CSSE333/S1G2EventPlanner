@@ -65,8 +65,15 @@ public class Main {
             app.get("/inbox", Main::handleInbox);
             app.get("/payment", Main::handlePayment);
             app.get("/personalinfo", Main::handlePersonalInfo);
+            app.get("/info/updateName", ctx -> ctx.render("/updateinfo.ftl", Map.of("type", "name")));
+            app.get("/info/updateEmail", ctx -> ctx.render("/updateinfo.ftl", Map.of("type", "email")));
+            app.get("/info/updatePhoneNo", ctx -> ctx.render("/updateinfo.ftl", Map.of("type", "phone")));
+            app.get("/pastevents", Main::handlePastEvents);
 
 
+            app.post("/info/updateName", Main::handleUpdateName);
+            app.post("/info/updateEmail", Main::handleUpdateEmail);
+            app.post("/info/updatePhoneNo", Main::handleUpdatePhoneNo);
             app.post("/login", Main::handleLogin);
             app.post("/signup", Main::handleSignup);
             app.post("/venue/{id}/addevent", Main::handleAddEventPost);
@@ -340,6 +347,22 @@ public class Main {
         ctx.redirect("/");
     }
 
+    private static void handlePastEvents(Context ctx) {
+        Integer user = ctx.sessionAttribute("userId");
+        if (user == null) {
+            ctx.redirect("/login");
+        }
+
+        EventsService eventsService = new EventsService(dbService);
+        List<Event> events = eventsService.getUserAttended(user);
+
+        System.out.println("Handling /pastevents request...");
+
+        ctx.render("pastevents.ftl", Map.of("events", events, 
+                                        "message", events.isEmpty() ? "No available events at the moment." : "",
+                                        "userSpecific", true));
+    }
+
     private static void handleEvents(Context ctx) {
         Integer user = ctx.sessionAttribute("userId");
         if (user == null) {
@@ -368,6 +391,56 @@ public class Main {
         EventsService eventsService = new EventsService(dbService);
 
         if (eventsService.registerForEvent(userId, eventId)) {
+            ctx.render("success.ftl");
+        } else {
+            ctx.result("error");
+        }
+    }
+
+    private static void handleUpdateName(@NotNull Context ctx) {
+        Integer user = ctx.sessionAttribute("userId");
+        if (user == null) {
+            ctx.redirect("/login");
+            return;
+        }
+
+        UserService userService = new UserService(dbService);
+        String newFirst = ctx.formParam("firstName");
+        String newM = ctx.formParam("Minit");
+        String newLast = ctx.formParam("lastName");
+        if (userService.updateName(user, newFirst, newM, newLast)) {
+            ctx.render("success.ftl");
+        } else {
+            ctx.result("error");
+        }
+    }
+
+    private static void handleUpdateEmail(@NotNull Context ctx) {
+        Integer user = ctx.sessionAttribute("userId");
+        if (user == null) {
+            ctx.redirect("/login");
+            return;
+        }
+
+        UserService userService = new UserService(dbService);
+        String newEmail = ctx.formParam("email");
+        if (userService.updateEmail(user, newEmail)) {
+            ctx.render("success.ftl");
+        } else {
+            ctx.result("error");
+        }
+    }
+
+    private static void handleUpdatePhoneNo(@NotNull Context ctx) {
+        Integer user = ctx.sessionAttribute("userId");
+        if (user == null) {
+            ctx.redirect("/login");
+            return;
+        }
+
+        UserService userService = new UserService(dbService);
+        String newPhoneNo = ctx.formParam("phoneNo");
+        if (userService.updatePhoneNo(user, newPhoneNo)) {
             ctx.render("success.ftl");
         } else {
             ctx.result("error");
@@ -576,5 +649,6 @@ public class Main {
                 "message", venues.isEmpty() ? "No available venues." : ""
         ));
     }
+
 
 }

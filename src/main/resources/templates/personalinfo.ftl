@@ -25,9 +25,9 @@
     <!-- Personal Info -->
     <#if user??>
         <div class="container">
-            <p>Full Name: ${user.fullName}</p>
-            <p>Email: ${user.email}</p>
-            <p>Phone Number: ${user.phoneNo}</p>
+            <p>Full Name: ${user.fullName} <a href="/info/updateName"><button>Change Name</button></a></p>
+            <p>Email: ${user.email} <a href="/info/updateEmail"><button>Change Email</button></a></p>
+            <p>Phone Number: ${user.phoneNo} <a href="/info/updatePhoneNo"><button>Change Phone Number</button></a></p>
             <p>Date of Birth: ${user.DOB}</p>
         </div>
     <#else>
