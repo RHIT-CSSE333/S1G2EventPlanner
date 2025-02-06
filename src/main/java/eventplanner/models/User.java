@@ -33,9 +33,9 @@ public class User {
 
     public String getFullName() {
         if(Minit != null && !Minit.isEmpty()) {
-            return FirstName + Minit + LastName;
+            return FirstName + " " + Minit + " " + LastName;
         }
-        return FirstName + LastName;
+        return FirstName + " " + LastName;
     }
 
     public String getFirstName() {

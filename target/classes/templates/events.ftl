@@ -13,6 +13,7 @@
             <a href="/events">Events</a>
         <#else>
             <a href="/myevents">My events</a>
+            <a href="personalinfo">My Account</a>
         </#if>
         <a href="/venues">Venues</a>
         <a href="hostedevents">My Hosted Events</a>

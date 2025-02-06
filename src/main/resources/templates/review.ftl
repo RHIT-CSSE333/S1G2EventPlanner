@@ -7,7 +7,7 @@
 <body>
     <h1>Leave a Review</h1>
     <form id="review" method="post">
-
+    <div class = "container">
         <label for="title">Title:</label>
         <input type="text" id="title" name="title"><br><br>
 
@@ -20,6 +20,8 @@
         <input type="hidden" id="postedOn" name="postedOn" value="${.now?string("yyyy-MM-dd HH:mm:ss")}">
 
         <button type="submit">Submit Review</button>
+    </div>
     </form>
+    <a href="/">Return</a>
 </body>
 </html>

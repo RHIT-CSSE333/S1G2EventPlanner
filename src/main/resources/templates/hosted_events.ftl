@@ -10,6 +10,9 @@
 <div class="nav">
     <a href="/">Home</a>
     <a href="/events">Events</a>
+    <#if not userSpecific>
+        <a href="personalinfo">My Account</a>
+    </#if>
     <a href="/venues">Venues</a>
     <a href="hostedevents">My Hosted Events</a>
     <a href="/inbox">Inbox</a>

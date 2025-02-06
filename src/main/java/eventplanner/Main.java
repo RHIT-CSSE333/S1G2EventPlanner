@@ -99,7 +99,7 @@ public class Main {
         if (user == null) {
             ctx.render("personalinfo.ftl", Map.of("message", "Create an account to get started!"));
         } else {
-            ctx.render("personalinfo.ftl", Map.of("user", user, "message", ""));
+            ctx.render("personalinfo.ftl", Map.of("user", user, "message", "", "userSpecific", true));
         }
     }
 
