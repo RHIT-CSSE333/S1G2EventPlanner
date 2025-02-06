@@ -356,9 +356,9 @@ public class Main {
         EventsService eventsService = new EventsService(dbService);
         List<Event> events = eventsService.getUserAttended(user);
 
-        System.out.println("Handling /events request...");
+        System.out.println("Handling /pastevents request...");
 
-        ctx.render("events.ftl", Map.of("events", events, 
+        ctx.render("pastevents.ftl", Map.of("events", events, 
                                         "message", events.isEmpty() ? "No available events at the moment." : "",
                                         "userSpecific", true));
     }

@@ -14,8 +14,8 @@
         <#else>
             <a href="/myevents">My events</a>
             <a href="personalinfo">My Account</a>
-            <a heref="/pastevents">Past Events</a>
         </#if>
+        <a href="/pastevents">Past Events</a>
         <a href="/venues">Venues</a>
         <a href="hostedevents">My Hosted Events</a>
         <a href="/inbox">Inbox</a>

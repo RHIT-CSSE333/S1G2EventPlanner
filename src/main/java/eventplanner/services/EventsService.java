@@ -6,7 +6,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import eventplanner.models.Event;
 
@@ -198,7 +202,7 @@ public class EventsService {
                     -1,
                     -1,
                     rs.getString("VenueName"),
-                    rs.getString("VenueAddress"),
+                    rs.getString("Address"),
                     -1,
                     null,
                         true,
