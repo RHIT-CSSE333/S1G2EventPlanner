@@ -386,6 +386,16 @@ public class Main {
             ctx.redirect("/login");
             return;
         }
+
+        UserService userService = new UserService(dbService);
+        String newFirst = ctx.formParam("firstName");
+        String newM = ctx.formParam("Minit");
+        String newLast = ctx.formParam("lastName");
+        if (userService.updateName(user, newFirst, newM, newLast)) {
+            ctx.render("success.ftl");
+        } else {
+            ctx.result("error");
+        }
     }
 
     private static void handleUpdateEmail(@NotNull Context ctx) {
@@ -394,6 +404,14 @@ public class Main {
             ctx.redirect("/login");
             return;
         }
+
+        UserService userService = new UserService(dbService);
+        String newEmail = ctx.formParam("email");
+        if (userService.updateEmail(user, newEmail)) {
+            ctx.render("success.ftl");
+        } else {
+            ctx.result("error");
+        }
     }
 
     private static void handleUpdatePhoneNo(@NotNull Context ctx) {
@@ -401,6 +419,14 @@ public class Main {
         if (user == null) {
             ctx.redirect("/login");
             return;
+        }
+
+        UserService userService = new UserService(dbService);
+        String newPhoneNo = ctx.formParam("phoneNo");
+        if (userService.updatePhoneNo(user, newPhoneNo)) {
+            ctx.render("success.ftl");
+        } else {
+            ctx.result("error");
         }
     }
 
