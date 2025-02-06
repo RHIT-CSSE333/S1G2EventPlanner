@@ -68,6 +68,7 @@ public class Main {
             app.get("/info/updateName", ctx -> ctx.render("/updateinfo.ftl", Map.of("type", "name")));
             app.get("/info/updateEmail", ctx -> ctx.render("/updateinfo.ftl", Map.of("type", "email")));
             app.get("/info/updatePhoneNo", ctx -> ctx.render("/updateinfo.ftl", Map.of("type", "phone")));
+            app.get("/pastevents", Main::handlePastEvents);
 
 
             app.post("/info/updateName", Main::handleUpdateName);
@@ -344,6 +345,22 @@ public class Main {
     private static void handleLogout(Context ctx) {
         ctx.req().getSession().invalidate();
         ctx.redirect("/");
+    }
+
+    private static void handlePastEvents(Context ctx) {
+        Integer user = ctx.sessionAttribute("userId");
+        if (user == null) {
+            ctx.redirect("/login");
+        }
+
+        EventsService eventsService = new EventsService(dbService);
+        List<Event> events = eventsService.getUserAttended(user);
+
+        System.out.println("Handling /events request...");
+
+        ctx.render("events.ftl", Map.of("events", events, 
+                                        "message", events.isEmpty() ? "No available events at the moment." : "",
+                                        "userSpecific", true));
     }
 
     private static void handleEvents(Context ctx) {
