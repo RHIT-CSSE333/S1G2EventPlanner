@@ -63,7 +63,7 @@
     </p>
 
     <!-- Back to Events -->
-    <p class="back-link"><a href="..">Back to Events</a></p>
+    <p class="back-link"><a href="/events">Back to Events</a></p>
 </div>
 </body>
 </html>
