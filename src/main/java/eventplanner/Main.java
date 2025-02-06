@@ -65,8 +65,14 @@ public class Main {
             app.get("/inbox", Main::handleInbox);
             app.get("/payment", Main::handlePayment);
             app.get("/personalinfo", Main::handlePersonalInfo);
+            app.get("/info/updateName", ctx -> ctx.render("/updateinfo.ftl", Map.of("type", "name")));
+            app.get("/info/updateEmail", ctx -> ctx.render("/updateinfo.ftl", Map.of("type", "email")));
+            app.get("/info/updatePhoneNo", ctx -> ctx.render("/updateinfo.ftl", Map.of("type", "phone")));
 
 
+            app.post("/info/updateName", Main::handleUpdateName);
+            app.post("/info/updateEmail", Main::handleUpdateEmail);
+            app.post("/info/updatePhoneNo", Main::handleUpdatePhoneNo);
             app.post("/login", Main::handleLogin);
             app.post("/signup", Main::handleSignup);
             app.post("/venue/{id}/addevent", Main::handleAddEventPost);
@@ -374,6 +380,30 @@ public class Main {
         }
     }
 
+    private static void handleUpdateName(@NotNull Context ctx) {
+        Integer user = ctx.sessionAttribute("userId");
+        if (user == null) {
+            ctx.redirect("/login");
+            return;
+        }
+    }
+
+    private static void handleUpdateEmail(@NotNull Context ctx) {
+        Integer user = ctx.sessionAttribute("userId");
+        if (user == null) {
+            ctx.redirect("/login");
+            return;
+        }
+    }
+
+    private static void handleUpdatePhoneNo(@NotNull Context ctx) {
+        Integer user = ctx.sessionAttribute("userId");
+        if (user == null) {
+            ctx.redirect("/login");
+            return;
+        }
+    }
+
     private static void handleAddReview(Context ctx) {
         Integer user = ctx.sessionAttribute("userId");
         if (user == null) {
@@ -576,5 +606,6 @@ public class Main {
                 "message", venues.isEmpty() ? "No available venues." : ""
         ));
     }
+
 
 }
