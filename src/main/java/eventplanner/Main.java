@@ -623,7 +623,10 @@ public class Main {
         }
 
         if (eventCreated.success) {
-            ctx.redirect("/pay/host/" + String.valueOf(eventCreated.eventId));
+            if (price != 0)
+                ctx.redirect("/pay/host/" + String.valueOf(eventCreated.eventId));
+            else
+                ctx.redirect("/hostedevents");
 
         } else {
             ctx.render("addevent.ftl", Map.of("error", eventCreated.errorMessage));
