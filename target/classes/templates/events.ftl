@@ -19,6 +19,7 @@
         <a href="/venues">Venues</a>
         <a href="hostedevents">My Hosted Events</a>
         <a href="/inbox">Inbox</a>
+        <a href="/transactions">Transactions</a>
         <a href="/logout">Log out</a>
     </div>
 

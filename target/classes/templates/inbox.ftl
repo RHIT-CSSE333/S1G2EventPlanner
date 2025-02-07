@@ -43,7 +43,11 @@
                                 <button type="submit" name="rsvpStatus" value="1">No</button>
                             </form>
                         <#elseif invitation.rsvpStatus == 0> <!-- 0 = Registered -->
-                            <span class="status registered">Registered</span>
+                            <#if invitation.paymentStatus>
+                                <span class="status registered">Registered</span>
+                            <#else>
+                                <span class="status registered">Registered, not paid. <a href="/pay/guest/${invitation.eventId}">Pay</a></span>
+                            </#if>
                         <#elseif invitation.rsvpStatus == 1> <!-- 1 = Declined -->
                             <span class="status declined">Declined</span>
                         </#if>

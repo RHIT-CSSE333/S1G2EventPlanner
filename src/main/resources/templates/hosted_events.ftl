@@ -56,7 +56,7 @@
                         <#if event.paymentStatus>
                             Paid
                         <#else>
-                            Unpaid
+                            Unpaid. <a href="/pay/host/${event.id}">Pay</a>
                         </#if>
                     </td>
 

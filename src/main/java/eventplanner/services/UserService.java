@@ -9,7 +9,11 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import javax.crypto.SecretKeyFactory;
@@ -134,6 +138,29 @@ public class UserService { ;
             return -1;
         }
 
+    }
+
+    public List<Map<String, Object>> getTransactions(int userId) {
+        List<Map<String, Object>> transactions = new ArrayList<>();
+        String sql = "{CALL GetTransactions(?)}";
+
+        try {
+            Connection conn = dbService.getConnection();
+            CallableStatement stmt = conn.prepareCall(sql);
+            stmt.setInt(1, userId);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Map<String, Object> transaction = new HashMap<>();
+                transaction.put("type", rs.getInt("Type"));
+                transaction.put("amount", rs.getString("Amount"));
+                transaction.put("paidOn", rs.getString("PaidOn"));
+                transactions.add(transaction);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching transactions: " + e.getMessage());
+        }
+        return transactions;
     }
 
     public byte[] getNewSalt() {

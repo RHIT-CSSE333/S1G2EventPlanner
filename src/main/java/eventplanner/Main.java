@@ -1,8 +1,13 @@
 package eventplanner;
 
+import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
@@ -14,6 +19,7 @@ import org.jasypt.properties.EncryptableProperties;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.json.JSONObject;
 
 import eventplanner.models.Event;
 import eventplanner.models.User;
@@ -23,6 +29,8 @@ import eventplanner.services.EncryptionServices;
 import eventplanner.services.EventsService;
 import eventplanner.services.UserService;
 import eventplanner.services.VenuesService;
+import eventplanner.services.EventsService.EventFinancialInfoReturnType;
+import eventplanner.services.EventsService.EventReturnType;
 import freemarker.template.Configuration;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
@@ -63,12 +71,16 @@ public class Main {
             app.get("/venue/{id}/addevent", Main::handlePublicEvent);
             app.get("/event/{id}/invitees-rsvp-status", Main::handleInviteesRSVPStatus);
             app.get("/inbox", Main::handleInbox);
-            app.get("/payment", Main::handlePayment);
             app.get("/personalinfo", Main::handlePersonalInfo);
             app.get("/info/updateName", ctx -> ctx.render("/updateinfo.ftl", Map.of("type", "name")));
             app.get("/info/updateEmail", ctx -> ctx.render("/updateinfo.ftl", Map.of("type", "email")));
             app.get("/info/updatePhoneNo", ctx -> ctx.render("/updateinfo.ftl", Map.of("type", "phone")));
             app.get("/pastevents", Main::handlePastEvents);
+            app.get("/pay/host/{eventId}", Main::handlePayForHosts);
+            app.get("/pay/guest/{eventId}", Main::handlePayForGuests);
+            app.get("/paymentsuccess/host/", Main::handlePaymentSuccessForHosts);
+            app.get("/paymentsuccess/guest/", Main::handlePaymentSuccessForGuests);
+            app.get("/transactions", Main::handleTransactions);
 
 
             app.post("/info/updateName", Main::handleUpdateName);
@@ -91,6 +103,19 @@ public class Main {
             e.printStackTrace();
         }
 
+    }
+
+    private static void handleTransactions(Context ctx) {
+        Integer userId = ctx.sessionAttribute("userId");
+        if (userId == null) {
+            ctx.redirect("/login");
+            return;
+        }
+
+        UserService userService = new UserService(dbService);
+
+        List<Map<String, Object>> transactions = userService.getTransactions(userId);
+        ctx.render("/transactions.ftl", Map.of("transactions", transactions));
     }
 
     private static void handlePersonalInfo(@NotNull Context ctx) {
@@ -130,14 +155,15 @@ public class Main {
         if (rsvpStatus == 0) {  // User accepted the invitation
             if (event.getPrice() > 0) {
                 // Paid Event, so redirect to payment age
-                ctx.redirect("/payment?eventId=" + eventId);
+                ctx.redirect("/pay/guest/" + eventId);
             } else {
                 // Free Event, so register the event directly
                 boolean success = eventsService.updateRSVPStatus(userId, eventId, rsvpStatus);
+                success = success && eventsService.updatePaymentInfo(userId, eventId, true);
                 if (success) {
                     ctx.render("success.ftl");
                 } else {
-                    ctx.result("Failed to update RSVP status.");
+                    ctx.result("Failed to update RSVP status or paymentinfo.");
                 }
             }
         } else {
@@ -207,7 +233,7 @@ public class Main {
             return;
         }
 
-        boolean success = eventsService.inviteUserToEvent(eventId, personId);
+        boolean success = eventsService.inviteUserToEvent(eventId, personId, generatePaymentId());
 
         if (success) {
             ctx.render("success.ftl", Map.of("message", "Invitation sent successfully."));
@@ -567,28 +593,170 @@ public class Main {
             return;
         }
 
-        VenuesService venuesService = new VenuesService(dbService);
-        boolean success = true;
+        EventsService eventsService = new EventsService(dbService);
+        EventReturnType eventCreated = null;
+        String paymentId = null;
 
         try {
+            paymentId = generatePaymentId();
+
             if ("private".equals(eventType)) {
-                success = venuesService.addPrivateEvent(userId, venueId, name, startTime, endTime, registrationDeadline, price);
+                eventCreated = eventsService.createEvent(name, startTime, endTime, venueId, price, registrationDeadline, userId, paymentId, false);
+
             } else if ("public".equals(eventType)) {
-                success = venuesService.addPublicEvent(venueId, name, startTime, endTime, registrationDeadline, price);
+                eventCreated = eventsService.createEvent(name, startTime, endTime, venueId, price, registrationDeadline, userId, paymentId, true);
+
             }
+            
+            // if ("private".equals(eventType)) {
+            //     eventCreated = venuesService.addPrivateEvent(userId, venueId, name, startTime, endTime, registrationDeadline, price, paymentId);
+            //     success = eventCreated.success;
+                
+
+            // } else if ("public".equals(eventType)) {
+            //     success = venuesService.addPublicEvent(venueId, name, startTime, endTime, registrationDeadline, price, paymentId);
+            // }
         } catch (Exception e) {
             e.printStackTrace();
             ctx.render("addevent.ftl", Map.of("error", "Database error: " + e.getMessage()));
             return;
         }
 
-        if (success) {
-            ctx.render("success.ftl");
+        if (eventCreated.success) {
+            ctx.redirect("/pay/host/" + String.valueOf(eventCreated.eventId));
+
         } else {
-            ctx.render("addevent.ftl", Map.of("error", "Error creating the event."));
+            ctx.render("addevent.ftl", Map.of("error", eventCreated.errorMessage));
         }
     }
 
+    private static void handlePayForHosts(Context ctx) {
+        int eventId = Integer.parseInt(ctx.pathParam("eventId"));
+        
+        EventsService eventsService = new EventsService(dbService);
+        EventFinancialInfoReturnType eventFinancialInfo = eventsService.getFinancialInfoForHost(eventId);
+
+        if (!eventFinancialInfo.success) {
+            ctx.result("error getting financial information for some weird reason hahahahahahah" + eventFinancialInfo.errorMessage);
+        } else {
+            String url = buildPaymentUrlForHosts(eventFinancialInfo.paymentId, eventFinancialInfo.price);
+            ctx.redirect(url);
+        }
+    }
+
+    private static void handlePayForGuests(Context ctx) {
+        int eventId = Integer.parseInt(ctx.pathParam("eventId"));
+        int userId = ctx.sessionAttribute("userId");
+        
+        EventsService eventsService = new EventsService(dbService);
+        EventFinancialInfoReturnType eventFinancialInfo = eventsService.getFinancialInfoForGuest(eventId, userId);
+
+        if (!eventFinancialInfo.success) {
+            ctx.result("error getting financial information for some weird reason hahahahahahah" + eventFinancialInfo.errorMessage);
+        } else {
+            String url = buildPaymentUrlForGuests(eventFinancialInfo.paymentId, eventFinancialInfo.price);
+            ctx.redirect(url);
+        }
+    }
+
+    private static void handlePaymentSuccessForHosts(Context ctx) {
+        String paymentId = ctx.queryParam("item");
+        int userId = ctx.sessionAttribute("userId");
+        String paymentConfirmationId = ctx.queryParam("confirmation");
+
+        if (isPaymentConfirmationValid(paymentConfirmationId)) {
+            EventsService eventsService = new EventsService(dbService);
+            if (eventsService.addSuccessfulPaymentForHosts(paymentId, userId)) {
+                ctx.redirect("/hostedevents");
+            } else {
+                ctx.result("errro");
+            }
+            
+        } else {
+            ctx.result("you can't just fake your payment lil bro");
+        }
+    }
+
+    private static void handlePaymentSuccessForGuests(Context ctx) {
+        String paymentId = ctx.queryParam("item");
+        int userId = ctx.sessionAttribute("userId");
+
+        System.out.println(paymentId);
+        String paymentConfirmationId = ctx.queryParam("confirmation");
+
+        if (isPaymentConfirmationValid(paymentConfirmationId)) {
+            EventsService eventsService = new EventsService(dbService);
+            if (eventsService.addSuccessfulPaymentForGuests(paymentId, userId)) {
+                ctx.redirect("/inbox");
+            } else {
+                ctx.result("errro");
+            }
+            
+        } else {
+            ctx.result("you can't just fake your payment lil bro");
+        }
+    }
+
+    private static String generatePaymentId() {
+        final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_.";
+        final SecureRandom RANDOM = new SecureRandom();
+
+        StringBuilder paymentId = new StringBuilder();
+        for (int i = 0; i < 50; i++) {
+            paymentId.append(CHARACTERS.charAt(RANDOM.nextInt(CHARACTERS.length())));
+        }
+
+        return paymentId.toString();
+    }
+
+    private static String buildPaymentUrlForHosts(String paymentId, double price) {
+        final String PAYMENT_HOST_URL = "http://localhost:5000/pay/";
+        final String CALLBACK_URL = "http://localhost:7070/paymentsuccess/host/";
+
+        String url = PAYMENT_HOST_URL + "?callback=" + CALLBACK_URL + "&amount=" + String.valueOf(price)
+                            + "&item=" + paymentId;
+        
+        return url;
+    }
+
+    private static String buildPaymentUrlForGuests(String paymentId, double price) {
+        final String PAYMENT_HOST_URL = "http://localhost:5000/pay/";
+        final String CALLBACK_URL = "http://localhost:7070/paymentsuccess/guest/";
+
+        String url = PAYMENT_HOST_URL + "?callback=" + CALLBACK_URL + "&amount=" + String.valueOf(price)
+                            + "&item=" + paymentId;
+        
+        return url;
+    }
+
+    private static boolean isPaymentConfirmationValid(String paymentConfirmarion) {
+        try {
+            URL url = new URL("http://localhost:5000/api/verifypayment/" + paymentConfirmarion);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("Accept", "application/json");
+            
+            if (conn.getResponseCode() != 200) {
+                System.out.println("Failed: HTTP error code: " + conn.getResponseCode());
+                return false;
+            }
+            
+            BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
+            StringBuilder response = new StringBuilder();
+            String output;
+            while ((output = br.readLine()) != null) {
+                response.append(output);
+            }
+            conn.disconnect();
+            
+            JSONObject jsonResponse = new JSONObject(response.toString());
+            return jsonResponse.optBoolean("valid", false);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
     private static void setUpDatabase() {
         Properties props = loadProperties();

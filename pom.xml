@@ -39,6 +39,11 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/external/mssql-jdbc-12.8.1.jre11.jar</systemPath>
         </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20250107</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

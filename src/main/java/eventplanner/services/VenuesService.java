@@ -96,71 +96,84 @@ public class VenuesService {
         return events;
     }
 
-    public boolean addPublicEvent(int venueId, String name, String startTime, String endTime, String registrationDeadline, double price) {
-        String query = "{call addEvent(?, ?, ?, ?, ?, ?, ?)}";
 
-        Connection conn = null;
-        CallableStatement stmt = null;
+    // legacy -- TODO: delete
+    // public EventReturnType addPublicEvent(int venueId, String name, String startTime, String endTime, String registrationDeadline, double price, String paymentId) {
+    //     String query = "{call addEvent(?, ?, ?, ?, ?, ?, ?, ?, ?)}";
 
-        try {
-            conn = dbService.getConnection();
-            stmt = conn.prepareCall(query);
+    //     Connection conn = null;
+    //     CallableStatement stmt = null;
 
-            SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
+    //     try {
+    //         conn = dbService.getConnection();
+    //         stmt = conn.prepareCall(query);
 
-            stmt.setString(1, name);
-            stmt.setTimestamp(2, new Timestamp(inputFormat.parse(startTime).getTime()));
-            stmt.setTimestamp(3, new Timestamp(inputFormat.parse(endTime).getTime()));
-            stmt.setTimestamp(4, new Timestamp(inputFormat.parse(registrationDeadline).getTime()));
-            stmt.setInt(5, venueId);
-            stmt.setDouble(6, price);
-            stmt.setBoolean(7, true);
+    //         SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
 
-            int rowsInserted = stmt.executeUpdate();
-            return rowsInserted > 0;
+    //         stmt.setString(1, name);
+    //         stmt.setTimestamp(2, new Timestamp(inputFormat.parse(startTime).getTime()));
+    //         stmt.setTimestamp(3, new Timestamp(inputFormat.parse(endTime).getTime()));
+    //         stmt.setTimestamp(4, new Timestamp(inputFormat.parse(registrationDeadline).getTime()));
+    //         stmt.setInt(5, venueId);
+    //         stmt.setDouble(6, price);
+    //         stmt.setBoolean(7, true);
+    //         stmt.setString(8, paymentId);
+
+    //         stmt.registerOutParameter(9, Types.INTEGER);  // For output EventID
+
+    //         stmt.execute();
+
+    //         int eventId = stmt.getInt(10);
+
+
+    //         int rowsInserted = stmt.executeUpdate();
+    //         return new EventReturnType(eventId > 0, eventId, "");
             
-        } catch (SQLException e) {
-            System.err.println("Error registering user: " + e.getMessage());
-            return false;
-        } catch (ParseException e) {
-            System.err.println("Error registering user: " + e.getMessage());
-            return false;
-        }
-    }
+    //     } catch (SQLException e) {
+    //         System.err.println("Error registering user: " + e.getMessage());
+    //         return new EventReturnType(false, -1, e.getMessage());
+    //     } catch (ParseException e) {
+    //         System.err.println("Error registering user: " + e.getMessage());
+    //         return new EventReturnType(false, -1, e.getMessage());
+    //     }
+    // }
 
-    public boolean addPrivateEvent(int personId, int venueId, String name, String startTime, String endTime, String registrationDeadline, double price) {
-        String query = "{call CreatePrivateEvent(?, ?, ?, ?, ?, ?, ?, ?, ?)}";
+    // // legacy -- TODO: delete
+    // public EventReturnType addPrivateEvent(int personId, int venueId, String name, String startTime, String endTime, String registrationDeadline, double price, String paymentId) {
+    //     String query = "{call CreatePrivateEvent(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}";
 
-        Connection conn = null;
-        CallableStatement stmt = null;
+    //     Connection conn = null;
+    //     CallableStatement stmt = null;
 
-        try {
-            conn = dbService.getConnection();
-            stmt = conn.prepareCall(query);
+    //     try {
+    //         conn = dbService.getConnection();
+    //         stmt = conn.prepareCall(query);
 
-            stmt.setString(1, name);
-            SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
-            stmt.setTimestamp(2, new Timestamp(inputFormat.parse(startTime).getTime()));
-            stmt.setTimestamp(3, new Timestamp(inputFormat.parse(endTime).getTime()));
-            stmt.setInt(4, venueId);
-            stmt.setDouble(5, price);
-            stmt.setTimestamp(6, new Timestamp(inputFormat.parse(registrationDeadline).getTime()));
-            stmt.setInt(7, personId);
-            stmt.setInt(8,0); // set payment status as 0
+    //         stmt.setString(1, name);
+    //         SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
+    //         stmt.setTimestamp(2, new Timestamp(inputFormat.parse(startTime).getTime()));
+    //         stmt.setTimestamp(3, new Timestamp(inputFormat.parse(endTime).getTime()));
+    //         stmt.setInt(4, venueId);
+    //         stmt.setDouble(5, price);
+    //         stmt.setTimestamp(6, new Timestamp(inputFormat.parse(registrationDeadline).getTime()));
+    //         stmt.setInt(7, personId);
+    //         stmt.setInt(8,0); // set payment status as 0
+    //         stmt.setString(9,paymentId);
 
-            stmt.registerOutParameter(9, Types.INTEGER);  // For output EventID
+    //         stmt.registerOutParameter(10, Types.INTEGER);  // For output EventID
 
-            stmt.execute();
+    //         stmt.execute();
 
-            int eventId = stmt.getInt(9);
-            System.out.println("Created Private Event with ID: " + eventId);
-            return eventId > 0;
+    //         int eventId = stmt.getInt(10);
+    //         System.out.println("Created Private Event with ID: " + eventId);
 
-        } catch (SQLException | ParseException e) {
-            System.err.println("Error creating private event: " + e.getMessage());
-            return false;
-        }
-    }
+    //         return new EventReturnType(eventId > 0, eventId, "");
+
+    //     } catch (SQLException | ParseException e) {
+    //         System.err.println("Error creating private event: " + e.getMessage());
+    //         return new EventReturnType(false, -1, e.getMessage());
+    //     }
+    // }
 
     public List<Venue> getAllVenues() {
         String query = "{call GetAllVenues}";

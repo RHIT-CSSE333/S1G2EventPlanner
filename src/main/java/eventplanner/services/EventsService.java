@@ -4,7 +4,9 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.sql.Types;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -15,6 +17,32 @@ import java.util.Map;
 import eventplanner.models.Event;
 
 public class EventsService {
+    public class EventReturnType {
+        public boolean success;
+        public int eventId;
+        public String errorMessage;
+
+        public EventReturnType(boolean success, int eventId, String errorMessage) {
+            this.success = success;
+            this.eventId = eventId;
+            this.errorMessage = errorMessage;
+        }
+    }
+
+    public class EventFinancialInfoReturnType {
+        public boolean success;
+        public double price;
+        public String paymentId;
+        public String errorMessage;
+
+        public EventFinancialInfoReturnType(boolean success, double price, String paymentId, String errorMessage) {
+            this.success = success;
+            this.price = price;
+            this.paymentId = paymentId;
+            this.errorMessage = errorMessage;
+        }
+    }
+
     private DatabaseConnectionService dbService;
 
     public EventsService(DatabaseConnectionService dbService) {
@@ -69,6 +97,106 @@ public class EventsService {
         }
         System.out.println("Database returned " + events.size() + " events.");
         return events;
+    }
+
+    
+
+    public EventReturnType createEvent(String name, String startTime, String endTime, int venueId, double price,
+                                        String registrattionDeadline, int hostPersonId, String paymentId, boolean isPublic) {
+        String query = "{call CreateEvent(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}";
+
+        Connection conn = null;
+        CallableStatement stmt = null;
+
+        try {
+            conn = dbService.getConnection();
+            stmt = conn.prepareCall(query);
+
+            SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
+
+            boolean paymentStatus = false;   // Not paid yet upon creation
+
+            stmt.setString(1, name);
+            stmt.setTimestamp(2, new Timestamp(inputFormat.parse(startTime).getTime()));
+            stmt.setTimestamp(3, new Timestamp(inputFormat.parse(endTime).getTime()));
+            stmt.setInt(4, venueId);
+            stmt.setDouble(5, price);
+            stmt.setTimestamp(6, new Timestamp(inputFormat.parse(registrattionDeadline).getTime()));
+            stmt.setInt(7, hostPersonId);
+            stmt.setBoolean(8, paymentStatus);
+            stmt.setString(9, paymentId);
+            stmt.setBoolean(10, isPublic);
+            stmt.registerOutParameter(11, Types.INTEGER);
+
+            stmt.execute();
+
+            int eventId = stmt.getInt(11);
+            System.out.println("Created Private Event with ID: " + eventId);
+
+            return new EventReturnType(eventId > 0, eventId, "");
+
+        } catch (SQLException | ParseException e) {
+            System.err.println("Error creating private event: " + e.getMessage());
+            return new EventReturnType(false, -1, e.getMessage());
+
+        }
+    }
+
+    public EventFinancialInfoReturnType getFinancialInfoForHost(int eventId) {
+        String query = "{call GetFinancialInfoForHost(?, ?, ?)}";
+
+        Connection conn = null;
+        CallableStatement stmt = null;
+
+        try {
+            conn = dbService.getConnection();
+            stmt = conn.prepareCall(query);
+
+            stmt.setInt(1, eventId);
+            stmt.registerOutParameter(2, Types.DECIMAL);
+            stmt.registerOutParameter(3, Types.CHAR);
+
+            stmt.execute();
+
+            double price = stmt.getDouble(2);
+            String paymentId = stmt.getString(3);
+
+            return new EventFinancialInfoReturnType(true, price, paymentId, "");
+
+        } catch (SQLException e) {
+            System.err.println("Error creating private event: " + e.getMessage());
+            return new EventFinancialInfoReturnType(false, -1, "", e.getMessage());
+
+        }
+    }
+
+    public EventFinancialInfoReturnType getFinancialInfoForGuest(int eventId, int userId) {
+        String query = "{call GetFinancialInfoForGuest(?, ?, ?, ?)}";
+
+        Connection conn = null;
+        CallableStatement stmt = null;
+
+        try {
+            conn = dbService.getConnection();
+            stmt = conn.prepareCall(query);
+
+            stmt.setInt(1, eventId);
+            stmt.setInt(2, userId);
+            stmt.registerOutParameter(3, Types.DECIMAL);
+            stmt.registerOutParameter(4, Types.CHAR);
+
+            stmt.execute();
+
+            double price = stmt.getDouble(3);
+            String paymentId = stmt.getString(4);
+
+            return new EventFinancialInfoReturnType(true, price, paymentId, "");
+
+        } catch (SQLException e) {
+            System.err.println("Error creating private event: " + e.getMessage());
+            return new EventFinancialInfoReturnType(false, -1, "", e.getMessage());
+
+        }
     }
 
     // This method is used for getting all public events a user is registered
@@ -283,14 +411,15 @@ public class EventsService {
         return event;
     }
 
-    public boolean inviteUserToEvent(int eventId, int personId) {
-        String sql = "{CALL InviteUserToEvent(?, ?)}";
+    public boolean inviteUserToEvent(int eventId, int personId, String paymentId) {
+        String sql = "{CALL InviteUserToEvent(?, ?, ?)}";
 
         try {
             Connection conn = dbService.getConnection();
             CallableStatement stmt = conn.prepareCall(sql);
             stmt.setInt(1, eventId);
             stmt.setInt(2, personId);
+            stmt.setString(3, paymentId);
             stmt.execute();
 
             return true;
@@ -364,6 +493,7 @@ public class EventsService {
                 invitation.put("endTime", rs.getTimestamp("EndTime").toString());
                 invitation.put("registrationDeadline", rs.getTimestamp("RegistrationDeadline").toString());
                 invitation.put("rsvpStatus", rs.getInt("RSVPStatus"));
+                invitation.put("paymentStatus", rs.getBoolean("PaymentStatus"));
 
                 invitations.add(invitation);
             }
@@ -389,6 +519,77 @@ public class EventsService {
             System.err.println("Error updating RSVP status: " + e.getMessage());
             return false;
         }
+    }
+
+    public boolean addSuccessfulPaymentForHosts(String paymentId, int personId) {
+        String query = "{call AddSuccessfulPaymentForHosts(?, ?)}";
+
+        Connection conn = null;
+        CallableStatement stmt = null;
+
+        try {
+            conn = dbService.getConnection();
+            stmt = conn.prepareCall(query);
+
+            stmt.setString(1, paymentId);
+            stmt.setInt(2, personId);
+            stmt.execute();
+
+            return true;
+
+        } catch (SQLException e) {
+            System.err.println("Error adding payment for host: " + e.getMessage());
+            return false;
+
+        }
+    }
+
+    public boolean addSuccessfulPaymentForGuests(String paymentId, int personId) {
+        String query = "{call AddSuccessfulPaymentForGuests(?, ?)}";
+
+        Connection conn = null;
+        CallableStatement stmt = null;
+
+        try {
+            conn = dbService.getConnection();
+            stmt = conn.prepareCall(query);
+
+            stmt.setString(1, paymentId);
+            stmt.setInt(2, personId);
+            stmt.execute();
+
+            return true;
+
+        } catch (SQLException e) {
+            System.err.println("Error adding payment for guest: " + e.getMessage());
+            return false;
+
+        }
+    }
+
+    public boolean updatePaymentInfo(Integer userId, int eventId, boolean paymentStatus) {
+        String query = "{call UpdateGuestPaymentStatus(?, ?, ?)}";
+
+        Connection conn = null;
+        CallableStatement stmt = null;
+
+        try {
+            conn = dbService.getConnection();
+            stmt = conn.prepareCall(query);
+
+            stmt.setInt(1, userId);
+            stmt.setInt(2, eventId);
+            stmt.setBoolean(3, paymentStatus);
+            stmt.execute();
+
+            return true;
+
+        } catch (SQLException e) {
+            System.err.println("Error updating payment status: " + e.getMessage());
+            return false;
+
+        }
+    
     }
 
 }
