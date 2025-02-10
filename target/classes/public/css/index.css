@@ -1,0 +1,225 @@
+/* Index page CSS */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.hero {
+    text-align: center;
+    max-width: 750px;
+    padding: 50px 40px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+h1 {
+    color: #800000;
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.hero-subtitle {
+    font-size: 18px;
+    color: #444;
+    margin-bottom: 30px;
+}
+
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-bottom: 30px;
+    text-align: left;
+}
+
+.feature-item {
+    font-size: 16px;
+    color: #555;
+    background: #f4f4f4;
+    padding: 10px 15px;
+    border-radius: 6px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.cta-text {
+    font-size: 18px;
+    color: #555;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.login-button, .signup-button {
+    width: 120px;
+    display: inline-block;
+    padding: 12px 0px;
+    font-size: 18px;
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 8px;
+    box-sizing: border-box;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.login-button {
+    background-color: #800000;
+    color: white;
+}
+
+.login-button:hover {
+    background-color: #600000;
+}
+
+.signup-button {
+    background-color: #444;
+    color: white;
+}
+
+.signup-button:hover {
+    background-color: #222;
+}
+
+/*Other*/
+.container {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    margin-top: 20vh;
+}
+
+.container-register {
+    margin-top: 6vh;
+    max-width: 600px;
+    width: 100%;
+}
+
+h2 {
+    margin-bottom: 20px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+label {
+    margin-top: 10px;
+}
+
+input {
+    padding: 8px;
+    margin: 5px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.form-group {
+    display: flex;
+    gap: 10px;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.form-group div {
+    width: 48%;
+    box-sizing: border-box;
+}
+
+.full-width {
+    width: calc(100% - 18px);
+}
+
+.submit-btn {
+    background-color: #800000;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 15px;
+}
+
+.submit-btn:hover {
+    background-color: #600000;
+}
+
+.register-link {
+    color: #808080;
+    margin-top: 15px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.register-link a {
+    color: #808080;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.register-link a:hover {
+    color: #800000;
+    text-decoration: underline;
+}
+
+/*index.ftl*/
+.nav {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    font-size: 18px;
+    margin-bottom: 20px;
+    top: 20px;
+    width: 100%;
+}
+
+
+.nav a {
+    text-decoration: none;
+    color: #800000;
+    font-weight: bold;
+}
+
+.nav a:hover {
+    color: #600000;
+    text-decoration: underline;
+}
+
+.container-index {
+    width: 350px;
+    margin-top: 80px;
+}
+
+.error {
+    color: red;
+    font-size: smaller;
+}
+
+td, th {
+    border: 1px solid black;
+    text-align: center;
+    padding: .5em;
+}
+
+th {
+    background-color: #800000;
+    color: white;
+    font-weight: 700;
+}

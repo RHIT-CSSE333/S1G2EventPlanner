@@ -1,0 +1,5 @@
+# pack-refs with: peeled fully-peeled sorted 
+a35a0ce438020b9e189ce87d1b60522efde9452d refs/heads/alex-anisimov/add-event
+c996d75587ba8465fe6a819dd1e0ed0ebf3c185a refs/heads/alex-anisimov/user-scenario-3
+e9d331f4d97532528def08f45248de2321f6c56e refs/heads/alex-anisimov/week-7-user-scenario
+4656b1362933c96cdebe5dd895710c229891fe9f refs/heads/main
