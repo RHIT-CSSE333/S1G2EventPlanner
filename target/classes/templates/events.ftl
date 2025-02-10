@@ -23,7 +23,7 @@
         <a href="/logout">Log out</a>
     </div>
 
-    <h2>Available Public Events</h2>
+    <h2>Future Public Events</h2>
     <div id="events-container">
         <#if events?? && events?size gt 0>
             <table >
@@ -81,6 +81,36 @@
             <p>No available events at the moment.</p>
         </#if>
 
+    </div>
+
+    <h2>Past Public Events</h2>
+    <div id="events-container">
+        <#if pastEvents?? && pastEvents?size gt 0>
+            <table>
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>Venue</th>
+                    <th>See Reviews</th>
+                </tr>
+                </thead>
+                <tbody>
+                <#list pastEvents as pastEvent>
+                    <tr>
+                        <td>${pastEvent.name}</td>
+                        <td>${pastEvent.startTime}</td>
+                        <td>${pastEvent.endTime}</td>
+                        <td><a href="/venue/${pastEvent.venueId}">${pastEvent.venueName}</a></td>
+                        <td><a href="/event/${pastEvent.id}/reviews">See Reviews</a></td>
+                    </tr>
+                </#list>
+                </tbody>
+            </table>
+        <#else>
+            <p>No past events available.</p>
+        </#if>
     </div>
 
 </body>

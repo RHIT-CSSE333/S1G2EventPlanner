@@ -592,4 +592,79 @@ public class EventsService {
     
     }
 
+    public List<Event> getPastPublicEvents() {
+        List<Event> events = new ArrayList<>();
+        String query = "{CALL ShowPastPublicEvents}";
+
+        Connection conn = null;
+        CallableStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = dbService.getConnection();
+            stmt = conn.prepareCall(query);
+            rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm a, MMM d, yyyy");
+
+                Event event = new Event(
+                        rs.getInt("ID"),
+                        rs.getString("Name"),
+                        dateFormat.format(new Date(rs.getTimestamp("StartTime").getTime())),
+                        dateFormat.format(new Date(rs.getTimestamp("EndTime").getTime())),
+                        rs.getInt("Price"),
+                        rs.getInt("VenueID"),
+                        rs.getString("VenueName"),
+                        rs.getString("VenueAddress"),
+                        rs.getInt("MaxCapacity"),
+                        null,
+                        true,
+                        true
+                );
+
+                events.add(event);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching past public events: " + e.getMessage());
+        }
+        return events;
+    }
+
+    public List<Map<String, Object>> getEventReviews(int eventId) {
+        List<Map<String, Object>> reviews = new ArrayList<>();
+        String query = "EXEC ShowEventReviews ?";
+
+        try {
+            Connection conn = dbService.getConnection();
+            CallableStatement stmt = conn.prepareCall(query);
+            stmt.setInt(1, eventId);
+            ResultSet rs = stmt.executeQuery();
+
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            while (rs.next()) {
+                String formattedDate = rs.getTimestamp("PostedOn") != null
+                        ? dateFormat.format(rs.getTimestamp("PostedOn"))
+                        : "Unknown";
+                Map<String, Object> review = new HashMap<>();
+                review.put("reviewId", rs.getInt("ReviewID"));
+                review.put("eventId", rs.getInt("EventID"));
+                review.put("eventName", rs.getString("EventName"));
+                review.put("title", rs.getString("Title") != null ? rs.getString("Title") : "No Title");
+                review.put("rating", rs.getInt("Rating"));
+                review.put("comment", rs.getString("Comment") != null ? rs.getString("Comment") : "No Comment");
+                review.put("postedOn", formattedDate);
+                review.put("reviewerName", rs.getString("ReviewerName"));
+
+                reviews.add(review);
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Error fetching event reviews: " + e.getMessage());
+        }
+        return reviews;
+    }
+
+
+
 }

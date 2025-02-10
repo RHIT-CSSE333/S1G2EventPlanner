@@ -9,16 +9,13 @@
 <body>
     <div class="nav">
         <a href="/">Home</a>
-        <#if userSpecific>
-            <a href="/events">Events</a>
-        <#else>
-            <a href="/myevents">My events</a>
-            <a href="personalinfo">My Account</a>
-        </#if>
+        <a href="/events">Events</a>
+        <a href="personalinfo">My Account</a>
         <a href="/pastevents">Past Events</a>
         <a href="/venues">Venues</a>
         <a href="hostedevents">My Hosted Events</a>
         <a href="/inbox">Inbox</a>
+        <a href="/transactions">Transactions</a>
         <a href="/logout">Log out</a>
     </div>
 

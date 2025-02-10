@@ -63,6 +63,7 @@ public class Main {
             app.get("/event/{id}/register", Main::handleEventRegister);
             app.get("/event/{id}/cancel", Main::handleCancelEventRegistration);
             app.get("/event/{id}/invite", Main::handleInvitePage);
+            app.get("/event/{id}/reviews", Main::handleEventReviews);
             app.get("/myevents", Main::handleMyEvents);
             app.get("/hostedevents", Main::handleHostedEvents);
             app.get("/venue/{id}", Main::handleVenuePage);
@@ -103,6 +104,24 @@ public class Main {
             e.printStackTrace();
         }
 
+    }
+
+    private static void handleEventReviews(@NotNull Context ctx) {
+        Integer user = ctx.sessionAttribute("userId");
+        if (user == null) {
+            ctx.redirect("/login");
+            return;
+        }
+
+        int eventId = Integer.parseInt(ctx.pathParam("id"));
+        EventsService eventsService = new EventsService(dbService);
+        List<Map<String, Object>> reviews = eventsService.getEventReviews(eventId);
+
+        ctx.render("show_reviews.ftl", Map.of(
+                "reviews", reviews,
+                "eventId", eventId,
+                "message", reviews.isEmpty() ? "No reviews available for this event." : ""
+        ));
     }
 
     private static void handleTransactions(Context ctx) {
@@ -393,18 +412,21 @@ public class Main {
         Integer user = ctx.sessionAttribute("userId");
         if (user == null) {
             ctx.redirect("/login");
+            return;
         }
 
         EventsService eventsService = new EventsService(dbService);
-        List<Event> events = eventsService.getAvailableEvents();
+        List<Event> futureEvents = eventsService.getAvailableEvents();
+        List<Event> pastEvents = eventsService.getPastPublicEvents();
 
-        System.out.println("Handling /events request...");
-
-        ctx.render("events.ftl", Map.of("events", events, 
-                                        "message", events.isEmpty() ? "No available events at the moment." : "",
-                                        "userSpecific", false));
-
+        ctx.render("events.ftl", Map.of(
+                "events", futureEvents,
+                "pastEvents", pastEvents,
+                "message", futureEvents.isEmpty() && pastEvents.isEmpty() ? "No available events at the moment." : "",
+                "userSpecific", false
+        ));
     }
+
 
     private static void handleEventRegister(Context ctx) {
         Integer user = ctx.sessionAttribute("userId");
