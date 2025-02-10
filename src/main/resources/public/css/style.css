@@ -182,6 +182,7 @@ input {
     color: #800000;
     text-decoration: underline;
 }
+
 /* Navigation bar */
 .nav {
     display: flex;
@@ -190,6 +191,7 @@ input {
     background-color: #800000;
     width: 100%;
     padding: 0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .nav a {
@@ -208,26 +210,45 @@ input {
 }
 
 .nav a:hover {
-    background-color: #600000;
+    background-color: #cb0000;
     color: #ffdddd;
-    cursor: pointer;
 }
 
+/* Table css*/
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
 
+th {
+    background-color: #dddddd;
+    color: #333;
+    font-weight: bold;
+    padding: 10px;
+    border: 1px solid #ccc;
+}
+
+td {
+    padding: 10px;
+    border: 1px solid #ccc;
+    text-align: center;
+}
+
+tr:nth-child(even) {
+    background-color: #f8f8f8;
+}
+
+tr:nth-child(odd) {
+    background-color: #ffffff;
+}
+
+tr:hover {
+    background-color: #eee;
+    transition: background-color 0.3s ease-in-out;
+}
 
 .error {
     color: red;
     font-size: smaller;
-}
-
-td, th {
-    border: 1px solid black;
-    text-align: center;
-    padding: .5em;
-}
-
-th {
-    background-color: #800000;
-    color: white;
-    font-weight: 700;
 }
