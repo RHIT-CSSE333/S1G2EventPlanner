@@ -46,7 +46,7 @@
                         <th>Address</th>
                         <th>Max Capacity</th>
                         <th>Registration Deadline</th>
-                        <th></th>
+                        <th>Register</th>
                     </#if>
                 </tr>
                 </thead>

@@ -2,16 +2,18 @@
 body {
     font-family: Arial, sans-serif;
     background-color: #f9f9f9;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
     margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
 }
 
 .hero {
     text-align: center;
     max-width: 900px;
+    margin: 100px auto;
     padding: 60px 50px;
     background: white;
     border-radius: 12px;
@@ -99,6 +101,7 @@ h1 {
 /*Other*/
 .container {
     background: white;
+    margin-top: 10vh;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
@@ -107,7 +110,6 @@ h1 {
 }
 
 .container-register {
-    margin-top: 6vh;
     max-width: 600px;
     width: 100%;
 }
@@ -180,34 +182,38 @@ input {
     color: #800000;
     text-decoration: underline;
 }
-
-/*index.ftl*/
+/* Navigation bar */
 .nav {
     display: flex;
-    justify-content: center;
-    gap: 20px;
-    font-size: 18px;
-    margin-bottom: 20px;
-    top: 20px;
+    justify-content: space-evenly;
+    align-items: center;
+    background-color: #800000;
     width: 100%;
+    padding: 0;
 }
 
-
 .nav a {
+    flex: 1;
+    text-align: center;
     text-decoration: none;
-    color: #800000;
+    color: white;
     font-weight: bold;
+    padding: 15px 0;
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+    border-right: 2px solid #ffffff;
+}
+
+.nav a:last-child {
+    border-right: none;
 }
 
 .nav a:hover {
-    color: #600000;
-    text-decoration: underline;
+    background-color: #600000;
+    color: #ffdddd;
+    cursor: pointer;
 }
 
-.container-index {
-    width: 350px;
-    margin-top: 80px;
-}
+
 
 .error {
     color: red;
