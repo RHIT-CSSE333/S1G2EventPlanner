@@ -10,10 +10,10 @@
     <div class="nav">
         <a href="/">Home</a>
         <a href="/events">Events</a>
-        <a href="personalinfo">My Account</a>
-        <a href="/pastevents">Past Events</a>
+        <a href="/personalinfo">My Account</a>
+        <a href="/pastevents">My Past Events</a>
         <a href="/venues">Venues</a>
-        <a href="hostedevents">My Hosted Events</a>
+        <a href="/hostedevents">My Hosted Events</a>
         <a href="/inbox">Inbox</a>
         <a href="/transactions">Transactions</a>
         <a href="/logout">Log out</a>
@@ -24,7 +24,7 @@
         <li>Address: ${venue.getAddress()}</li>
     </ul>
     <a href="/venue/${venue.id}/addevent">Create a new event</a>
-    
+
     <h2>Available Public Events</h2>
     <div id="events-container">
         <#if events?? && events?size gt 0>

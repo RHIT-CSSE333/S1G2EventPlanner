@@ -10,7 +10,7 @@
     <a href="/">Home</a>
     <a href="/events">Events</a>
     <a href="personalinfo">My Account</a>
-    <a href="/pastevents">Past Events</a>
+    <a href="/pastevents">My Past Events</a>
     <a href="/venues">Venues</a>
     <a href="hostedevents">My Hosted Events</a>
     <a href="/inbox">Inbox</a>

@@ -199,8 +199,7 @@ public class EventsService {
         }
     }
 
-    // This method is used for getting all public events a user is registered
-    // Again, we can still assume all events are already paied
+    // This method is used for getting all events (public or private) a user is registered
     public List<Event> getEventsForUser(int userId) {
         List<Event> events = new ArrayList<>();
         String query = "{CALL GetEventsByPerson(?)}";
@@ -229,7 +228,7 @@ public class EventsService {
                     rs.getString("VenueAddress"),
                     -1,
                     null,
-                        true,
+                        rs.getBoolean("IsPublic"),
                         true
                 );
 
