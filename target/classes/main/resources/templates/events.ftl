@@ -23,6 +23,11 @@
         <a href="/logout">Log out</a>
     </div>
 
+    <p class="event-hosting-info">
+        Want to host an event? Browse our venue list and be the host of your next great event!
+    </p>
+    <p><a href="/venues" class="create-event-button">Browse Venues</a></p>
+
     <h2>Future Public Events</h2>
     <div id="events-container">
         <#if events?? && events?size gt 0>

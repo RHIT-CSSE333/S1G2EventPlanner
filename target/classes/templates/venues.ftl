@@ -20,6 +20,9 @@
     </div>
 
     <h2>Available Venues</h2>
+    <p class="event-hosting-info">
+        Looking for the perfect place to host your event? Choose a venue from the list below and start planning!
+    </p>
     <div id="venues-container">
         <#if venues?? && venues?size gt 0>
             <table>

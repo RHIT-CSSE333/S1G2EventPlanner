@@ -183,6 +183,14 @@ input {
     text-decoration: underline;
 }
 
+.event-hosting-info {
+    font-size: 24px;
+    color: #800000;
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
 /* Navigation bar */
 .nav {
     display: flex;
