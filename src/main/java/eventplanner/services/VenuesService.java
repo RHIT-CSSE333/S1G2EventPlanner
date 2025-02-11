@@ -6,14 +6,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import eventplanner.models.Event;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import eventplanner.models.Venue;
 
@@ -203,5 +201,38 @@ public class VenuesService {
         }
         return venues;
     }
+
+    public List<Map<String, Object>> getVenueReviews(int venueId) {
+        List<Map<String, Object>> reviews = new ArrayList<>();
+        String query = "EXEC ShowVenueReviews ?";  // 需要在 SQL 里创建这个存储过程
+
+        try {
+            Connection conn = dbService.getConnection();
+            CallableStatement stmt = conn.prepareCall(query);
+            stmt.setInt(1, venueId);
+            ResultSet rs = stmt.executeQuery();
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+
+            while (rs.next()) {
+                String formattedDate = rs.getTimestamp("PostedOn") != null
+                        ? dateFormat.format(rs.getTimestamp("PostedOn"))
+                        : "Unknown";
+                Map<String, Object> review = new HashMap<>();
+                review.put("reviewId", rs.getInt("ReviewID"));
+                review.put("venueId", rs.getInt("VenueID"));
+                review.put("venueName", rs.getString("VenueName"));
+                review.put("title", rs.getString("Title") != null ? rs.getString("Title") : "No Title");
+                review.put("rating", rs.getInt("Rating"));
+                review.put("comment", rs.getString("Comment") != null ? rs.getString("Comment") : "No Comment");
+                review.put("postedOn", formattedDate);
+                review.put("reviewerName", rs.getString("ReviewerName"));
+                reviews.add(review);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching venue reviews: " + e.getMessage());
+        }
+        return reviews;
+    }
+
 
 }

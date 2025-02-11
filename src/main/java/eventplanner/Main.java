@@ -67,6 +67,7 @@ public class Main {
             app.get("/myevents", Main::handleMyEvents);
             app.get("/hostedevents", Main::handleHostedEvents);
             app.get("/venue/{id}", Main::handleVenuePage);
+            app.get("/venue/{id}/reviews", Main::handleVenueReviews);
             app.get("/event/{id}/review", ctx -> ctx.render("/review.ftl", Map.of("error", "")));
             app.get("/venue/{id}/review", ctx -> ctx.render("/review.ftl", Map.of("error", "")));
             app.get("/venue/{id}/addevent", Main::handlePublicEvent);
@@ -106,6 +107,25 @@ public class Main {
 
     }
 
+    private static void handleVenueReviews(@NotNull Context ctx) {
+        Integer user = ctx.sessionAttribute("userId");
+        if (user == null) {
+            ctx.redirect("/login");
+            return;
+        }
+
+        int venueId = Integer.parseInt(ctx.pathParam("id"));
+        VenuesService venuesService = new VenuesService(dbService);
+
+        List<Map<String, Object>> reviews = venuesService.getVenueReviews(venueId);
+
+        ctx.render("venue_reviews.ftl", Map.of(
+                "reviews", reviews,
+                "venueId", venueId,
+                "message", reviews.isEmpty() ? "No reviews available for this venue." : ""
+        ));
+    }
+
     private static void handleEventReviews(@NotNull Context ctx) {
         Integer user = ctx.sessionAttribute("userId");
         if (user == null) {
@@ -117,7 +137,7 @@ public class Main {
         EventsService eventsService = new EventsService(dbService);
         List<Map<String, Object>> reviews = eventsService.getEventReviews(eventId);
 
-        ctx.render("show_reviews.ftl", Map.of(
+        ctx.render("event_reviews.ftl", Map.of(
                 "reviews", reviews,
                 "eventId", eventId,
                 "message", reviews.isEmpty() ? "No reviews available for this event." : ""

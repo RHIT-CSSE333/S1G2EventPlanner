@@ -34,6 +34,7 @@
                     <th>City</th>
                     <th>Street Address</th>
                     <th>ZipCode</th>
+                    <th>Reviews</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -54,6 +55,7 @@
                         <td>${venue.city}</td>
                         <td>${venue.streetAddress}</td>
                         <td>${venue.zipCode}</td>
+                        <td><a href="/venue/${venue.id}/reviews">See Reviews</a></td>
                     </tr>
                 </#list>
                 </tbody>
