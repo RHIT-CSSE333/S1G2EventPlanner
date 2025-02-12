@@ -17,20 +17,22 @@ import java.util.Properties;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.jasypt.properties.EncryptableProperties;
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.json.JSONObject;
 
 import eventplanner.models.Event;
 import eventplanner.models.User;
+import eventplanner.models.Vendor;
 import eventplanner.models.Venue;
 import eventplanner.services.DatabaseConnectionService;
 import eventplanner.services.EncryptionServices;
 import eventplanner.services.EventsService;
-import eventplanner.services.UserService;
-import eventplanner.services.VenuesService;
 import eventplanner.services.EventsService.EventFinancialInfoReturnType;
 import eventplanner.services.EventsService.EventReturnType;
+import eventplanner.services.UserService;
+import eventplanner.services.VendorService;
+import eventplanner.services.VenuesService;
 import freemarker.template.Configuration;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
@@ -83,6 +85,7 @@ public class Main {
             app.get("/paymentsuccess/host/", Main::handlePaymentSuccessForHosts);
             app.get("/paymentsuccess/guest/", Main::handlePaymentSuccessForGuests);
             app.get("/transactions", Main::handleTransactions);
+            app.get("/vendors", Main::handleVendors);
 
 
             app.post("/info/updateName", Main::handleUpdateName);
@@ -104,6 +107,24 @@ public class Main {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+    }
+
+    private static void handleVendors(@NotNull Context ctx) {
+        Integer user = ctx.sessionAttribute("userId");
+        if (user == null) {
+            ctx.redirect("/login");
+            return;
+        }
+
+        VendorService vendorService = new VendorService(dbService);
+
+        List<Vendor> vendors = vendorService.getAllVendors();
+
+        ctx.render("vendors.ftl", Map.of("vendors", vendors, 
+        "message", vendors.isEmpty() ? "No available venues at the moment." : ""));
+
+
 
     }
 
