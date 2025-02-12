@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eventplanner.models.Event;
+import eventplanner.models.Service;
 import eventplanner.models.User;
 import eventplanner.models.Vendor;
 import eventplanner.models.Venue;
@@ -86,6 +87,7 @@ public class Main {
             app.get("/paymentsuccess/guest/", Main::handlePaymentSuccessForGuests);
             app.get("/transactions", Main::handleTransactions);
             app.get("/vendors", Main::handleVendors);
+            app.get("/vendors/{id}/services", Main::handleServices);
 
 
             app.post("/info/updateName", Main::handleUpdateName);
@@ -108,6 +110,22 @@ public class Main {
             e.printStackTrace();
         }
 
+    }
+
+    private static void handleServices(@NotNull Context ctx) {
+        Integer user = ctx.sessionAttribute("userId");
+        if (user == null) {
+            ctx.redirect("/login");
+            return;
+        }
+
+        int vendorId = Integer.parseInt(ctx.pathParam("id"));
+        VendorService vendorService = new VendorService(dbService);
+
+        List<Service> services = vendorService.getVendorServices(vendorId);
+
+        ctx.render("services.ftl", Map.of("services", services, 
+        "message", services.isEmpty() ? "No available services at the moment." : ""));
     }
 
     private static void handleVendors(@NotNull Context ctx) {
