@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Event Planner - Create Event</title>
     <link rel="stylesheet" href="/css/style.css">
+    <script src="/js/eventscript.js"></script>
 </head>
 <body>
 <div class="container container-create-event">
@@ -18,7 +19,7 @@
                 <input type="text" id="name" name="name" pattern=".*\S.*" title="Field cannot be blank or contain only spaces" required>
             </div>
             <div>
-                <span>Pirvate or public:</span>
+                <span>Private or public:</span>
                 <input type="radio" id="private" name="event-type" value="private" />
                 <label for="private">Private</label>
 
@@ -54,6 +55,22 @@
         </div>
 
         <button type="submit" class="submit-btn">Create Event</button>
+
+        <div class="form-group"></div>
+            <h3>Services</h3>
+            <div id="servicesContainer">
+            <div class="service">
+                <label for="service1">Select Service:</label>
+                <select id="service1" name="services[0].id" required>
+                <#list services as service>
+                    <option value="${service.id}">${service.name} - ${service.description} - $${service.price}</option>
+                </#list>
+                </select>
+            </div>
+            </div>
+            <button type="button" id="addServiceBtn">Add Another Service</button>
+        </div>
+        <input type="hidden" id="serviceCount" name="serviceCount" value="1">
     </form>
 
     <p>

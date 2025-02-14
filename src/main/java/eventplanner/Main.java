@@ -655,8 +655,11 @@ public class Main {
     }
 
     private static void handlePublicEvent(Context ctx) {
-        int venueId = Integer.parseInt(ctx.pathParam("id"));
-        ctx.render("addevent.ftl", Map.of("error", ""));
+        VendorService vendorService = new VendorService(dbService);
+        List<Service> services = vendorService.getAllServices();
+
+        ctx.render("addevent.ftl", Map.of("error", "",  
+                                            "services", services));
     }
 
     private static void handleAddEventPost(Context ctx) {
@@ -668,49 +671,44 @@ public class Main {
         String registrationDeadline = ctx.formParam("registrationDeadline");
         double price = Double.parseDouble(ctx.formParam("price"));
         Integer userId = ctx.sessionAttribute("userId");
-
+    
         if (userId == null) {
             ctx.render("addevent.ftl", Map.of("error", "You must be logged in to create an event."));
             return;
         }
-
+    
         EventsService eventsService = new EventsService(dbService);
         EventReturnType eventCreated = null;
-        String paymentId = null;
-
+    
         try {
-            paymentId = generatePaymentId();
-
+            String paymentId = generatePaymentId();
+    
             if ("private".equals(eventType)) {
                 eventCreated = eventsService.createEvent(name, startTime, endTime, venueId, price, registrationDeadline, userId, paymentId, false);
-
             } else if ("public".equals(eventType)) {
                 eventCreated = eventsService.createEvent(name, startTime, endTime, venueId, price, registrationDeadline, userId, paymentId, true);
-
             }
-            
-            // if ("private".equals(eventType)) {
-            //     eventCreated = venuesService.addPrivateEvent(userId, venueId, name, startTime, endTime, registrationDeadline, price, paymentId);
-            //     success = eventCreated.success;
-                
-
-            // } else if ("public".equals(eventType)) {
-            //     success = venuesService.addPublicEvent(venueId, name, startTime, endTime, registrationDeadline, price, paymentId);
-            // }
+    
+            // Process services
+            int serviceCount = Integer.parseInt(ctx.formParam("serviceCount"));
+            for (int i = 0; i < serviceCount; i++) {
+                int serviceId = Integer.parseInt(ctx.formParam("services[" + i + "].id"));
+                eventsService.addServiceToEvent(eventCreated.eventId, serviceId);
+            }
+    
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Database error: ", e);
             ctx.render("addevent.ftl", Map.of("error", "Database error: " + e.getMessage()));
             return;
         }
-
-        if (eventCreated.success) {
+    
+        if (eventCreated != null && eventCreated.success) {
             if (price != 0)
                 ctx.redirect("/pay/host/" + String.valueOf(eventCreated.eventId));
             else
                 ctx.redirect("/hostedevents");
-
         } else {
-            ctx.render("addevent.ftl", Map.of("error", eventCreated.errorMessage));
+            ctx.render("addevent.ftl", Map.of("error", eventCreated != null ? eventCreated.errorMessage : "Unknown error"));
         }
     }
 

@@ -85,4 +85,29 @@ public class VendorService {
         return services;
     }
 
+    public List<Service> getAllServices() {
+        String query = "{call GetAllServices()}";
+        List<Service> services = new ArrayList<>();
+
+        try {
+            Connection conn = dbService.getConnection();
+            CallableStatement stmt = conn.prepareCall(query);
+
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Service service = new Service(rs.getInt("ID"),
+                rs.getString("Name"),
+                rs.getString("Description"),
+                rs.getDouble("Price"),
+                rs.getInt("VendorID")
+                );
+                services.add(service);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching vendor services: " + e.getMessage());
+        }
+        return services;
+    }
+
 }

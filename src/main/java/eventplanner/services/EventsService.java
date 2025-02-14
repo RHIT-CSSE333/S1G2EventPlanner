@@ -664,6 +664,23 @@ public class EventsService {
         return reviews;
     }
 
+    public void addServiceToEvent(int eventId, int serviceId) {
+        String query = "{call AddServiceToEvent(?, ?)}";
 
+        Connection conn = null;
+        CallableStatement stmt = null;
+
+        try {
+            conn = dbService.getConnection();
+            stmt = conn.prepareCall(query);
+
+            stmt.setInt(1, eventId);
+            stmt.setInt(2, serviceId);
+            stmt.execute();
+
+        } catch (SQLException e) {
+            System.err.println("Error adding service to event: " + e.getMessage());
+        }
+    }
 
 }
