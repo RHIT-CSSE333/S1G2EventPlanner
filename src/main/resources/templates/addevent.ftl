@@ -61,10 +61,11 @@
             <div id="servicesContainer">
             <div class="service">
                 <label for="service1">Select Service:</label>
-                <select id="service1" name="services[0].id" required>
-                <#list services as service>
-                    <option value="${service.id}">${service.name} - ${service.description} - $${service.price}</option>
-                </#list>
+                <select id="service1" name="services[0].id">
+                    <option value="">None</option>
+                    <#list services as service>
+                        <option value="${service.id}">${service.name} - ${service.description} - $${service.price}</option>
+                    </#list>
                 </select>
             </div>
             </div>

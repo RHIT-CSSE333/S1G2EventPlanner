@@ -692,8 +692,14 @@ public class Main {
             // Process services
             int serviceCount = Integer.parseInt(ctx.formParam("serviceCount"));
             for (int i = 0; i < serviceCount; i++) {
-                int serviceId = Integer.parseInt(ctx.formParam("services[" + i + "].id"));
-                eventsService.addServiceToEvent(eventCreated.eventId, serviceId);
+                int serviceId;
+                String value = ctx.formParam("services[" + i + "].value");
+                if(value == null || value.isEmpty()) {
+                    continue;
+                } else {
+                    serviceId = Integer.parseInt(ctx.formParam("services[" + i + "].id"));
+                    eventsService.addServiceToEvent(eventCreated.eventId, serviceId);
+                }
             }
     
         } catch (Exception e) {
