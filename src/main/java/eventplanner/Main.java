@@ -659,10 +659,10 @@ public class Main {
         List<Service> services = vendorService.getAllServices();
 
         ctx.render("addevent.ftl", Map.of("error", "",  
-                                            "services", services));
-    }
+                            "services", services));
+        }
 
-    private static void handleAddEventPost(Context ctx) {
+        private static void handleAddEventPost(Context ctx) {
         int venueId = Integer.parseInt(ctx.pathParam("id"));
         String name = ctx.formParam("name");
         String eventType = ctx.formParam("event-type");
@@ -671,54 +671,57 @@ public class Main {
         String registrationDeadline = ctx.formParam("registrationDeadline");
         double price = Double.parseDouble(ctx.formParam("price"));
         Integer userId = ctx.sessionAttribute("userId");
-    
+
         if (userId == null) {
             ctx.render("addevent.ftl", Map.of("error", "You must be logged in to create an event."));
             return;
         }
-    
+
         EventsService eventsService = new EventsService(dbService);
         EventReturnType eventCreated = null;
-    
+        String paymentId = null;
+
         try {
-            String paymentId = generatePaymentId();
-    
+            paymentId = generatePaymentId();
+
             if ("private".equals(eventType)) {
-                eventCreated = eventsService.createEvent(name, startTime, endTime, venueId, price, registrationDeadline, userId, paymentId, false);
+            eventCreated = eventsService.createEvent(name, startTime, endTime, venueId, price, registrationDeadline, userId, paymentId, false);
+
             } else if ("public".equals(eventType)) {
-                eventCreated = eventsService.createEvent(name, startTime, endTime, venueId, price, registrationDeadline, userId, paymentId, true);
+            eventCreated = eventsService.createEvent(name, startTime, endTime, venueId, price, registrationDeadline, userId, paymentId, true);
+
             }
-    
-            // Process services
+
+            if (eventCreated.success) {
+            int eventId = eventCreated.eventId;
             int serviceCount = Integer.parseInt(ctx.formParam("serviceCount"));
             for (int i = 0; i < serviceCount; i++) {
-                int serviceId;
-                String value = ctx.formParam("services[" + i + "].value");
-                if(value == null || value.isEmpty()) {
-                    continue;
-                } else {
-                    serviceId = Integer.parseInt(ctx.formParam("services[" + i + "].id"));
-                    eventsService.addServiceToEvent(eventCreated.eventId, serviceId);
+                String serviceIdParam = "services[" + i + "].id";
+                String serviceIdStr = ctx.formParam(serviceIdParam);
+                if (serviceIdStr != null && !serviceIdStr.isEmpty()) {
+                int serviceId = Integer.parseInt(serviceIdStr);
+                eventsService.addServiceToEvent(eventId, serviceId);
                 }
             }
-    
+            }
         } catch (Exception e) {
-            logger.error("Database error: ", e);
+            e.printStackTrace();
             ctx.render("addevent.ftl", Map.of("error", "Database error: " + e.getMessage()));
             return;
         }
-    
-        if (eventCreated != null && eventCreated.success) {
-            if (price != 0)
-                ctx.redirect("/pay/host/" + String.valueOf(eventCreated.eventId));
-            else
-                ctx.redirect("/hostedevents");
-        } else {
-            ctx.render("addevent.ftl", Map.of("error", eventCreated != null ? eventCreated.errorMessage : "Unknown error"));
-        }
-    }
 
-    private static void handlePayForHosts(Context ctx) {
+        if (eventCreated.success) {
+            if (price != 0)
+            ctx.redirect("/pay/host/" + String.valueOf(eventCreated.eventId));
+            else
+            ctx.redirect("/hostedevents");
+
+        } else {
+            ctx.render("addevent.ftl", Map.of("error", eventCreated.errorMessage));
+        }
+        }
+
+        private static void handlePayForHosts(Context ctx) {
         int eventId = Integer.parseInt(ctx.pathParam("eventId"));
         
         EventsService eventsService = new EventsService(dbService);
@@ -730,9 +733,9 @@ public class Main {
             String url = buildPaymentUrlForHosts(eventFinancialInfo.paymentId, eventFinancialInfo.price);
             ctx.redirect(url);
         }
-    }
+        }
 
-    private static void handlePayForGuests(Context ctx) {
+        private static void handlePayForGuests(Context ctx) {
         int eventId = Integer.parseInt(ctx.pathParam("eventId"));
         int userId = ctx.sessionAttribute("userId");
         

@@ -63,9 +63,13 @@
                 <label for="service1">Select Service:</label>
                 <select id="service1" name="services[0].id">
                     <option value="">None</option>
-                    <#list services as service>
-                        <option value="${service.id}">${service.name} - ${service.description} - $${service.price}</option>
-                    </#list>
+                    <#if services?has_content>
+                        <#list services as service>
+                            <option value="${service.id}">${service.name} - ${service.description} - $${service.price}</option>
+                        </#list>
+                    <#else>
+                        <option value="">No services available</option>
+                    </#if>
                 </select>
             </div>
             </div>
