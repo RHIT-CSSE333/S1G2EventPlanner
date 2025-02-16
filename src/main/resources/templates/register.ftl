@@ -15,7 +15,7 @@
         <div class="form-group">
             <div>
                 <label for="email">Email:</label>
-                <input type="email" id="email" name="email" class="full-width" required>
+                <input type="email" id="email" name="email" value ="${email}" class="full-width" required>
             </div>
             <div>
                 <label for="phoneNo">Phone Number:</label>

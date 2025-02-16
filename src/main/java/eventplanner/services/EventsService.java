@@ -43,6 +43,16 @@ public class EventsService {
         }
     }
 
+    public class EventCheckInReturnType {
+        public boolean success;
+        public String errorMessage;
+
+        public EventCheckInReturnType(boolean success, String errorMessage) {
+            this.success = success;
+            this.errorMessage = errorMessage;
+        }
+    }
+
     private DatabaseConnectionService dbService;
 
     public EventsService(DatabaseConnectionService dbService) {
@@ -680,6 +690,132 @@ public class EventsService {
 
         } catch (SQLException e) {
             System.err.println("Error adding service to event: " + e.getMessage());
+        }
+    }
+
+    public boolean addPendingEventInvitation(String email, int eventId, String invitationId) {
+        String query = "{? = call AddPendingEventInvitation(?, ?, ?)}";
+
+        Connection conn = null;
+        CallableStatement stmt = null;
+
+        try {
+            conn = dbService.getConnection();
+            stmt = conn.prepareCall(query);
+
+            stmt.registerOutParameter(1, Types.INTEGER);
+            stmt.setString(2, email);
+            stmt.setInt(3, eventId);
+            stmt.setString(4, invitationId);
+            stmt.execute();
+
+            return true;
+
+        } catch (SQLException e) {
+            System.err.println("Error adding service to event: " + e.getMessage());
+            return false;
+        }
+    }
+
+    private boolean completePendingInvitation(int personId, String invitationId, String paymentId) {
+        String query = "{CALL CompletePendingInvitation(?, ?, ?)}";
+        Connection conn = null;
+        CallableStatement stmt = null;
+
+        try {
+            conn = dbService.getConnection();
+            stmt = conn.prepareCall(query);
+            stmt.setInt(1, personId);
+            stmt.setString(2, invitationId);
+            stmt.setString(3, paymentId);
+
+            stmt.execute();
+
+            return true;
+
+        } catch (SQLException e) {
+            System.out.println("completePendingInvitation: " + e.getMessage());
+            return false;
+        } 
+    }
+
+    /**
+     * Complete all pending invitations for a user
+     * 
+     * @param personId
+     * @param email
+     * @return 0 on successful completion of all invitations, 1 on failing to complete some of them, 2 on overall procecure fail
+     */
+    public int completePendingInvitations(int personId, String email) {
+        String query = "{CALL GetPendingInvitations(?)}";
+
+        Connection conn = null;
+        CallableStatement stmt = null;
+        ResultSet rs = null;
+
+        int returnCode = 0;
+
+        try {
+            conn = dbService.getConnection();
+            stmt = conn.prepareCall(query);
+            stmt.setString(1, email);
+
+            rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                String invitationId = rs.getString("InvitationId");
+                
+                if (!completePendingInvitation(personId, invitationId,  HelperService.generateRandomIdOfLength50())) {
+                    returnCode = 1;
+                }
+            }
+        } catch (SQLException e) {
+            returnCode = 2;
+        }
+
+        return returnCode;
+    }
+
+    public String getCheckInId(int personId, int eventId) {
+        String query = "{CALL GetCheckInId(?, ?, ?)}";
+        Connection conn = null;
+        CallableStatement stmt = null;
+
+        try {
+            conn = dbService.getConnection();
+            stmt = conn.prepareCall(query);
+            stmt.setInt(1, personId);
+            stmt.setInt(2, eventId);
+            stmt.registerOutParameter(3, Types.CHAR);
+
+            stmt.execute();
+
+            return stmt.getString(3);
+
+        } catch (SQLException e) {
+            System.out.println("getCheckInId: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public EventCheckInReturnType checkIn(Integer personId, String checkInId) {
+        String query = "{CALL CheckIn(?, ?)}";
+        Connection conn = null;
+        CallableStatement stmt = null;
+
+        try {
+            conn = dbService.getConnection();
+            stmt = conn.prepareCall(query);
+            stmt.setInt(1, personId);
+            stmt.setString(2, checkInId);
+
+            stmt.execute();
+
+            return new EventCheckInReturnType(true, "");
+
+        } catch (SQLException e) {
+            System.out.println("EventCheckInReturnType: " + e.getMessage());
+            return new EventCheckInReturnType(false, e.getMessage());
         }
     }
 

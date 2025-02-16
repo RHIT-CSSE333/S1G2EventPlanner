@@ -29,17 +29,21 @@ import eventplanner.models.Venue;
 import eventplanner.services.DatabaseConnectionService;
 import eventplanner.services.EncryptionServices;
 import eventplanner.services.EventsService;
+import eventplanner.services.EventsService.EventCheckInReturnType;
 import eventplanner.services.EventsService.EventFinancialInfoReturnType;
 import eventplanner.services.EventsService.EventReturnType;
 import eventplanner.services.UserService;
 import eventplanner.services.VendorService;
 import eventplanner.services.VenuesService;
+import eventplanner.services.HelperService;
 import freemarker.template.Configuration;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 import io.javalin.rendering.template.JavalinFreemarker;
 
 public class Main {
+
+    private static final String appUrl = "http://localhost:7070/";
 
     private static String serverUsername = null;
     private static String serverPassword = null;
@@ -59,7 +63,7 @@ public class Main {
 
             app.get("/", ctx -> ctx.render("/index.ftl"));
             app.get("/login", ctx -> ctx.render("/login.ftl", Map.of("error", "")));
-            app.get("/signup", ctx -> ctx.render("/register.ftl", Map.of("error", "")));
+            app.get("/signup", Main::handleSignupIII);
             app.get("/logout", Main::handleLogout);
             app.get("/events", Main::handleEvents);
             app.get("/venues", Main::handleVenues);
@@ -89,6 +93,13 @@ public class Main {
             app.get("/vendors", Main::handleVendors);
             app.get("/vendors/{id}/services", Main::handleServices);
 
+            app.get("/qr/{eventId}", Main::handleShowCheckInQR);
+
+            app.get("/checkin/{checkInId}", Main::handleCheckIn); 
+            app.get("/checkin/9WuIiWSOwFzx1IC.S8bT39Czibdy4MNS4JjocPk9LDI5DPtIrv", ctx -> ctx.result("<h3>Too early</h3")); 
+            app.get("/checkin/R8--xjG.Wv2a8TS6Or7WPsh2pfwC5b019h4yGEu4nqAgMYr5Wn", ctx -> ctx.result("<h3>Check in over</h3"));
+            app.get("/checkin/SwqkIrnkCer0FLC9bPyY_kjbflWvbTfjsvn6RdLf2ZnH7YQH1Z", ctx -> ctx.result("<h3>Success. <a href='/events'>Back</a></h3>"));
+
 
             app.post("/info/updateName", Main::handleUpdateName);
             app.post("/info/updateEmail", Main::handleUpdateEmail);
@@ -108,6 +119,65 @@ public class Main {
             });
         } catch (Exception e) {
             e.printStackTrace();
+        }
+
+    }
+
+    private static void handleCheckIn(Context ctx) {
+        Integer userId = ctx.sessionAttribute("userId");
+        if (userId == null) {
+            ctx.redirect("/login");
+            return;
+        }
+
+        String checkInId = ctx.pathParam("checkInId");
+
+        EventsService eventsService = new EventsService(dbService);
+        EventCheckInReturnType eventCheckInReturn = eventsService.checkIn(userId, checkInId);
+
+        if (eventCheckInReturn.success) {
+            ctx.render("success.ftl", Map.of("message", "Checked in successfully."));
+        } else {
+            ctx.result(eventCheckInReturn.errorMessage);
+        }
+    }
+
+    private static void handleShowCheckInQR(Context ctx) {
+        Integer userId = ctx.sessionAttribute("userId");
+        if (userId == null) {
+            ctx.redirect("/login");
+            return;
+        }
+
+        int eventId = Integer.parseInt(ctx.pathParam("eventId"));
+
+        EventsService eventsService = new EventsService(dbService);
+
+        String checkInId = eventsService.getCheckInId(userId, eventId);
+
+        if (checkInId != null) {
+            ctx.render("/qr.ftl", Map.of("checkInId", checkInId));
+
+        } else {
+            ctx.result("You are not authorized to check in for this event");
+        }
+    }
+
+    private static void handleSignupIII(Context ctx) {
+        String invitationId = ctx.queryParam("via");
+
+        if (invitationId == null) {
+            ctx.render("/register.ftl", Map.of("error", "", "email", ""));
+
+        } else {
+            UserService userService = new UserService(dbService);
+            String email = userService.getEmailForPendingInvitation(invitationId);
+
+            if (email == null) {
+                ctx.render("/register.ftl", Map.of("error", "Invitation not found", "email", ""));
+            } else {
+                ctx.render("/register.ftl", Map.of("error", "",  "email", email));
+            }
         }
 
     }
@@ -300,18 +370,34 @@ public class Main {
         }
 
         int eventId = Integer.parseInt(ctx.pathParam("id"));
+        String email = ctx.formParam("email");
 
         UserService userService = new UserService(dbService);
         EventsService eventsService = new EventsService(dbService);
 
-        int personId = userService.getUserIdByEmail(ctx.formParam("email"));
+        int personId = userService.getUserIdByEmail(email);
+
+        boolean success = false;
 
         if (personId == -1) {
-            ctx.render("invite.ftl", Map.of("error", "User not found.", "eventId", eventId));
-            return;
-        }
+            String invitationId = HelperService.generateRandomIdOfLength50();
+            success = eventsService.addPendingEventInvitation(email, eventId, invitationId);
 
-        boolean success = eventsService.inviteUserToEvent(eventId, personId, generatePaymentId());
+            if (success) {
+                String url = "mailto:" 
+                                + email
+                                + "?subject=You're invited to an event!"
+                                + "&body=Sign up for Event Planner at "
+                                + appUrl + "signup?via=" + invitationId
+                                + " to view your invitation";
+
+                ctx.redirect(url);
+
+            }
+
+        } else {
+            success = eventsService.inviteUserToEvent(eventId, personId, HelperService.generateRandomIdOfLength50());
+        }
 
         if (success) {
             ctx.render("success.ftl", Map.of("message", "Invitation sent successfully."));
@@ -431,18 +517,37 @@ public class Main {
             error.append("<li>Passwords should match</li>");
         }
 
-        UserService userService = new UserService(dbService);
+        if (!hasError) {
 
-        if (userService.registerUser(email, phone, firstName, middleInit, lastName, dob, null, null, null, password)) {
-            ctx.redirect("/login");
+            UserService userService = new UserService(dbService);
+            EventsService eventsService = new EventsService(dbService);
 
-        } else {
-            hasError = true;
-            error.append("<li>Registration failed on the database side</li>");
+            int personId = userService.registerUser(email, phone, firstName, middleInit, lastName, dob, null, null, null, password);
+
+            if (personId != -1) {
+                int pendingInvitationsStatus = eventsService.completePendingInvitations(personId, email);
+
+                if (pendingInvitationsStatus == 0) {
+                    ctx.redirect("/login");
+        
+                } else if (pendingInvitationsStatus == 1) {
+                    hasError = true;
+                    error.append("<li>Registration completed successfully, but we weren't able to register you for events. Contact the person who invited you. Please <a href='/login'>login</a>.");
+                
+                } else {
+                    hasError = true;
+                    error.append("<li>Registration completed successfully, but registering failed. Contact the developers. Please <a href='/login'>login</a>.");
+                
+                }
+            
+            } else {
+                hasError = true;
+                error.append("<li>Registration failed on the database side</li>");
+            }
         }
 
         if (hasError) {
-            ctx.render("register.ftl", Map.of("error", error.toString()));
+            ctx.render("register.ftl", Map.of("email", "", "error", error.toString()));
         }
     }
 
@@ -682,7 +787,7 @@ public class Main {
         String paymentId = null;
 
         try {
-            paymentId = generatePaymentId();
+            paymentId = HelperService.generateRandomIdOfLength50();
 
             if ("private".equals(eventType)) {
             eventCreated = eventsService.createEvent(name, startTime, endTime, venueId, price, registrationDeadline, userId, paymentId, false);
@@ -786,18 +891,6 @@ public class Main {
         } else {
             ctx.result("you can't just fake your payment lil bro");
         }
-    }
-
-    private static String generatePaymentId() {
-        final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_.";
-        final SecureRandom RANDOM = new SecureRandom();
-
-        StringBuilder paymentId = new StringBuilder();
-        for (int i = 0; i < 50; i++) {
-            paymentId.append(CHARACTERS.charAt(RANDOM.nextInt(CHARACTERS.length())));
-        }
-
-        return paymentId.toString();
     }
 
     private static String buildPaymentUrlForHosts(String paymentId, double price) {

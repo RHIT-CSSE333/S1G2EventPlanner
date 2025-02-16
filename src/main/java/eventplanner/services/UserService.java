@@ -35,14 +35,14 @@ public class UserService { ;
     /**
      * Registers a new user by hashing the password and storing it with a salt.
      *
-     * @return true if registration succeeds, false otherwise.
+     * @return Id of the new Person record if registration succeeds, -1 otherwise.
      */
-    public boolean registerUser(String email, String phoneNo, String firstName, String middleInit, String lastName,
+    public int registerUser(String email, String phoneNo, String firstName, String middleInit, String lastName,
                                 String dob, String ccNum, String ccExpDate, String cvv, String password) {
         Connection conn = dbService.getConnection();
         if (conn == null) {
-            JOptionPane.showMessageDialog(null, "Database connection failed.");
-            return false;
+            System.err.println("Database connection failed.");
+            return -1;
         }
 
         byte[] salt = getNewSalt();
@@ -51,7 +51,7 @@ public class UserService { ;
         CallableStatement stmt = null;
 
         try {
-            String storedProcedure = "{CALL CreateOrUpdatePerson(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}";
+            String storedProcedure = "{CALL CreatePerson(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}";
             stmt = conn.prepareCall(storedProcedure);
 
             stmt.setString(1, email);
@@ -63,15 +63,17 @@ public class UserService { ;
             stmt.setString(7, ccNum == null || ccNum.isEmpty() ? null : ccNum);        // Nullable field
             stmt.setString(8, ccExpDate == null || ccExpDate.isEmpty() ? null : ccExpDate);   // Nullable field
             stmt.setString(9, cvv == null || cvv.isEmpty() ? null : cvv);         // Nullable field
-            stmt.setInt(10, 0);
-            stmt.setString(11, hashedPassword);
-            stmt.setString(12, saltString);
+            stmt.setString(10, hashedPassword);
+            stmt.setString(11, saltString);
+            stmt.registerOutParameter(12, Types.INTEGER);
 
-            int rowsInserted = stmt.executeUpdate();
-            return rowsInserted > 0;
+            stmt.executeUpdate();
+
+            return stmt.getInt(12);
+        
         } catch (SQLException e) {
             System.err.println("Error registering user: " + e.getMessage());
-            return false;
+            return -1;
         }
     }
 
@@ -377,5 +379,27 @@ public class UserService { ;
 	        e.printStackTrace();
 	        return false;
 	    }
+    }
+
+    public String getEmailForPendingInvitation(String invitationId) {
+        String query = "{call GetEmailForPendingInvitation(?, ?)}";
+
+        Connection conn = null;
+        CallableStatement stmt = null;
+
+        try {
+            conn = dbService.getConnection();
+            stmt = conn.prepareCall(query);
+            
+            stmt.setString(1, invitationId);
+            stmt.registerOutParameter(2, Types.NVARCHAR);
+            stmt.execute();
+
+            return stmt.getString(2);
+
+        } catch (SQLException e) {
+            System.err.println("Error adding service to event: " + e.getMessage());
+            return null;
+        }
     }
 }

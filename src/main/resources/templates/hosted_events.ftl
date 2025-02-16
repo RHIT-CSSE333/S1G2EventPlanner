@@ -35,6 +35,7 @@
                 <th>Payment Status</th>
                 <th>Actions</th>
                 <th>Invitees RSVP Status</th>
+                <th>Check In QR-Code</th>
             </tr>
             </thead>
             <tbody>
@@ -74,6 +75,10 @@
                         <#else>
                             N/A
                         </#if>
+                    </td>
+
+                    <td>
+                        <a href="/qr/${event.id}">Check In</a>
                     </td>
                 </tr>
             </#list>
