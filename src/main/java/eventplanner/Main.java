@@ -96,10 +96,6 @@ public class Main {
             app.get("/qr/{eventId}", Main::handleShowCheckInQR);
 
             app.get("/checkin/{checkInId}", Main::handleCheckIn); 
-            app.get("/checkin/9WuIiWSOwFzx1IC.S8bT39Czibdy4MNS4JjocPk9LDI5DPtIrv", ctx -> ctx.result("<h3>Too early</h3")); 
-            app.get("/checkin/R8--xjG.Wv2a8TS6Or7WPsh2pfwC5b019h4yGEu4nqAgMYr5Wn", ctx -> ctx.result("<h3>Check in over</h3"));
-            app.get("/checkin/SwqkIrnkCer0FLC9bPyY_kjbflWvbTfjsvn6RdLf2ZnH7YQH1Z", ctx -> ctx.result("<h3>Success. <a href='/events'>Back</a></h3>"));
-
 
             app.post("/info/updateName", Main::handleUpdateName);
             app.post("/info/updateEmail", Main::handleUpdateEmail);
