@@ -576,7 +576,7 @@ public class Main {
         }
 
         EventsService eventsService = new EventsService(dbService);
-        List<Event> futureEvents = eventsService.getAvailableEvents();
+        List<Map<String, Object>> futureEvents = eventsService.getAvailableEvents();
         List<Event> pastEvents = eventsService.getPastPublicEvents();
 
         ctx.render("events.ftl", Map.of(
@@ -764,62 +764,62 @@ public class Main {
         }
 
         private static void handleAddEventPost(Context ctx) {
-        int venueId = Integer.parseInt(ctx.pathParam("id"));
-        String name = ctx.formParam("name");
-        String eventType = ctx.formParam("event-type");
-        String startTime = ctx.formParam("startTime");
-        String endTime = ctx.formParam("endTime");
-        String registrationDeadline = ctx.formParam("registrationDeadline");
-        double price = Double.parseDouble(ctx.formParam("price"));
-        Integer userId = ctx.sessionAttribute("userId");
+            int venueId = Integer.parseInt(ctx.pathParam("id"));
+            String name = ctx.formParam("name");
+            String eventType = ctx.formParam("event-type");
+            String startTime = ctx.formParam("startTime");
+            String endTime = ctx.formParam("endTime");
+            String registrationDeadline = ctx.formParam("registrationDeadline");
+            double price = Double.parseDouble(ctx.formParam("price"));
+            Integer userId = ctx.sessionAttribute("userId");
 
-        if (userId == null) {
-            ctx.render("addevent.ftl", Map.of("error", "You must be logged in to create an event."));
-            return;
-        }
+            if (userId == null) {
+                ctx.render("addevent.ftl", Map.of("error", "You must be logged in to create an event."));
+                return;
+            }
 
-        EventsService eventsService = new EventsService(dbService);
-        EventReturnType eventCreated = null;
-        String paymentId = null;
+            EventsService eventsService = new EventsService(dbService);
+            EventReturnType eventCreated = null;
+            String paymentId = null;
 
-        try {
-            paymentId = HelperService.generateRandomIdOfLength50();
+            try {
+                paymentId = HelperService.generateRandomIdOfLength50();
 
-            if ("private".equals(eventType)) {
-            eventCreated = eventsService.createEvent(name, startTime, endTime, venueId, price, registrationDeadline, userId, paymentId, false);
+                if ("private".equals(eventType)) {
+                eventCreated = eventsService.createEvent(name, startTime, endTime, venueId, price, registrationDeadline, userId, paymentId, false);
 
-            } else if ("public".equals(eventType)) {
-            eventCreated = eventsService.createEvent(name, startTime, endTime, venueId, price, registrationDeadline, userId, paymentId, true);
+                } else if ("public".equals(eventType)) {
+                eventCreated = eventsService.createEvent(name, startTime, endTime, venueId, price, registrationDeadline, userId, paymentId, true);
 
+                }
+
+                if (eventCreated.success) {
+                int eventId = eventCreated.eventId;
+                int serviceCount = Integer.parseInt(ctx.formParam("serviceCount"));
+                for (int i = 0; i < serviceCount; i++) {
+                    String serviceIdParam = "services[" + i + "].id";
+                    String serviceIdStr = ctx.formParam(serviceIdParam);
+                    if (serviceIdStr != null && !serviceIdStr.isEmpty()) {
+                    int serviceId = Integer.parseInt(serviceIdStr);
+                    eventsService.addServiceToEvent(eventId, serviceId);
+                    }
+                }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                ctx.render("addevent.ftl", Map.of("error", "Database error: " + e.getMessage()));
+                return;
             }
 
             if (eventCreated.success) {
-            int eventId = eventCreated.eventId;
-            int serviceCount = Integer.parseInt(ctx.formParam("serviceCount"));
-            for (int i = 0; i < serviceCount; i++) {
-                String serviceIdParam = "services[" + i + "].id";
-                String serviceIdStr = ctx.formParam(serviceIdParam);
-                if (serviceIdStr != null && !serviceIdStr.isEmpty()) {
-                int serviceId = Integer.parseInt(serviceIdStr);
-                eventsService.addServiceToEvent(eventId, serviceId);
-                }
-            }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            ctx.render("addevent.ftl", Map.of("error", "Database error: " + e.getMessage()));
-            return;
-        }
+                if (price != 0)
+                ctx.redirect("/pay/host/" + String.valueOf(eventCreated.eventId));
+                else
+                ctx.redirect("/hostedevents");
 
-        if (eventCreated.success) {
-            if (price != 0)
-            ctx.redirect("/pay/host/" + String.valueOf(eventCreated.eventId));
-            else
-            ctx.redirect("/hostedevents");
-
-        } else {
-            ctx.render("addevent.ftl", Map.of("error", eventCreated.errorMessage));
-        }
+            } else {
+                ctx.render("addevent.ftl", Map.of("error", eventCreated.errorMessage));
+            }
         }
 
         private static void handlePayForHosts(Context ctx) {

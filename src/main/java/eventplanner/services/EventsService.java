@@ -60,10 +60,10 @@ public class EventsService {
     }
 
     // This method is for getting all available public events
-    // For now, we can assume all available events are already payed
+    // For now, we can assume all available events are already paid
     // If we need improvement in the future, we can modify this method and related stored procedures
-    public List<Event> getAvailableEvents() {
-        List<Event> events = new ArrayList<>();
+    public List<Map<String, Object>> getAvailableEvents() {
+        List<Map<String, Object>> events = new ArrayList<>();
         String query = "{CALL ShowAvailableEvents}"; // Stored procedure call
 
         Connection conn = null;
@@ -78,32 +78,22 @@ public class EventsService {
             while (rs.next()) {
                 SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm a, MMM d, yyyy");
 
-                Event event = new Event(
-                    rs.getInt("Id"),
-                    rs.getString("Name"),
-                    dateFormat.format(new Date(rs.getTimestamp("StartTime").getTime())),
-                    dateFormat.format(new Date(rs.getTimestamp("EndTime").getTime())),
-                    rs.getInt("Price"),
-                    rs.getInt("VenueId"),
-                    rs.getString("VenueName"),
-                    rs.getString("VenueAddress"),
-                    rs.getInt("MaxCapacity"),
-                    dateFormat.format(new Date(rs.getTimestamp("RegistrationDeadline").getTime())),
-            true,
-       true
-                );
+                Map<String, Object> event = new HashMap<>();
+                event.put("id", rs.getInt("ID"));
+                event.put("name", rs.getString("Name"));
+                event.put("startTime", dateFormat.format(new Date(rs.getTimestamp("StartTime").getTime())));
+                event.put("endTime", dateFormat.format(new Date(rs.getTimestamp("EndTime").getTime())));
+                event.put("price", rs.getInt("Price"));
+                event.put("venueId", rs.getInt("VenueId"));
+                event.put("venueName", rs.getString("VenueName"));
+                event.put("venueAddress", rs.getString("VenueAddress"));
+                event.put("maxCapacity", rs.getInt("MaxCapacity"));
+                event.put("registrationDeadline", dateFormat.format(new Date(rs.getTimestamp("RegistrationDeadline").getTime())));
+                event.put("remainingSeats", rs.getInt("RemainingSeats"));
                 events.add(event);
             }
         } catch (SQLException e) {
             System.err.println("Error fetching available events: " + e.getMessage());
-        } finally {
-            try {
-                if (rs != null) rs.close();
-                if (stmt != null) stmt.close();
-                // if (conn != null) conn.close();
-            } catch (SQLException e) {
-                System.err.println("Error closing resources: " + e.getMessage());
-            }
         }
         System.out.println("Database returned " + events.size() + " events.");
         return events;

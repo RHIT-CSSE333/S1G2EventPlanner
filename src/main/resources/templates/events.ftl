@@ -56,6 +56,7 @@
                         <th>Venue</th>
                         <th>Address</th>
                         <th>Max Capacity</th>
+                        <th>Remaining Seats</th>
                         <th>Registration Deadline</th>
                         <th>Register</th>
                     </#if>
@@ -82,8 +83,21 @@
                             <td><a href="/venue/${event.venueId}">${event.venueName}</a></td>
                             <td>${event.venueAddress}</td>
                             <td>${event.maxCapacity}</td>
+                            <td>
+                                <#if event.remainingSeats gt 0>
+                                    ${event.remainingSeats}
+                                <#else>
+                                    <span style="color: red;">Full</span>
+                                </#if>
+                            </td>
                             <td>${event.registrationDeadline}</td>
-                            <td><a href="/event/${event.id}/register">Register</a></td>
+                            <td>
+                                <#if event.remainingSeats gt 0>
+                                    <a href="/event/${event.id}/register">Register</a>
+                                <#else>
+                                    <span style="color: gray;">Not Available</span>
+                                </#if>
+                            </td>
                         </#if>
                     </tr>
                 </#list>
