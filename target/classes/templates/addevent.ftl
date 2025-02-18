@@ -45,10 +45,6 @@
                 <input type="number" id="price" name="price" min="0" required>
             </div>
             <div>
-                <label for="maxCapacity">Max Capacity:</label>
-                <input type="number" id="maxCapacity" name="maxCapacity" min="1" required>
-            </div>
-            <div>
                 <label for="registrationDeadline">Registration Deadline:</label>
                 <input type="datetime-local" id="registrationDeadline" name="registrationDeadline" required>
             </div>

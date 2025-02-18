@@ -1,12 +1,12 @@
-eventplanner\services\EventsService$EventFinancialInfoReturnType.class
+eventplanner\services\VenuesService.class
 eventplanner\Main.class
-eventplanner\models\Venue.class
 eventplanner\models\User.class
 eventplanner\services\EncryptionServices.class
-eventplanner\models\Event.class
-eventplanner\services\VenuesService.class
 eventplanner\services\UserService.class
-eventplanner\services\EventsService.class
 eventplanner\services\DatabaseConnectionService.class
+eventplanner\services\EventsService$EventFinancialInfoReturnType.class
 eventplanner\models\Venue$PricingType.class
+eventplanner\models\Venue.class
+eventplanner\models\Event.class
 eventplanner\services\EventsService$EventReturnType.class
+eventplanner\services\EventsService.class
