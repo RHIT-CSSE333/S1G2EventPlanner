@@ -205,7 +205,7 @@ public class VenuesService {
 
     public List<Map<String, Object>> getVenueReviews(int venueId) {
         List<Map<String, Object>> reviews = new ArrayList<>();
-        String query = "EXEC ShowVenueReviews ?";  // 需要在 SQL 里创建这个存储过程
+        String query = "EXEC ShowVenueReviews ?";
 
         try {
             Connection conn = dbService.getConnection();
