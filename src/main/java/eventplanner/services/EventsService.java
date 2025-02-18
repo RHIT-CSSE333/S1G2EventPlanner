@@ -809,4 +809,23 @@ public class EventsService {
         }
     }
 
+    public int getRemainingSeatsForPrivateEvent(int eventId) {
+        String sql = "{CALL GetRemainingSeatsForPrivateEvent(?)}";
+        int remainingSeats = -1;
+
+        try {
+            Connection conn = dbService.getConnection();
+            CallableStatement stmt = conn.prepareCall(sql);
+            stmt.setInt(1, eventId);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                remainingSeats = rs.getInt("RemainingSeats");
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching remaining seats for private event: " + e.getMessage());
+        }
+        return remainingSeats;
+    }
+
 }

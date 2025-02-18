@@ -195,6 +195,7 @@ public class VenuesService {
 
                 );
                 venues.add(venue);
+                System.out.println("Venue fetched: " + (venue != null ? venue.getName() : "null"));
             }
         } catch (SQLException e) {
             System.err.println("Error fetching venues: " + e.getMessage());

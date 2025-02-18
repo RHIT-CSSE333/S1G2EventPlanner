@@ -431,6 +431,8 @@ public class Main {
                 errorMessage = "Invitations are only allowed for private events.";
             }
 
+            int remainingSeats = eventsService.getRemainingSeatsForPrivateEvent(eventId);
+
             // check registration date
             if (errorMessage == null) {
                 Date registrationDeadline = event.getRegistrationDeadlineDate();
@@ -448,6 +450,7 @@ public class Main {
 
             ctx.render("invite.ftl", Map.of(
                     "event", event,
+                    "remainingSeats", remainingSeats,
                     "error", errorMessage == null ? "" : errorMessage
             ));
             System.out.println("Handling event/{id}/invite request");
@@ -748,6 +751,8 @@ public class Main {
         VenuesService venuesService = new VenuesService(dbService);
 
         Venue venue = venuesService.getVenue(venueId);
+        System.out.println("Venue fetched: " + venue);
+
         List<Event> eventsForVenue = venuesService.getEventsForVenue(venueId);
 
         ctx.render("venue.ftl", Map.of("venue", venue,
