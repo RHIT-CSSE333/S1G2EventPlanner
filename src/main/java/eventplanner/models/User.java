@@ -42,6 +42,10 @@ public class User {
         return FirstName;
     }
 
+    public String getMinit() {
+        return Minit;
+    }
+
     public String getLastName() {
         return LastName;
     }
