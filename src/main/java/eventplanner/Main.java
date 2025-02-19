@@ -620,7 +620,7 @@ public class Main {
         if (userObj == null) {
             ctx.render("updateinfo.ftl", Map.of("type", "name", "error", "User not found"));
         } else {
-            ctx.render("updateinfo.ftl", Map.of("type", "name", "user", userObj));
+            ctx.render("updateinfo.ftl", Map.of("type", "name", "user", userObj, "error", ""));
         }
     }
 
@@ -637,7 +637,7 @@ public class Main {
         if (userObj == null) {
             ctx.render("updateinfo.ftl", Map.of("type", "email", "error", "User not found"));
         } else {
-            ctx.render("updateinfo.ftl", Map.of("type", "email", "user", userObj));
+            ctx.render("updateinfo.ftl", Map.of("type", "email", "user", userObj, "error", ""));
         }
     }
 
@@ -654,7 +654,7 @@ public class Main {
         if (userObj == null) {
             ctx.render("updateinfo.ftl", Map.of("type", "phone", "error", "User not found"));
         } else {
-            ctx.render("updateinfo.ftl", Map.of("type", "phone", "user", userObj));
+            ctx.render("updateinfo.ftl", Map.of("type", "phone", "user", userObj, "error", ""));
         }
     }
 
@@ -666,13 +666,14 @@ public class Main {
         }
 
         UserService userService = new UserService(dbService);
+        User userObj = userService.getUserData(user);
         String newFirst = ctx.formParam("firstName");
         String newM = ctx.formParam("Minit");
         String newLast = ctx.formParam("lastName");
         if (userService.updateName(user, newFirst, newM, newLast)) {
-            ctx.render("success.ftl");
+            ctx.redirect("/personalinfo");
         } else {
-            ctx.result("error");
+            ctx.render("updateinfo.ftl", Map.of("type", "name", "user", userObj, "error", "Failed to update name"));
         }
     }
 
@@ -684,14 +685,14 @@ public class Main {
         }
 
         UserService userService = new UserService(dbService);
+        User userObj = userService.getUserData(user);
         String newEmail = ctx.formParam("email");
         if (userService.updateEmail(user, newEmail)) {
-            ctx.render("success.ftl");
+            ctx.redirect("/personalinfo");
         } else {
-            ctx.result("error");
+            ctx.render("updateinfo.ftl", Map.of("type", "email", "user", userObj, "error", "Email already in use"));
         }
     }
-
     private static void handleUpdatePhoneNo(@NotNull Context ctx) {
         Integer user = ctx.sessionAttribute("userId");
         if (user == null) {
@@ -700,13 +701,15 @@ public class Main {
         }
 
         UserService userService = new UserService(dbService);
+        User userObj = userService.getUserData(user);
         String newPhoneNo = ctx.formParam("phoneNo");
         if (userService.updatePhoneNo(user, newPhoneNo)) {
-            ctx.render("success.ftl");
+            ctx.redirect("/personalinfo");
         } else {
-            ctx.result("error");
+            ctx.render("updateinfo.ftl", Map.of("type", "phone", "user", userObj, "error", "Phone number already in use"));
         }
     }
+
 
     private static void handleAddReview(Context ctx) {
         Integer user = ctx.sessionAttribute("userId");

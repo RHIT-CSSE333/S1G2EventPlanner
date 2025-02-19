@@ -47,6 +47,7 @@
             <button class="submit-btn" type="submit">Submit Update</button>
             <br><br>
             <a href="/personalinfo">Return</a>
+            <p class="error">${error}</p>
         </div>
     </form>
 </body>
