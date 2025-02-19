@@ -5,6 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Event Planner - Personal Info</title>
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        .info-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            max-width: 600px;
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .info-row {
+            display: contents;
+        }
+        .info-row p {
+            margin: 0;
+        }
+        .info-row a {
+            justify-self: end;
+        }
+    </style>
 </head>
 <body>
     <div class="nav">
@@ -22,11 +43,22 @@
 
     <!-- Personal Info -->
     <#if user??>
-        <div class="container">
-            <p>Full Name: ${user.fullName} <a href="/info/updateName"><button>Change Name</button></a></p>
-            <p>Email: ${user.email} <a href="/info/updateEmail"><button>Change Email</button></a></p>
-            <p>Phone Number: ${user.phoneNo} <a href="/info/updatePhoneNo"><button>Change Phone Number</button></a></p>
-            <p>Date of Birth: ${user.DOB}</p>
+        <div class="info-container container">
+            <div class="info-row">
+                <p>Full Name: ${user.fullName}</p>
+                <a href="/info/updateName">Change Name</a>
+            </div>
+            <div class="info-row">
+                <p>Email: ${user.email}</p>
+                <a href="/info/updateEmail">Change Email</a>
+            </div>
+            <div class="info-row">
+                <p>Phone Number: ${user.phoneNo}</p>
+                <a href="/info/updatePhoneNo">Change Phone Number</a>
+            </div>
+            <div class="info-row">
+                <p>Date of Birth: ${user.DOB}</p>
+            </div>
         </div>
     <#else>
         <p>${message}</p>

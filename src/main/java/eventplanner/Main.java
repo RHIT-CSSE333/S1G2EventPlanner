@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
@@ -32,10 +31,10 @@ import eventplanner.services.EventsService;
 import eventplanner.services.EventsService.EventCheckInReturnType;
 import eventplanner.services.EventsService.EventFinancialInfoReturnType;
 import eventplanner.services.EventsService.EventReturnType;
+import eventplanner.services.HelperService;
 import eventplanner.services.UserService;
 import eventplanner.services.VendorService;
 import eventplanner.services.VenuesService;
-import eventplanner.services.HelperService;
 import freemarker.template.Configuration;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
@@ -81,9 +80,9 @@ public class Main {
             app.get("/event/{id}/invitees-rsvp-status", Main::handleInviteesRSVPStatus);
             app.get("/inbox", Main::handleInbox);
             app.get("/personalinfo", Main::handlePersonalInfo);
-            app.get("/info/updateName", ctx -> ctx.render("/updateinfo.ftl", Map.of("type", "name")));
-            app.get("/info/updateEmail", ctx -> ctx.render("/updateinfo.ftl", Map.of("type", "email")));
-            app.get("/info/updatePhoneNo", ctx -> ctx.render("/updateinfo.ftl", Map.of("type", "phone")));
+            app.get("/info/updateName", Main::handleUpdateNameGet);
+            app.get("/info/updateEmail", Main::handleUpdateEmailGet);
+            app.get("/info/updatePhoneNo", Main::handleUpdatePhoneNoGet);
             app.get("/pastevents", Main::handlePastEvents);
             app.get("/pay/host/{eventId}", Main::handlePayForHosts);
             app.get("/pay/guest/{eventId}", Main::handlePayForGuests);
@@ -605,6 +604,57 @@ public class Main {
             ctx.render("success.ftl");
         } else {
             ctx.result("error");
+        }
+    }
+
+    private static void handleUpdateNameGet(@NotNull Context ctx) {
+        Integer user = ctx.sessionAttribute("userId");
+        if (user == null) {
+            ctx.redirect("/login");
+            return;
+        }
+
+        UserService userService = new UserService(dbService);
+        User userObj = userService.getUserData(user);
+
+        if (userObj == null) {
+            ctx.render("updateinfo.ftl", Map.of("type", "name", "error", "User not found"));
+        } else {
+            ctx.render("updateinfo.ftl", Map.of("type", "name", "user", userObj));
+        }
+    }
+
+    public static void handleUpdateEmailGet(@NotNull Context ctx) {
+        Integer user = ctx.sessionAttribute("userId");
+        if (user == null) {
+            ctx.redirect("/login");
+            return;
+        }
+
+        UserService userService = new UserService(dbService);
+        User userObj = userService.getUserData(user);
+
+        if (userObj == null) {
+            ctx.render("updateinfo.ftl", Map.of("type", "email", "error", "User not found"));
+        } else {
+            ctx.render("updateinfo.ftl", Map.of("type", "email", "user", userObj));
+        }
+    }
+
+    public static void handleUpdatePhoneNoGet(@NotNull Context ctx) {
+        Integer user = ctx.sessionAttribute("userId");
+        if (user == null) {
+            ctx.redirect("/login");
+            return;
+        }
+
+        UserService userService = new UserService(dbService);
+        User userObj = userService.getUserData(user);
+
+        if (userObj == null) {
+            ctx.render("updateinfo.ftl", Map.of("type", "phone", "error", "User not found"));
+        } else {
+            ctx.render("updateinfo.ftl", Map.of("type", "phone", "user", userObj));
         }
     }
 
