@@ -43,11 +43,11 @@ public class EventsService {
         }
     }
 
-    public class EventCheckInReturnType {
+    public class EventSprocReturnType {
         public boolean success;
         public String errorMessage;
 
-        public EventCheckInReturnType(boolean success, String errorMessage) {
+        public EventSprocReturnType(boolean success, String errorMessage) {
             this.success = success;
             this.errorMessage = errorMessage;
         }
@@ -241,10 +241,10 @@ public class EventsService {
         return events;
     }
 
-    public boolean registerForEvent(int personId, int eventId) {
+    public EventSprocReturnType registerForEvent(int personId, int eventId) {
         Connection conn = dbService.getConnection();
         if (conn == null) {
-            return false;
+            return new EventSprocReturnType(false, "Internal Server Error (no connection to db)");
         }
 
         try {
@@ -254,11 +254,11 @@ public class EventsService {
             stmt.setInt(3, eventId);
             stmt.execute();
 
-            return true;
+            return new EventSprocReturnType(true, "");
 
         } catch (SQLException e) {
             System.err.println("Error logging in: " + e.getMessage());
-            return false;
+            return new EventSprocReturnType(false, e.getMessage());
         }
     }
 
@@ -788,7 +788,7 @@ public class EventsService {
         }
     }
 
-    public EventCheckInReturnType checkIn(Integer personId, String checkInId) {
+    public EventSprocReturnType checkIn(Integer personId, String checkInId) {
         String query = "{CALL CheckIn(?, ?)}";
         Connection conn = null;
         CallableStatement stmt = null;
@@ -801,11 +801,11 @@ public class EventsService {
 
             stmt.execute();
 
-            return new EventCheckInReturnType(true, "");
+            return new EventSprocReturnType(true, "");
 
         } catch (SQLException e) {
             System.out.println("EventCheckInReturnType: " + e.getMessage());
-            return new EventCheckInReturnType(false, e.getMessage());
+            return new EventSprocReturnType(false, e.getMessage());
         }
     }
 

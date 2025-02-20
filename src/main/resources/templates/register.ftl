@@ -19,29 +19,29 @@
             </div>
             <div>
                 <label for="phoneNo">Phone Number:</label>
-                <input type="tel" id="phoneNo" name="phone" required>
+                <input type="tel" id="phoneNo" name="phone" value ="${phone}" required>
             </div>
         </div>
 
         <div class="form-group">
             <div>
                 <label for="firstName">First Name:</label>
-                <input type="text" id="firstName" name="firstName" pattern=".*\S.*" title="Field cannot be blank or contain only spaces" required>
+                <input type="text" id="firstName" name="firstName" value ="${firstName}" pattern=".*\S.*" title="Field cannot be blank or contain only spaces" required>
             </div>
             <div>
                 <label for="middleInit">Middle Initial (Optional):</label>
-                <input type="text" id="middleInit" name="middleInit" maxlength="1">
+                <input type="text" id="middleInit" name="middleInit" value="${middleInit}" maxlength="1">
             </div>
             <div>
                 <label for="lastName">Last Name:</label>
-                <input type="text" id="lastName" name="lastName" pattern=".*\S.*" title="Field cannot be blank or contain only spaces" required>
+                <input type="text" id="lastName" name="lastName" value ="${lastName}" pattern=".*\S.*" title="Field cannot be blank or contain only spaces" required>
             </div>
         </div>
 
         <div class="form-group">
             <div>
                 <label for="dob">Date of Birth:</label>
-                <input type="date" id="dob" name="dob" required>
+                <input type="date" id="dob" name="dob" value ="${dob}" required>
             </div>
         </div>
 
