@@ -42,7 +42,7 @@
             <tbody>
             <#list events as event>
                 <tr>
-                    <td>${event.name}</td>
+                    <td><a href="/event/${event.id}/services">${event.name}</a></td>
                     <td>${event.startTime}</td>
                     <td>${event.endTime}</td>
                     <td>${event.venueName}</td>
