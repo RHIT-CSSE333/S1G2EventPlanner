@@ -20,7 +20,7 @@
             </div>
             <div>
                 <span>Private or public:</span>
-                <input type="radio" id="private" name="event-type" value="private" />
+                <input type="radio" id="private" name="event-type" value="private" required />
                 <label for="private">Private</label>
 
                 <input type="radio" id="public" name="event-type" value="public" />
