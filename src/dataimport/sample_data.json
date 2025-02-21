@@ -1,0 +1,118 @@
+{
+    "People": [
+        {
+            "unique_username": "alice.j",
+            "first_name": "Alice",
+            "middle_initial": "M",
+            "last_name": "Johnson",
+            "date_of_birth": "1990-03-15",
+            "email": "alice.j@example.com",
+            "phone_number": "5551234567",
+            "reviews_written": [
+                {
+                    "venue_id": 1,
+                    "title": "Beautiful Wedding Venue",
+                    "rating": 5,
+                    "description": "Perfect venue for our wedding!",
+                    "posted_on": "2025-06-02 09:00:00"
+                }
+            ],
+            "events_hosted": [
+                {
+                    "id": 1,
+                    "name": "Alice & Bob Wedding",
+                    "start_time": "2025-06-01 14:00:00",
+                    "end_time": "2025-06-01 20:00:00",
+                    "venue": {
+                        "name": "The Grand Hall",
+                        "max_capacity": 300,
+                        "pricing_type": 1,
+                        "price": 500.00,
+                        "state": "NY",
+                        "city": "New York",
+                        "street_address": "123 Main St",
+                        "zip_code": 10001
+                    },
+                    "is_public": false,
+                    "price": 0,
+                    "registration_deadline": "2025-05-15 23:59:59",
+                    "payment_status": true,
+                    "payment_id": "EVT_PAY_001",
+                    "check_in_id": "CHK_001",
+                    "co-hosts": [
+                        "bob.m"
+                    ],
+                    "attendees": [
+                        {
+                            "person_id": 3,
+                            "invited": 1,
+                            "rsvp_status": 1,
+                            "attendance": 1,
+                            "payment_status": true,
+                            "payment_id": "ATT_PAY_001"
+                        }
+                    ],
+                    "vendor_services": [
+                        {
+                            "vendor": "Party Time Catering",
+                            "services": [
+                                {
+                                    "name": "Catering Package",
+                                    "description": "Full-service catering for events",
+                                    "price": 2000.00
+                                }
+                            ]
+                        }
+                    ],
+                    "pending_invitations": [
+                        {
+                            "person_email": "david.r@example.com",
+                            "invitation_id": "INV_001"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "Venues": [
+        {
+            "name": "The Grand Hall",
+            "max_capacity": 300,
+            "pricing_type": 1,
+            "price": 500.00,
+            "state": "NY",
+            "city": "New York",
+            "street_address": "123 Main St",
+            "zip_code": 10001,
+            "reviews": [
+                {
+                    "person_id": 1,
+                    "title": "Beautiful Wedding Venue",
+                    "rating": 5,
+                    "description": "Perfect venue for our wedding!",
+                    "posted_on": "2025-06-02 09:00:00"
+                }
+            ]
+        }
+    ],
+    "Vendors": [
+        {
+            "id": 1,
+            "name": "Party Time Catering",
+            "services_provided": [
+                {
+                    "id": 1,
+                    "name": "Catering Package",
+                    "description": "Full-service catering for events",
+                    "price": 2000.00
+                },
+                {
+                    "id": 2,
+                    "name": "Flower Arrangements",
+                    "description": "Custom floral displays",
+                    "price": 500.00
+                }
+            ]
+        }
+    ]
+}
