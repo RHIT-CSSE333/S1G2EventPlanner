@@ -75,7 +75,8 @@ public class VendorService {
                 rs.getString("Name"),
                 rs.getString("Description"),
                 rs.getDouble("Price"),
-                rs.getInt("VendorID")
+                rs.getInt("VendorID"),
+                ""
                 );
                 services.add(service);
             }
@@ -100,7 +101,8 @@ public class VendorService {
                 rs.getString("Name"),
                 rs.getString("Description"),
                 rs.getDouble("Price"),
-                rs.getInt("VendorID")
+                rs.getInt("VendorID"),
+                ""
                 );
                 services.add(service);
             }

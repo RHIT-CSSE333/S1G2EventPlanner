@@ -368,7 +368,8 @@ public class EventsService {
                     rs.getString("ServiceName"),
                     rs.getString("Description"),
                     rs.getDouble("Price"),
-                    -1
+                    -1,
+                    rs.getString("VendorName")
                 );
 
                 services.add(service);
