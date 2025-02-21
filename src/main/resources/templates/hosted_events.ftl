@@ -79,7 +79,11 @@
                     </td>
 
                     <td>
-                        <a href="/qr/${event.id}">Check In</a>
+                        <#if !event.isPublic>
+                            <a href="/qr/${event.id}">Check In</a>
+                        <#else>
+                            N/A
+                        </#if>
                     </td>
                 </tr>
             </#list>
