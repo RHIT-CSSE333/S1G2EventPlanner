@@ -7,104 +7,321 @@
             "last_name": "Johnson",
             "date_of_birth": "1990-03-15",
             "email": "alice.j@example.com",
-            "phone_number": "5551234567",
-            "reviews_written": [
-                {
-                    "venue_id": 1,
-                    "title": "Beautiful Wedding Venue",
-                    "rating": 5,
-                    "description": "Perfect venue for our wedding!",
-                    "posted_on": "2025-06-02 09:00:00"
-                }
-            ],
+            "phone_number": "+1-555-123-4567",
             "events_hosted": [
                 {
-                    "id": 1,
                     "name": "Alice & Bob Wedding",
                     "start_time": "2025-06-01 14:00:00",
                     "end_time": "2025-06-01 20:00:00",
                     "venue": {
                         "name": "The Grand Hall",
-                        "max_capacity": 300,
-                        "pricing_type": 1,
-                        "price": 500.00,
-                        "state": "NY",
                         "city": "New York",
-                        "street_address": "123 Main St",
-                        "zip_code": 10001
+                        "state": "NY"
                     },
-                    "is_public": false,
-                    "price": 0,
-                    "registration_deadline": "2025-05-15 23:59:59",
                     "attendees": [
-                        {
-                            "person_id": 3,
-                            "invited": 1,
-                            "rsvp_status": 1,
-                            "attendance": 1,
-                            "payment_status": true,
-                            "payment_id": "ATT_PAY_001"
-                        }
+                        "cathy.w",
+                        "bob.m"
                     ],
                     "vendor_services": [
                         {
                             "vendor": "Party Time Catering",
                             "services": [
-                                {
-                                    "name": "Catering Package",
-                                    "description": "Full-service catering for events",
-                                    "price": 2000.00
-                                }
+                                "Catering Package",
+                                "Flower Arrangements",
+                                "DJ Services"
                             ]
-                        }
-                    ],
-                    "pending_invitations": [
-                        {
-                            "person_email": "david.r@example.com",
-                            "invitation_id": "INV_001"
                         }
                     ]
                 }
             ]
+        },
+        {
+            "unique_username": "bob.m",
+            "first_name": "Bob",
+            "middle_initial": "K",
+            "last_name": "Smith",
+            "date_of_birth": "1985-07-20",
+            "email": "bob.smith@example.com",
+            "phone_number": "+1-555-234-5678"
+        },
+        {
+            "unique_username": "cathy.w",
+            "first_name": "Cathy",
+            "middle_initial": "L",
+            "last_name": "Wang",
+            "date_of_birth": "1998-12-01",
+            "email": "cathy.wang@example.com",
+            "phone_number": "+1-555-345-6789",
+            "events_hosted": [
+                {
+                    "name": "Summer Rooftop Party",
+                    "start_time": "2025-08-10 18:00:00",
+                    "end_time": "2025-08-10 23:00:00",
+                    "venue": {
+                        "name": "Rooftop Terrace",
+                        "city": "Chicago",
+                        "state": "IL"
+                    },
+                    "attendees": [
+                        "mary.l",
+                        "dylan.l",
+                        "bob.m"
+                    ],
+                    "vendor_services": [
+                        {
+                            "vendor": "Elite Florists",
+                            "services": [
+                                "Flower Arrangements",
+                                "Bouquet Design"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "unique_username": "dylan.l",
+            "first_name": "Dylan",
+            "middle_initial": "R",
+            "last_name": "Lee",
+            "date_of_birth": "1979-01-09",
+            "email": "dylan.lee@example.com",
+            "phone_number": "+1-555-456-7890",
+            "events_hosted": []
+        },
+        {
+            "unique_username": "mary.l",
+            "first_name": "Mary",
+            "middle_initial": "A",
+            "last_name": "Lee",
+            "date_of_birth": "1982-04-30",
+            "email": "mary.l@example.com",
+            "phone_number": "+1-555-567-8901",
+            "events_hosted": []
+        },
+        {
+            "unique_username": "emma.k",
+            "first_name": "Emma",
+            "middle_initial": "J",
+            "last_name": "King",
+            "date_of_birth": "1993-11-25",
+            "email": "emma.king@example.com",
+            "phone_number": "+1-555-678-9012",
+            "events_hosted": [
+                {
+                    "name": "New Year Gala",
+                    "start_time": "2025-12-31 21:00:00",
+                    "end_time": "2026-01-01 02:00:00",
+                    "venue": {
+                        "name": "Conference Center",
+                        "city": "San Francisco",
+                        "state": "CA"
+                    },
+                    "co-hosts": [
+                        "cathy.w"
+                    ],
+                    "attendees": [
+                        "alice.j",
+                        "bob.m"
+                    ],
+                    "vendor_services": [
+                        {
+                            "vendor": "Memories Photography",
+                            "services": [
+                                "Event Photography",
+                                "Photo Booth"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "unique_username": "john.d",
+            "first_name": "John",
+            "middle_initial": "H",
+            "last_name": "Doe",
+            "date_of_birth": "1995-05-14",
+            "email": "john.doe@example.com",
+            "phone_number": "+1-555-789-0123",
+            "payment_info": {
+                "card_number": "6011111111111117",
+                "expiration_date": "2027-03",
+                "cvv": "654"
+            },
+            "events_hosted": []
         }
     ],
     "Venues": [
         {
             "name": "The Grand Hall",
             "max_capacity": 300,
-            "pricing_type": 1,
+            "pricing_type": "Per hour",
             "price": 500.00,
             "state": "NY",
             "city": "New York",
             "street_address": "123 Main St",
-            "zip_code": 10001,
-            "reviews": [
-                {
-                    "person_id": 1,
-                    "title": "Beautiful Wedding Venue",
-                    "rating": 5,
-                    "description": "Perfect venue for our wedding!",
-                    "posted_on": "2025-06-02 09:00:00"
-                }
-            ]
+            "zip_code": "10001"
+        },
+        {
+            "name": "Conference Center",
+            "max_capacity": 500,
+            "pricing_type": "Per hour",
+            "price": 50.00,
+            "state": "CA",
+            "city": "San Francisco",
+            "street_address": "456 Elm St",
+            "zip_code": "94102"
+        },
+        {
+            "name": "Rooftop Terrace",
+            "max_capacity": 100,
+            "pricing_type": "Per hour",
+            "price": 200.00,
+            "state": "IL",
+            "city": "Chicago",
+            "street_address": "789 Oak St",
+            "zip_code": "60611"
+        },
+        {
+            "name": "Lakeside Pavilion",
+            "max_capacity": 150,
+            "pricing_type": "Per day",
+            "price": 300.00,
+            "state": "TX",
+            "city": "Austin",
+            "street_address": "321 Lake St",
+            "zip_code": "73301"
+        },
+        {
+            "name": "Downtown Loft",
+            "max_capacity": 75,
+            "pricing_type": "Per day",
+            "price": 75.00,
+            "state": "MA",
+            "city": "Boston",
+            "street_address": "987 River Rd",
+            "zip_code": "02108"
+        },
+        {
+            "name": "Sunset Ballroom",
+            "max_capacity": 250,
+            "pricing_type": "Per day",
+            "price": 450.00,
+            "state": "FL",
+            "city": "Miami",
+            "street_address": "654 Ocean Ave",
+            "zip_code": "33101"
+        },
+        {
+            "name": "Garden Grove",
+            "max_capacity": 120,
+            "pricing_type": "Per hour",
+            "price": 100.00,
+            "state": "WA",
+            "city": "Seattle",
+            "street_address": "111 Pine St",
+            "zip_code": "98101"
         }
     ],
     "Vendors": [
         {
-            "id": 1,
             "name": "Party Time Catering",
             "services_provided": [
                 {
-                    "id": 1,
                     "name": "Catering Package",
                     "description": "Full-service catering for events",
                     "price": 2000.00
                 },
                 {
-                    "id": 2,
                     "name": "Flower Arrangements",
                     "description": "Custom floral displays",
                     "price": 500.00
+                },
+                {
+                    "name": "DJ Services",
+                    "description": "DJ and sound system",
+                    "price": 1200.00
+                }
+            ]
+        },
+        {
+            "name": "Elite Florists",
+            "services_provided": [
+                {
+                    "name": "Flower Arrangements",
+                    "description": "Custom elite floral displays",
+                    "price": 800.00
+                },
+                {
+                    "name": "Bouquet Design",
+                    "description": "Handcrafted floral bouquets",
+                    "price": 350.00
+                }
+            ]
+        },
+        {
+            "name": "City Sound DJs",
+            "services_provided": [
+                {
+                    "name": "DJ Services",
+                    "description": "Professional DJ and sound system",
+                    "price": 1200.00
+                }
+            ]
+        },
+        {
+            "name": "Event Magic Rentals",
+            "services_provided": [
+                {
+                    "name": "Furniture Rental",
+                    "description": "Tables, chairs, and decor",
+                    "price": 1000.00
+                },
+                {
+                    "name": "Lighting Setup",
+                    "description": "Professional event lighting",
+                    "price": 750.00
+                }
+            ]
+        },
+        {
+            "name": "Gourmet Chefs",
+            "services_provided": [
+                {
+                    "name": "Custom Menu",
+                    "description": "Tailored gourmet meals",
+                    "price": 2500.00
+                }
+            ]
+        },
+        {
+            "name": "Memories Photography",
+            "services_provided": [
+                {
+                    "name": "Event Photography",
+                    "description": "Full-day photography coverage",
+                    "price": 1500.00
+                },
+                {
+                    "name": "Photo Booth",
+                    "description": "Fun photo booth setup",
+                    "price": 600.00
+                }
+            ]
+        },
+        {
+            "name": "Sweet Treats Bakery",
+            "services_provided": [
+                {
+                    "name": "Custom Cakes",
+                    "description": "Designed cakes for any occasion",
+                    "price": 1200.00
+                },
+                {
+                    "name": "Dessert Table",
+                    "description": "Selection of gourmet desserts",
+                    "price": 800.00
                 }
             ]
         }
