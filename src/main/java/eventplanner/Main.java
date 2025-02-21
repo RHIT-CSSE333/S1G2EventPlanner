@@ -44,6 +44,8 @@ import io.javalin.rendering.template.JavalinFreemarker;
 
 public class Main {
 
+    // test
+
     private static final String appUrl = "http://localhost:7070/";
 
     private static String serverUsername = null;
