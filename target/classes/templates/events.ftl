@@ -30,7 +30,7 @@
     <p><a href="/venues" class="create-event-button">Browse Venues</a></p>
 
     <#if userSpecific>
-        <h2>Future Events</h2>
+        <h2>All registered Events</h2>
     <#else>
         <h2>Future Public Events</h2>
     </#if>
@@ -69,7 +69,13 @@
                             <td>${event.venueName}</td>
                             <td>${event.venueAddress}</td>
                             <td><#if event.isPublic>Public<#else>Private</#if></td>
-                            <td><a href="/event/${event.id}/cancel">Cancel registration</a></td>
+                            <td>
+                                <#if event.startTime?datetime("hh:mm a, MMM d, yyyy") lt .now>
+                                    <span style="color: gray;">Not Available</span>
+                                <#else>
+                                    <a href="/event/${event.id}/cancel">Cancel registration</a>
+                                </#if>
+                            </td>
 
                         <#else>
                             <td>${event.name}</td>
