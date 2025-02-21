@@ -856,7 +856,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE     PROCEDURE [dbo].[GetFinancialInfoForHost]
+CREATE OR ALTER     PROCEDURE [dbo].[GetFinancialInfoForHost]
 	@EventID int,
     @Price decimal(10, 2) OUTPUT,
 	@PaymentId char(50) OUTPUT
@@ -916,14 +916,13 @@ BEGIN
     ELSE IF @PricingType = 1    -- Daily pricing
     BEGIN
         SET @Price = ((DATEDIFF(DAY, @StartTime, @EndTime) + 1) * @VenuePrice);
-		IF (@ServicePrice IS NOT NULL AND @ServicePrice > 0)
-			SET @Price = @Price + @ServicePrice;
     END
 	ELSE
 	BEGIN
 		;throw 50004, 'Error: Unknown pricing type', 3;
 	END
-
+	IF (@ServicePrice IS NOT NULL AND @ServicePrice > 0)
+		SET @Price = @Price + @ServicePrice;
 	SET @PaymentId = @EventPaymentId
 
 END;
@@ -1093,7 +1092,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER   procedure [dbo].[CheckIn]
+CREATE OR ALTER   procedure [dbo].[CheckIn]
 (
 	@PersonId int,
 	@CheckInId char(50)
@@ -1304,7 +1303,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER     PROCEDURE [dbo].[CreateEvent]
+CREATE OR ALTER     PROCEDURE [dbo].[CreateEvent]
     @Name NVARCHAR(100),
     @StartTime DATETIME,
     @EndTime DATETIME,
@@ -1535,7 +1534,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER   PROCEDURE [dbo].[CreatePrivateEvent]
+CREATE OR ALTER   PROCEDURE [dbo].[CreatePrivateEvent]
     @Name NVARCHAR(100),
     @StartTime DATETIME,
     @EndTime DATETIME,
@@ -2978,7 +2977,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-ALTER PROCEDURE [dbo].[GetServicesByEvent] (
+CREATE OR ALTER PROCEDURE [dbo].[GetServicesByEvent] (
 	@EventID int
 )
 AS

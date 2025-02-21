@@ -52,7 +52,7 @@
 
         <button type="submit" class="submit-btn">Create Event</button>
 
-        <div class="form-group"></div>
+        <div class="form-group">
             <h3>Services</h3>
             <div id="servicesContainer">
             <div class="service">
