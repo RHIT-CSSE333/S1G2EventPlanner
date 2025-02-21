@@ -37,7 +37,7 @@
                     <th>State</th>
                     <th>City</th>
                     <th>Street Address</th>
-                    <th>ZipCode</th>
+                    <th>Zip Code</th>
                     <th>Reviews</th>
                 </tr>
                 </thead>
@@ -58,7 +58,7 @@
                         <td>${venue.state}</td>
                         <td>${venue.city}</td>
                         <td>${venue.streetAddress}</td>
-                        <td>${venue.zipCode}</td>
+                        <td>${venue.zipCode?c}</td>
                         <td><a href="/venue/${venue.id}/reviews">See Reviews</a></td>
                     </tr>
                 </#list>

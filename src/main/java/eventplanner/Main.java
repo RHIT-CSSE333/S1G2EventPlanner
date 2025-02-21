@@ -28,11 +28,13 @@ import eventplanner.models.Venue;
 import eventplanner.services.DatabaseConnectionService;
 import eventplanner.services.EncryptionServices;
 import eventplanner.services.EventsService;
-import eventplanner.services.EventsService.EventCheckInReturnType;
 import eventplanner.services.EventsService.EventFinancialInfoReturnType;
 import eventplanner.services.EventsService.EventReturnType;
+import eventplanner.services.EventsService.EventSprocReturnType;
 import eventplanner.services.HelperService;
 import eventplanner.services.UserService;
+import eventplanner.services.UserService.RegisterUserReturnType;
+import eventplanner.services.UserService.UserSprocReturnType;
 import eventplanner.services.VendorService;
 import eventplanner.services.VenuesService;
 import freemarker.template.Configuration;
@@ -60,7 +62,7 @@ public class Main {
                 config.fileRenderer(new JavalinFreemarker(getFreemarkerConfiguration()));
             }).start(7070);
 
-            app.get("/", ctx -> ctx.render("/index.ftl"));
+            app.get("/", Main::handleIndex);
             app.get("/login", ctx -> ctx.render("/login.ftl", Map.of("error", "")));
             app.get("/signup", Main::handleSignupIII);
             app.get("/logout", Main::handleLogout);
@@ -118,6 +120,15 @@ public class Main {
 
     }
 
+    private static void handleIndex(Context ctx) {
+        Integer userId = ctx.sessionAttribute("userId");
+        if (userId == null) {
+            ctx.render("/index.ftl");
+        } else {
+            ctx.render("/main.ftl");
+        }
+    }
+
     private static void handleCheckIn(Context ctx) {
         Integer userId = ctx.sessionAttribute("userId");
         if (userId == null) {
@@ -128,12 +139,12 @@ public class Main {
         String checkInId = ctx.pathParam("checkInId");
 
         EventsService eventsService = new EventsService(dbService);
-        EventCheckInReturnType eventCheckInReturn = eventsService.checkIn(userId, checkInId);
+        EventSprocReturnType eventCheckInReturn = eventsService.checkIn(userId, checkInId);
 
         if (eventCheckInReturn.success) {
             ctx.render("success.ftl", Map.of("message", "Checked in successfully."));
         } else {
-            ctx.result(eventCheckInReturn.errorMessage);
+            ctx.render("error.ftl", Map.of("error", eventCheckInReturn.errorMessage));
         }
     }
 
@@ -154,7 +165,7 @@ public class Main {
             ctx.render("/qr.ftl", Map.of("checkInId", checkInId));
 
         } else {
-            ctx.result("You are not authorized to check in for this event");
+            ctx.render("error.ftl", Map.of("error", "You are not authorized to check in for this event"));
         }
     }
 
@@ -162,16 +173,16 @@ public class Main {
         String invitationId = ctx.queryParam("via");
 
         if (invitationId == null) {
-            ctx.render("/register.ftl", Map.of("error", "", "email", ""));
+            ctx.render("/register.ftl", Map.of("email", "", "phone", "", "firstName", "", "middleInit", "", "lastName", "", "dob", "", "error", ""));
 
         } else {
             UserService userService = new UserService(dbService);
             String email = userService.getEmailForPendingInvitation(invitationId);
 
             if (email == null) {
-                ctx.render("/register.ftl", Map.of("error", "Invitation not found", "email", ""));
+                ctx.render("/register.ftl", Map.of("error", "Invitation not found", "email", "", "phone", "", "firstName", "", "middleInit", "", "lastName", "", "dob", ""));
             } else {
-                ctx.render("/register.ftl", Map.of("error", "",  "email", email));
+                ctx.render("/register.ftl", Map.of("error", "",  "email", email, "phone", "", "firstName", "", "middleInit", "", "lastName", "", "dob", ""));
             }
         }
 
@@ -212,12 +223,6 @@ public class Main {
     }
 
     private static void handleVenueReviews(@NotNull Context ctx) {
-        Integer user = ctx.sessionAttribute("userId");
-        if (user == null) {
-            ctx.redirect("/login");
-            return;
-        }
-
         int venueId = Integer.parseInt(ctx.pathParam("id"));
         VenuesService venuesService = new VenuesService(dbService);
 
@@ -306,7 +311,7 @@ public class Main {
                 if (success) {
                     ctx.render("success.ftl");
                 } else {
-                    ctx.result("Failed to update RSVP status or paymentinfo.");
+                    ctx.render("error.ftl", Map.of("error", "Failed to update RSVP status or paymentinfo."));
                 }
             }
         } else {
@@ -315,7 +320,7 @@ public class Main {
             if (success) {
                 ctx.render("success.ftl");
             } else {
-                ctx.result("Failed to update RSVP status.");
+                ctx.render("error.ftl", Map.of("error", "Failed to update RSVP status."));
             }
         }
     }
@@ -345,7 +350,7 @@ public class Main {
         Event event = eventsService.getEventById(eventId);
 
         if (event.getIsPublic()) {
-            ctx.result("Public events do not have RSVP status to display.");
+            ctx.render("error.ftl", Map.of("error", "Public events do not have RSVP status to display."));
             return;
         }
 
@@ -415,14 +420,14 @@ public class Main {
 
             if (!dbService.isConnected()) {
                 logger.error("Debugging: Database connection lost while handling invite page");
-                ctx.status(500).result("Database connection error");
+                ctx.render("error.ftl", Map.of("error", "Database connection error"));
                 return;
             }
 
             String errorMessage = null;
             if (event == null) {
                 logger.error("Event not found with ID: {}", eventId);
-                ctx.status(404).result("Event not found");
+                ctx.render("error.ftl", Map.of("error", "Event not found"));
                 return;
             }
 
@@ -455,7 +460,7 @@ public class Main {
             System.out.println("Handling event/{id}/invite request");
         } catch (Exception e) {
             logger.error("Error in handleInvitePage: ", e);
-            ctx.status(500).result("Internal Server Error");
+            ctx.render("error.ftl", Map.of("error", e.getMessage()));
         }
     }
 
@@ -520,10 +525,10 @@ public class Main {
             UserService userService = new UserService(dbService);
             EventsService eventsService = new EventsService(dbService);
 
-            int personId = userService.registerUser(email, phone, firstName, middleInit, lastName, dob, null, null, null, password);
+            RegisterUserReturnType returnVal = userService.registerUser(email, phone, firstName, middleInit, lastName, dob, password);
 
-            if (personId != -1) {
-                int pendingInvitationsStatus = eventsService.completePendingInvitations(personId, email);
+            if (returnVal.personId != -1) {
+                int pendingInvitationsStatus = eventsService.completePendingInvitations(returnVal.personId, email);
 
                 if (pendingInvitationsStatus == 0) {
                     ctx.redirect("/login");
@@ -540,12 +545,12 @@ public class Main {
             
             } else {
                 hasError = true;
-                error.append("<li>Registration failed on the database side</li>");
+                error.append("<li>" + returnVal.errorMsg + "</li>");
             }
         }
 
         if (hasError) {
-            ctx.render("register.ftl", Map.of("email", "", "error", error.toString()));
+            ctx.render("register.ftl", Map.of("email", email, "phone", phone, "firstName", firstName, "middleInit", middleInit, "lastName", lastName, "dob", dob, "error", error.toString()));
         }
     }
 
@@ -558,6 +563,7 @@ public class Main {
         Integer user = ctx.sessionAttribute("userId");
         if (user == null) {
             ctx.redirect("/login");
+            return;
         }
 
         EventsService eventsService = new EventsService(dbService);
@@ -594,16 +600,19 @@ public class Main {
         Integer user = ctx.sessionAttribute("userId");
         if (user == null) {
             ctx.redirect("/login");
+            return;
         }
 
         int eventId = Integer.parseInt(ctx.pathParam("id"));
         int userId = user.intValue();
         EventsService eventsService = new EventsService(dbService);
 
-        if (eventsService.registerForEvent(userId, eventId)) {
+        EventSprocReturnType returnVal = eventsService.registerForEvent(userId, eventId, HelperService.generateRandomIdOfLength50());
+
+        if (returnVal.success) {
             ctx.render("success.ftl");
         } else {
-            ctx.result("error");
+            ctx.render("error.ftl", Map.of("error", returnVal.errorMessage));
         }
     }
 
@@ -726,10 +735,12 @@ public class Main {
         int rating = Integer.parseInt(ctx.formParam("rating"));
         String desc = ctx.formParam("description");
 
-        if (userService.leaveReview(userId, -1, eventId, title, rating, desc)) {
+        UserSprocReturnType returnVal = userService.leaveReview(userId, -1, eventId, title, rating, desc);
+
+        if (returnVal.success) {
             ctx.render("success.ftl");
         } else {
-            ctx.result("error");
+            ctx.render("error.ftl", Map.of("error", returnVal.errorMsg));
         }
     }
 
@@ -748,10 +759,12 @@ public class Main {
         int rating = Integer.parseInt(ctx.formParam("rating"));
         String desc = ctx.formParam("description");
 
-        if (userService.leaveReview(userId, venueId, -1, title, rating, desc)) {
+        UserSprocReturnType returnVal = userService.leaveReview(userId, venueId, -1, title, rating, desc);
+
+        if (returnVal.success) {
             ctx.render("success.ftl");
         } else {
-            ctx.result("error");
+            ctx.render("error.ftl", Map.of("error", returnVal.errorMsg));
         }
     }
 
@@ -778,7 +791,7 @@ public class Main {
         if (success) {
             ctx.render("success.ftl");
         } else {
-            ctx.result("Failed to cancel registration.");
+            ctx.render("error.ftl", Map.of("error", "Failed to cancel registration"));
         }
     }
 
@@ -819,82 +832,84 @@ public class Main {
 
         ctx.render("addevent.ftl", Map.of("error", "",  
                             "services", services));
+    }
+
+    private static void handleAddEventPost(Context ctx) {
+        int venueId = Integer.parseInt(ctx.pathParam("id"));
+        String name = ctx.formParam("name");
+        String eventType = ctx.formParam("event-type");
+        String startTime = ctx.formParam("startTime");
+        String endTime = ctx.formParam("endTime");
+        String registrationDeadline = ctx.formParam("registrationDeadline");
+        double price = Double.parseDouble(ctx.formParam("price"));
+        Integer userId = ctx.sessionAttribute("userId");
+
+        if (userId == null) {
+            ctx.render("addevent.ftl", Map.of("error", "You must be logged in to create an event."));
+            return;
         }
 
-        private static void handleAddEventPost(Context ctx) {
-            int venueId = Integer.parseInt(ctx.pathParam("id"));
-            String name = ctx.formParam("name");
-            String eventType = ctx.formParam("event-type");
-            String startTime = ctx.formParam("startTime");
-            String endTime = ctx.formParam("endTime");
-            String registrationDeadline = ctx.formParam("registrationDeadline");
-            double price = Double.parseDouble(ctx.formParam("price"));
-            Integer userId = ctx.sessionAttribute("userId");
+        EventsService eventsService = new EventsService(dbService);
+        EventReturnType eventCreated = null;
+        String paymentId = null;
+        String checkInId = null;
 
-            if (userId == null) {
-                ctx.render("addevent.ftl", Map.of("error", "You must be logged in to create an event."));
-                return;
+        try {
+            paymentId = HelperService.generateRandomIdOfLength50();
+
+            if ("private".equals(eventType)) {
+                checkInId = HelperService.generateRandomIdOfLength50();
+                eventCreated = eventsService.createEvent(name, startTime, endTime, venueId, price, registrationDeadline, userId, paymentId, false, checkInId);
+
+            } else if ("public".equals(eventType)) {
+                eventCreated = eventsService.createEvent(name, startTime, endTime, venueId, price, registrationDeadline, userId, paymentId, true, checkInId);
+
             }
 
-            EventsService eventsService = new EventsService(dbService);
-            EventReturnType eventCreated = null;
-            String paymentId = null;
-
-            try {
-                paymentId = HelperService.generateRandomIdOfLength50();
-
-                if ("private".equals(eventType)) {
-                eventCreated = eventsService.createEvent(name, startTime, endTime, venueId, price, registrationDeadline, userId, paymentId, false);
-
-                } else if ("public".equals(eventType)) {
-                eventCreated = eventsService.createEvent(name, startTime, endTime, venueId, price, registrationDeadline, userId, paymentId, true);
-
-                }
-
-                if (eventCreated.success) {
+            if (eventCreated.success) {
                 int eventId = eventCreated.eventId;
                 int serviceCount = Integer.parseInt(ctx.formParam("serviceCount"));
                 for (int i = 0; i < serviceCount; i++) {
                     String serviceIdParam = "services[" + i + "].id";
                     String serviceIdStr = ctx.formParam(serviceIdParam);
                     if (serviceIdStr != null && !serviceIdStr.isEmpty()) {
-                    int serviceId = Integer.parseInt(serviceIdStr);
-                    eventsService.addServiceToEvent(eventId, serviceId);
+                        int serviceId = Integer.parseInt(serviceIdStr);
+                        eventsService.addServiceToEvent(eventId, serviceId);
                     }
                 }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                ctx.render("addevent.ftl", Map.of("error", "Database error: " + e.getMessage()));
-                return;
             }
-
-            if (eventCreated.success) {
-                if (price != 0)
-                ctx.redirect("/pay/host/" + String.valueOf(eventCreated.eventId));
-                else
-                ctx.redirect("/hostedevents");
-
-            } else {
-                ctx.render("addevent.ftl", Map.of("error", eventCreated.errorMessage));
-            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            ctx.render("addevent.ftl", Map.of("error", "Database error: " + e.getMessage()));
+            return;
         }
 
-        private static void handlePayForHosts(Context ctx) {
+        if (eventCreated.success) {
+            if (price != 0)
+            ctx.redirect("/pay/host/" + String.valueOf(eventCreated.eventId));
+            else
+            ctx.redirect("/hostedevents");
+
+        } else {
+            ctx.render("addevent.ftl", Map.of("error", eventCreated.errorMessage));
+        }
+    }
+
+    private static void handlePayForHosts(Context ctx) {
         int eventId = Integer.parseInt(ctx.pathParam("eventId"));
         
         EventsService eventsService = new EventsService(dbService);
         EventFinancialInfoReturnType eventFinancialInfo = eventsService.getFinancialInfoForHost(eventId);
 
         if (!eventFinancialInfo.success) {
-            ctx.result("error getting financial information for some weird reason hahahahahahah" + eventFinancialInfo.errorMessage);
+            ctx.render("error.ftl", Map.of("error", "Error getting financial info: " + eventFinancialInfo.errorMessage));
         } else {
             String url = buildPaymentUrlForHosts(eventFinancialInfo.paymentId, eventFinancialInfo.price);
             ctx.redirect(url);
         }
-        }
+    }
 
-        private static void handlePayForGuests(Context ctx) {
+    private static void handlePayForGuests(Context ctx) {
         int eventId = Integer.parseInt(ctx.pathParam("eventId"));
         int userId = ctx.sessionAttribute("userId");
         
@@ -902,7 +917,7 @@ public class Main {
         EventFinancialInfoReturnType eventFinancialInfo = eventsService.getFinancialInfoForGuest(eventId, userId);
 
         if (!eventFinancialInfo.success) {
-            ctx.result("error getting financial information for some weird reason hahahahahahah" + eventFinancialInfo.errorMessage);
+            ctx.render("error.ftl", Map.of("error", "Error getting financial info: " + eventFinancialInfo.errorMessage));
         } else {
             String url = buildPaymentUrlForGuests(eventFinancialInfo.paymentId, eventFinancialInfo.price);
             ctx.redirect(url);
@@ -919,11 +934,11 @@ public class Main {
             if (eventsService.addSuccessfulPaymentForHosts(paymentId, userId)) {
                 ctx.redirect("/hostedevents");
             } else {
-                ctx.result("errro");
+                ctx.render("error.ftl", Map.of("error", "Payment was not successful"));
             }
             
         } else {
-            ctx.result("you can't just fake your payment lil bro");
+            ctx.render("error.ftl", Map.of("error", "Payment doesn't exist. Please pay again"));
         }
     }
 
@@ -939,11 +954,11 @@ public class Main {
             if (eventsService.addSuccessfulPaymentForGuests(paymentId, userId)) {
                 ctx.redirect("/inbox");
             } else {
-                ctx.result("errro");
+                ctx.render("error.ftl", Map.of("error", "Payment was not successful"));
             }
             
         } else {
-            ctx.result("you can't just fake your payment lil bro");
+            ctx.render("error.ftl", Map.of("error", "Payment does not exist. Please pay again"));
         }
     }
 

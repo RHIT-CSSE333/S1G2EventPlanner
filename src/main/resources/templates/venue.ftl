@@ -24,6 +24,8 @@
         <li>Max capacity: ${venue.maxCapacity}</li>
         <li>Address: ${venue.getAddress()}</li>
     </ul>
+    
+    <a href="/venue/${venue.id}/reviews">See reviews</a>
     <a href="/venue/${venue.id}/addevent">Create a new event</a>
 
     <h2>Available Public Events</h2>

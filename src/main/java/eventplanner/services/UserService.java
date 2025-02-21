@@ -22,7 +22,28 @@ import javax.swing.JOptionPane;
 
 import eventplanner.models.User;
 
-public class UserService { ;
+public class UserService {
+
+    public class RegisterUserReturnType {
+        public int personId;
+        public String errorMsg;
+
+        public RegisterUserReturnType(int personId, String errorMsg) {
+            this.personId = personId;
+            this.errorMsg = errorMsg;
+        }
+    }
+
+    public class UserSprocReturnType {
+        public boolean success;
+        public String errorMsg;
+
+        public UserSprocReturnType(boolean success, String errorMsg) {
+            this.success = success;
+            this.errorMsg = errorMsg;
+        }
+    }
+
     private static final Random RANDOM = new SecureRandom();
     private static final Base64.Encoder enc = Base64.getEncoder();
     private static final Base64.Decoder dec = Base64.getDecoder();
@@ -37,12 +58,12 @@ public class UserService { ;
      *
      * @return Id of the new Person record if registration succeeds, -1 otherwise.
      */
-    public int registerUser(String email, String phoneNo, String firstName, String middleInit, String lastName,
-                                String dob, String ccNum, String ccExpDate, String cvv, String password) {
+    public RegisterUserReturnType registerUser(String email, String phoneNo, String firstName, String middleInit, String lastName,
+                                String dob, String password) {
         Connection conn = dbService.getConnection();
         if (conn == null) {
             System.err.println("Database connection failed.");
-            return -1;
+            return new RegisterUserReturnType(-1, "Database connection failed.");
         }
 
         byte[] salt = getNewSalt();
@@ -51,7 +72,7 @@ public class UserService { ;
         CallableStatement stmt = null;
 
         try {
-            String storedProcedure = "{CALL CreatePerson(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}";
+            String storedProcedure = "{CALL CreatePerson(?, ?, ?, ?, ?, ?, ?, ?, ?)}";
             stmt = conn.prepareCall(storedProcedure);
 
             stmt.setString(1, email);
@@ -59,21 +80,18 @@ public class UserService { ;
             stmt.setString(3, firstName);
             stmt.setString(4, middleInit == null || middleInit.isEmpty() ? null : middleInit);   // Nullable field
             stmt.setString(5, lastName);
-            stmt.setString(6, dob);
-            stmt.setString(7, ccNum == null || ccNum.isEmpty() ? null : ccNum);        // Nullable field
-            stmt.setString(8, ccExpDate == null || ccExpDate.isEmpty() ? null : ccExpDate);   // Nullable field
-            stmt.setString(9, cvv == null || cvv.isEmpty() ? null : cvv);         // Nullable field
-            stmt.setString(10, hashedPassword);
-            stmt.setString(11, saltString);
-            stmt.registerOutParameter(12, Types.INTEGER);
+            stmt.setString(6, dob);        // Nullable field
+            stmt.setString(7, hashedPassword);
+            stmt.setString(8, saltString);
+            stmt.registerOutParameter(9, Types.INTEGER);
 
             stmt.executeUpdate();
 
-            return stmt.getInt(12);
+            return new RegisterUserReturnType(stmt.getInt(9), "");
         
         } catch (SQLException e) {
             System.err.println("Error registering user: " + e.getMessage());
-            return -1;
+            return new RegisterUserReturnType(-1, e.getMessage());
         }
     }
 
@@ -234,12 +252,11 @@ public class UserService { ;
      *
      * @return true if registration succeeds, false otherwise.
      */
-	public boolean leaveReview(int PersonID, Integer VenueID, Integer EventID, String Title, int Rating,
+	public UserSprocReturnType leaveReview(int PersonID, Integer VenueID, Integer EventID, String Title, int Rating,
 	                            String Desc) {
 	    Connection conn = dbService.getConnection();
 	    if (conn == null) {
-	        JOptionPane.showMessageDialog(null, "Database connection failed.");
-	        return false;
+	        return new UserSprocReturnType(false, "Internal Server Error (no db connection)");
 	    }
 
 	    try {
@@ -279,13 +296,16 @@ public class UserService { ;
  	        	JOptionPane.showMessageDialog(null, "ERROR: Same user cannot leave more than 1 review per Event or Venue.");
  	        } else if (returnCode == 5) {
  	        	JOptionPane.showMessageDialog(null, "ERROR: Rating must be between 1 and 5.");
- 	        } else
+ 	        } else {
  	        	JOptionPane.showMessageDialog(null, "ERROR: Unknown error has occured.");
-	        return returnCode == 0;
+            }
+
+            return new UserSprocReturnType(returnCode == 0, returnCode == 0 ? "" : "Unknown error");
+                
 	    } catch (SQLException e) {
 	        System.err.println("Error leaving review: " + e.getMessage());
 	        e.printStackTrace();
-	        return false;
+	        return new UserSprocReturnType(false, e.getMessage());
 	    }
 	}
 

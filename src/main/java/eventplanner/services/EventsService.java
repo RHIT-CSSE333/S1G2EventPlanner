@@ -43,11 +43,11 @@ public class EventsService {
         }
     }
 
-    public class EventCheckInReturnType {
+    public class EventSprocReturnType {
         public boolean success;
         public String errorMessage;
 
-        public EventCheckInReturnType(boolean success, String errorMessage) {
+        public EventSprocReturnType(boolean success, String errorMessage) {
             this.success = success;
             this.errorMessage = errorMessage;
         }
@@ -102,8 +102,8 @@ public class EventsService {
     
 
     public EventReturnType createEvent(String name, String startTime, String endTime, int venueId, double price,
-                                        String registrattionDeadline, int hostPersonId, String paymentId, boolean isPublic) {
-        String query = "{call CreateEvent(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}";
+                                        String registrattionDeadline, int hostPersonId, String paymentId, boolean isPublic, String checkInId) {
+        String query = "{call CreateEvent(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}";
 
         Connection conn = null;
         CallableStatement stmt = null;
@@ -126,11 +126,12 @@ public class EventsService {
             stmt.setBoolean(8, paymentStatus);
             stmt.setString(9, paymentId);
             stmt.setBoolean(10, isPublic);
-            stmt.registerOutParameter(11, Types.INTEGER);
+            stmt.setString(11, checkInId);
+            stmt.registerOutParameter(12, Types.INTEGER);
 
             stmt.execute();
 
-            int eventId = stmt.getInt(11);
+            int eventId = stmt.getInt(12);
             System.out.println("Created Private Event with ID: " + eventId);
 
             return new EventReturnType(eventId > 0, eventId, "");
@@ -241,24 +242,25 @@ public class EventsService {
         return events;
     }
 
-    public boolean registerForEvent(int personId, int eventId) {
+    public EventSprocReturnType registerForEvent(int personId, int eventId, String paymentId) {
         Connection conn = dbService.getConnection();
         if (conn == null) {
-            return false;
+            return new EventSprocReturnType(false, "Internal Server Error (no connection to db)");
         }
 
         try {
-            CallableStatement stmt = conn.prepareCall("{? = call RegisterForEvent(?, ?)}");
+            CallableStatement stmt = conn.prepareCall("{? = call RegisterForEvent(?, ?, ?)}");
             stmt.registerOutParameter(1, Types.INTEGER);
             stmt.setInt(2, personId);
             stmt.setInt(3, eventId);
+            stmt.setString(4, paymentId);
             stmt.execute();
 
-            return true;
+            return new EventSprocReturnType(true, "");
 
         } catch (SQLException e) {
-            System.err.println("Error logging in: " + e.getMessage());
-            return false;
+            System.err.println("Error registering: " + e.getMessage());
+            return new EventSprocReturnType(false, e.getMessage());
         }
     }
 
@@ -278,7 +280,7 @@ public class EventsService {
             return true;
 
         } catch (SQLException e) {
-            System.err.println("Error logging in: " + e.getMessage());
+            System.err.println("Error canceling registration: " + e.getMessage());
             return false;
         }
     }
@@ -788,7 +790,7 @@ public class EventsService {
         }
     }
 
-    public EventCheckInReturnType checkIn(Integer personId, String checkInId) {
+    public EventSprocReturnType checkIn(Integer personId, String checkInId) {
         String query = "{CALL CheckIn(?, ?)}";
         Connection conn = null;
         CallableStatement stmt = null;
@@ -801,11 +803,11 @@ public class EventsService {
 
             stmt.execute();
 
-            return new EventCheckInReturnType(true, "");
+            return new EventSprocReturnType(true, "");
 
         } catch (SQLException e) {
             System.out.println("EventCheckInReturnType: " + e.getMessage());
-            return new EventCheckInReturnType(false, e.getMessage());
+            return new EventSprocReturnType(false, e.getMessage());
         }
     }
 
