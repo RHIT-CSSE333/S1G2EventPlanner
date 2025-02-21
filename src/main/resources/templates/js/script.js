@@ -21,20 +21,3 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 
-// document.addEventListener("DOMContentLoaded", function () {
-//     const loginForm = document.getElementById("loginForm");
-
-//     loginForm.addEventListener("submit", function (event) {
-//         event.preventDefault();
-
-//         const email = document.getElementById("email").value;
-//         const password = document.getElementById("password").value;
-
-//         // TODO: validation check
-//         if (email && password) {
-//             window.location.href = "index.ftl"; // Redirect to index.ftl
-//         } else {
-//             alert("Please fill out both fields.");
-//         }
-//     });
-// });
