@@ -760,13 +760,17 @@ public class Main {
         UserService userService = new UserService(dbService);
 
         String title = ctx.formParam("title");
+        if(ctx.formParam("rating") == null || ctx.formParam("rating").isEmpty()) {
+            ctx.render("review.ftl", Map.of("error", "Rating cannot be empty"));
+            return;
+        }
         int rating = Integer.parseInt(ctx.formParam("rating"));
         String desc = ctx.formParam("description");
 
         UserSprocReturnType returnVal = userService.leaveReview(userId, venueId, -1, title, rating, desc);
 
         if (returnVal.success) {
-            ctx.render("review.ftl");
+            ctx.render("success.ftl");
         } else {
             ctx.render("review.ftl", Map.of("error", returnVal.errorMsg));
         }
