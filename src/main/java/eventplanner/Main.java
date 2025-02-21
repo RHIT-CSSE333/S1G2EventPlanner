@@ -186,6 +186,12 @@ public class Main {
     }
 
     private static void handleSignupIII(Context ctx) {
+        Integer user = ctx.sessionAttribute("userId");
+        if (user != null) {
+            ctx.redirect("/");
+            return;
+        }
+
         String invitationId = ctx.queryParam("via");
 
         if (invitationId == null) {
@@ -297,10 +303,6 @@ public class Main {
         } else {
             ctx.render("personalinfo.ftl", Map.of("user", user, "message", "", "userSpecific", true));
         }
-    }
-
-    private static void handlePayment(@NotNull Context ctx) {
-
     }
 
     private static void handleRSVP(@NotNull Context ctx) {
@@ -498,6 +500,12 @@ public class Main {
     }
 
     private static void handleLogin(Context ctx) {
+        Integer userId = ctx.sessionAttribute("userId");
+        if (userId != null) {
+            ctx.redirect("/");
+            return;
+        }
+
         String email = ctx.formParam("email");
         String password = ctx.formParam("password");
 
@@ -513,6 +521,12 @@ public class Main {
     }
 
     private static void handleSignup(Context ctx) {
+        Integer userId = ctx.sessionAttribute("userId");
+        if (userId != null) {
+            ctx.redirect("/");
+            return;
+        }
+
         boolean hasError = false;
         StringBuilder error = new StringBuilder();
         
@@ -571,6 +585,12 @@ public class Main {
     }
 
     private static void handleLogout(Context ctx) {
+        Integer userId = ctx.sessionAttribute("userId");
+        if (userId == null) {
+            ctx.redirect("/login");
+            return;
+        }
+
         ctx.req().getSession().invalidate();
         ctx.redirect("/");
     }
@@ -796,6 +816,7 @@ public class Main {
         Integer user = ctx.sessionAttribute("userId");
         if (user == null) {
             ctx.redirect("/login");
+            return;
         }
 
         int eventId = Integer.parseInt(ctx.pathParam("id"));
@@ -836,7 +857,6 @@ public class Main {
     }
 
     private static void handleVenuePage(Context ctx) {
-        // TODO: convert to UTC on server when adding event
         int venueId = Integer.parseInt(ctx.pathParam("id"));
         VenuesService venuesService = new VenuesService(dbService);
 
@@ -851,6 +871,12 @@ public class Main {
     }
 
     private static void handlePublicEvent(Context ctx) {
+        Integer userId = ctx.sessionAttribute("userId");
+        if (userId == null) {
+            ctx.redirect("/login");
+            return;
+        }
+
         VendorService vendorService = new VendorService(dbService);
         List<Service> services = vendorService.getAllServices();
 
@@ -859,6 +885,12 @@ public class Main {
     }
 
     private static void handleAddEventPost(Context ctx) {
+        Integer userId = ctx.sessionAttribute("userId");
+        if (userId == null) {
+            ctx.render("addevent.ftl", Map.of("error", "You must be logged in to create an event."));
+            return;
+        }
+        
         int venueId = Integer.parseInt(ctx.pathParam("id"));
         String name = ctx.formParam("name");
         String eventType = ctx.formParam("event-type");
@@ -866,13 +898,7 @@ public class Main {
         String endTime = ctx.formParam("endTime");
         String registrationDeadline = ctx.formParam("registrationDeadline");
         double price = Double.parseDouble(ctx.formParam("price"));
-        Integer userId = ctx.sessionAttribute("userId");
-
-        if (userId == null) {
-            ctx.render("addevent.ftl", Map.of("error", "You must be logged in to create an event."));
-            return;
-        }
-
+        
         EventsService eventsService = new EventsService(dbService);
         EventReturnType eventCreated = null;
         String paymentId = null;
@@ -920,6 +946,12 @@ public class Main {
     }
 
     private static void handlePayForHosts(Context ctx) {
+        Integer userId = ctx.sessionAttribute("userId");
+        if (userId == null) {
+            ctx.redirect("/login");
+            return;
+        }
+
         int eventId = Integer.parseInt(ctx.pathParam("eventId"));
         
         EventsService eventsService = new EventsService(dbService);
@@ -934,8 +966,13 @@ public class Main {
     }
 
     private static void handlePayForGuests(Context ctx) {
+        Integer userId = ctx.sessionAttribute("userId");
+        if (userId == null) {
+            ctx.redirect("/login");
+            return;
+        }
+
         int eventId = Integer.parseInt(ctx.pathParam("eventId"));
-        int userId = ctx.sessionAttribute("userId");
         
         EventsService eventsService = new EventsService(dbService);
         EventFinancialInfoReturnType eventFinancialInfo = eventsService.getFinancialInfoForGuest(eventId, userId);
@@ -949,8 +986,13 @@ public class Main {
     }
 
     private static void handlePaymentSuccessForHosts(Context ctx) {
+        Integer userId = ctx.sessionAttribute("userId");
+        if (userId == null) {
+            ctx.redirect("/login");
+            return;
+        }
+
         String paymentId = ctx.queryParam("item");
-        int userId = ctx.sessionAttribute("userId");
         String paymentConfirmationId = ctx.queryParam("confirmation");
 
         if (isPaymentConfirmationValid(paymentConfirmationId)) {
@@ -967,8 +1009,13 @@ public class Main {
     }
 
     private static void handlePaymentSuccessForGuests(Context ctx) {
+        Integer userId = ctx.sessionAttribute("userId");
+        if (userId == null) {
+            ctx.redirect("/login");
+            return;
+        }
+
         String paymentId = ctx.queryParam("item");
-        int userId = ctx.sessionAttribute("userId");
 
         System.out.println(paymentId);
         String paymentConfirmationId = ctx.queryParam("confirmation");
