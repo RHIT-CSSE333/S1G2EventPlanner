@@ -29,6 +29,7 @@
                     <th>Service Name</th>
                     <th>Description</th>
                     <th>Price</th>
+                    <th>Vendor Name</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -37,6 +38,7 @@
                         <td>${service.name}</td>
                         <td>${service.description}</td>
                         <td>${service.price}</td>
+                        <td>${service.vendorName}</td>
                     </tr>
                 </#list>
                 </tbody>
