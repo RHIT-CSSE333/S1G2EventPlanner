@@ -24,5 +24,6 @@
         <a href="/">Return</a>
     </div>
     </form>
+    <p class="error">${error}</p>
 </body>
 </html>
