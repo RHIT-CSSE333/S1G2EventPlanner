@@ -102,8 +102,8 @@ public class EventsService {
     
 
     public EventReturnType createEvent(String name, String startTime, String endTime, int venueId, double price,
-                                        String registrattionDeadline, int hostPersonId, String paymentId, boolean isPublic) {
-        String query = "{call CreateEvent(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}";
+                                        String registrattionDeadline, int hostPersonId, String paymentId, boolean isPublic, String checkInId) {
+        String query = "{call CreateEvent(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}";
 
         Connection conn = null;
         CallableStatement stmt = null;
@@ -126,11 +126,12 @@ public class EventsService {
             stmt.setBoolean(8, paymentStatus);
             stmt.setString(9, paymentId);
             stmt.setBoolean(10, isPublic);
-            stmt.registerOutParameter(11, Types.INTEGER);
+            stmt.setString(11, checkInId);
+            stmt.registerOutParameter(12, Types.INTEGER);
 
             stmt.execute();
 
-            int eventId = stmt.getInt(11);
+            int eventId = stmt.getInt(12);
             System.out.println("Created Private Event with ID: " + eventId);
 
             return new EventReturnType(eventId > 0, eventId, "");
@@ -257,7 +258,7 @@ public class EventsService {
             return new EventSprocReturnType(true, "");
 
         } catch (SQLException e) {
-            System.err.println("Error logging in: " + e.getMessage());
+            System.err.println("Error registering: " + e.getMessage());
             return new EventSprocReturnType(false, e.getMessage());
         }
     }
@@ -278,7 +279,7 @@ public class EventsService {
             return true;
 
         } catch (SQLException e) {
-            System.err.println("Error logging in: " + e.getMessage());
+            System.err.println("Error canceling registration: " + e.getMessage());
             return false;
         }
     }

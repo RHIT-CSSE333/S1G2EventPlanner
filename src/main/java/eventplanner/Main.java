@@ -28,7 +28,6 @@ import eventplanner.models.Venue;
 import eventplanner.services.DatabaseConnectionService;
 import eventplanner.services.EncryptionServices;
 import eventplanner.services.EventsService;
-import eventplanner.services.EventsService.EventCheckInReturnType;
 import eventplanner.services.EventsService.EventFinancialInfoReturnType;
 import eventplanner.services.EventsService.EventReturnType;
 import eventplanner.services.EventsService.EventSprocReturnType;
@@ -124,9 +123,9 @@ public class Main {
     private static void handleIndex(Context ctx) {
         Integer userId = ctx.sessionAttribute("userId");
         if (userId == null) {
-            ctx.render("/index.ftl")
+            ctx.render("/index.ftl");
         } else {
-            ctx.render("/main.ftl")
+            ctx.render("/main.ftl");
         }
     }
 
@@ -224,12 +223,6 @@ public class Main {
     }
 
     private static void handleVenueReviews(@NotNull Context ctx) {
-        Integer user = ctx.sessionAttribute("userId");
-        if (user == null) {
-            ctx.redirect("/login");
-            return;
-        }
-
         int venueId = Integer.parseInt(ctx.pathParam("id"));
         VenuesService venuesService = new VenuesService(dbService);
 
@@ -570,6 +563,7 @@ public class Main {
         Integer user = ctx.sessionAttribute("userId");
         if (user == null) {
             ctx.redirect("/login");
+            return;
         }
 
         EventsService eventsService = new EventsService(dbService);
@@ -606,6 +600,7 @@ public class Main {
         Integer user = ctx.sessionAttribute("userId");
         if (user == null) {
             ctx.redirect("/login");
+            return;
         }
 
         int eventId = Integer.parseInt(ctx.pathParam("id"));
@@ -740,7 +735,7 @@ public class Main {
         int rating = Integer.parseInt(ctx.formParam("rating"));
         String desc = ctx.formParam("description");
 
-        UserSprocReturnType returnVal = userService.leaveReview(userId, -1, eventId, title, rating, desc)
+        UserSprocReturnType returnVal = userService.leaveReview(userId, -1, eventId, title, rating, desc);
 
         if (returnVal.success) {
             ctx.render("success.ftl");
@@ -857,15 +852,17 @@ public class Main {
         EventsService eventsService = new EventsService(dbService);
         EventReturnType eventCreated = null;
         String paymentId = null;
+        String checkInId = null;
 
         try {
             paymentId = HelperService.generateRandomIdOfLength50();
+            checkInId = HelperService.generateRandomIdOfLength50();
 
             if ("private".equals(eventType)) {
-                eventCreated = eventsService.createEvent(name, startTime, endTime, venueId, price, registrationDeadline, userId, paymentId, false);
+                eventCreated = eventsService.createEvent(name, startTime, endTime, venueId, price, registrationDeadline, userId, paymentId, false, checkInId);
 
             } else if ("public".equals(eventType)) {
-                eventCreated = eventsService.createEvent(name, startTime, endTime, venueId, price, registrationDeadline, userId, paymentId, true);
+                eventCreated = eventsService.createEvent(name, startTime, endTime, venueId, price, registrationDeadline, userId, paymentId, true, checkInId);
 
             }
 

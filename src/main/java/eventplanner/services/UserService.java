@@ -256,7 +256,7 @@ public class UserService {
 	                            String Desc) {
 	    Connection conn = dbService.getConnection();
 	    if (conn == null) {
-	        return new UserSprocReturnType(false, "Internal Server Error (no db connection)")
+	        return new UserSprocReturnType(false, "Internal Server Error (no db connection)");
 	    }
 
 	    try {
