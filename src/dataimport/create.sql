@@ -1,95 +1,97 @@
 USE [master]
 GO
---ALTER DATABASE EventPlannerS1G2_TEST SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
---DROP DATABASE EventPlannerS1G2_TEST;
+--ALTER DATABASE EventPlannerS1G2_DEMO SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+--DROP DATABASE EventPlannerS1G2_DEMO;
 GO
-/****** Object:  Database [EventPlannerS1G2_TEST]    Script Date: 2/21/2025 12:20:21 AM ******/
-CREATE DATABASE [EventPlannerS1G2_TEST]
+/****** Object:  Database [EventPlannerS1G2_DEMO]    Script Date: 2/21/2025 12:20:21 AM ******/
+CREATE DATABASE [EventPlannerS1G2_DEMO]
  CONTAINMENT = NONE
  ON  PRIMARY 
-( NAME = N'EventPlannerTESTData', FILENAME = N'c:\var\opt\mssql\data\EventPlannerS1G2_TEST.mdf' , SIZE = 20480KB , MAXSIZE = 92160KB , FILEGROWTH = 12%)
+( NAME = N'EventPlannerTESTData', FILENAME = N'c:\var\opt\mssql\data\EventPlannerS1G2_DEMO.mdf' , SIZE = 20480KB , MAXSIZE = 92160KB , FILEGROWTH = 12%)
  LOG ON 
-( NAME = N'EventPlannerTESTLog', FILENAME = N'c:\var\opt\mssql\data\EventPlannerS1G2_TEST.ldf' , SIZE = 51200KB , MAXSIZE = 51200KB , FILEGROWTH = 17%)
+( NAME = N'EventPlannerTESTLog', FILENAME = N'c:\var\opt\mssql\data\EventPlannerS1G2_DEMO.ldf' , SIZE = 51200KB , MAXSIZE = 51200KB , FILEGROWTH = 17%)
  WITH CATALOG_COLLATION = DATABASE_DEFAULT, LEDGER = OFF
 GO
-ALTER DATABASE [EventPlannerS1G2_TEST] SET COMPATIBILITY_LEVEL = 160
+ALTER DATABASE [EventPlannerS1G2_DEMO] SET COMPATIBILITY_LEVEL = 160
 GO
 IF (1 = FULLTEXTSERVICEPROPERTY('IsFullTextInstalled'))
 begin
-EXEC [EventPlannerS1G2_TEST].[dbo].[sp_fulltext_database] @action = 'enable'
+EXEC [EventPlannerS1G2_DEMO].[dbo].[sp_fulltext_database] @action = 'enable'
 end
 GO
-ALTER DATABASE [EventPlannerS1G2_TEST] SET ANSI_NULL_DEFAULT OFF 
+ALTER DATABASE [EventPlannerS1G2_DEMO] SET ANSI_NULL_DEFAULT OFF 
 GO
-ALTER DATABASE [EventPlannerS1G2_TEST] SET ANSI_NULLS OFF 
+ALTER DATABASE [EventPlannerS1G2_DEMO] SET ANSI_NULLS OFF 
 GO
-ALTER DATABASE [EventPlannerS1G2_TEST] SET ANSI_PADDING OFF 
+ALTER DATABASE [EventPlannerS1G2_DEMO] SET ANSI_PADDING OFF 
 GO
-ALTER DATABASE [EventPlannerS1G2_TEST] SET ANSI_WARNINGS OFF 
+ALTER DATABASE [EventPlannerS1G2_DEMO] SET ANSI_WARNINGS OFF 
 GO
-ALTER DATABASE [EventPlannerS1G2_TEST] SET ARITHABORT OFF 
+ALTER DATABASE [EventPlannerS1G2_DEMO] SET ARITHABORT OFF 
 GO
-ALTER DATABASE [EventPlannerS1G2_TEST] SET AUTO_CLOSE OFF 
+ALTER DATABASE [EventPlannerS1G2_DEMO] SET AUTO_CLOSE OFF 
 GO
-ALTER DATABASE [EventPlannerS1G2_TEST] SET AUTO_SHRINK OFF 
+ALTER DATABASE [EventPlannerS1G2_DEMO] SET AUTO_SHRINK OFF 
 GO
-ALTER DATABASE [EventPlannerS1G2_TEST] SET AUTO_UPDATE_STATISTICS ON 
+ALTER DATABASE [EventPlannerS1G2_DEMO] SET AUTO_UPDATE_STATISTICS ON 
 GO
-ALTER DATABASE [EventPlannerS1G2_TEST] SET CURSOR_CLOSE_ON_COMMIT OFF 
+ALTER DATABASE [EventPlannerS1G2_DEMO] SET CURSOR_CLOSE_ON_COMMIT OFF 
 GO
-ALTER DATABASE [EventPlannerS1G2_TEST] SET CURSOR_DEFAULT  GLOBAL 
+ALTER DATABASE [EventPlannerS1G2_DEMO] SET CURSOR_DEFAULT  GLOBAL 
 GO
-ALTER DATABASE [EventPlannerS1G2_TEST] SET CONCAT_NULL_YIELDS_NULL OFF 
+ALTER DATABASE [EventPlannerS1G2_DEMO] SET CONCAT_NULL_YIELDS_NULL OFF 
 GO
-ALTER DATABASE [EventPlannerS1G2_TEST] SET NUMERIC_ROUNDABORT OFF 
+ALTER DATABASE [EventPlannerS1G2_DEMO] SET NUMERIC_ROUNDABORT OFF 
 GO
-ALTER DATABASE [EventPlannerS1G2_TEST] SET QUOTED_IDENTIFIER OFF 
+ALTER DATABASE [EventPlannerS1G2_DEMO] SET QUOTED_IDENTIFIER OFF 
 GO
-ALTER DATABASE [EventPlannerS1G2_TEST] SET RECURSIVE_TRIGGERS OFF 
+ALTER DATABASE [EventPlannerS1G2_DEMO] SET RECURSIVE_TRIGGERS OFF 
 GO
-ALTER DATABASE [EventPlannerS1G2_TEST] SET  ENABLE_BROKER 
+ALTER DATABASE [EventPlannerS1G2_DEMO] SET  ENABLE_BROKER 
 GO
-ALTER DATABASE [EventPlannerS1G2_TEST] SET AUTO_UPDATE_STATISTICS_ASYNC OFF 
+ALTER DATABASE [EventPlannerS1G2_DEMO] SET AUTO_UPDATE_STATISTICS_ASYNC OFF 
 GO
-ALTER DATABASE [EventPlannerS1G2_TEST] SET DATE_CORRELATION_OPTIMIZATION OFF 
+ALTER DATABASE [EventPlannerS1G2_DEMO] SET DATE_CORRELATION_OPTIMIZATION OFF 
 GO
---ALTER DATABASE [EventPlannerS1G2_TEST] SET TRUSTWORTHY OFF 
+--ALTER DATABASE [EventPlannerS1G2_DEMO] SET TRUSTWORTHY OFF 
 --GO
-ALTER DATABASE [EventPlannerS1G2_TEST] SET ALLOW_SNAPSHOT_ISOLATION OFF 
+ALTER DATABASE [EventPlannerS1G2_DEMO] SET ALLOW_SNAPSHOT_ISOLATION OFF 
 GO
-ALTER DATABASE [EventPlannerS1G2_TEST] SET PARAMETERIZATION SIMPLE 
+ALTER DATABASE [EventPlannerS1G2_DEMO] SET PARAMETERIZATION SIMPLE 
 GO
-ALTER DATABASE [EventPlannerS1G2_TEST] SET READ_COMMITTED_SNAPSHOT OFF 
+ALTER DATABASE [EventPlannerS1G2_DEMO] SET READ_COMMITTED_SNAPSHOT OFF 
 GO
---ALTER DATABASE [EventPlannerS1G2_TEST] SET HONOR_BROKER_PRIORITY OFF 
+--ALTER DATABASE [EventPlannerS1G2_DEMO] SET HONOR_BROKER_PRIORITY OFF 
 --GO
-ALTER DATABASE [EventPlannerS1G2_TEST] SET RECOVERY FULL 
+ALTER DATABASE [EventPlannerS1G2_DEMO] SET RECOVERY FULL 
 GO
-ALTER DATABASE [EventPlannerS1G2_TEST] SET  MULTI_USER 
+ALTER DATABASE [EventPlannerS1G2_DEMO] SET  MULTI_USER 
 GO
-ALTER DATABASE [EventPlannerS1G2_TEST] SET PAGE_VERIFY CHECKSUM  
+ALTER DATABASE [EventPlannerS1G2_DEMO] SET PAGE_VERIFY CHECKSUM  
 GO
---ALTER DATABASE [EventPlannerS1G2_TEST] SET DB_CHAINING OFF 
+--ALTER DATABASE [EventPlannerS1G2_DEMO] SET DB_CHAINING OFF 
 --GO
-ALTER DATABASE [EventPlannerS1G2_TEST] SET FILESTREAM( NON_TRANSACTED_ACCESS = OFF ) 
+ALTER DATABASE [EventPlannerS1G2_DEMO] SET FILESTREAM( NON_TRANSACTED_ACCESS = OFF ) 
 GO
-ALTER DATABASE [EventPlannerS1G2_TEST] SET TARGET_RECOVERY_TIME = 60 SECONDS 
+ALTER DATABASE [EventPlannerS1G2_DEMO] SET TARGET_RECOVERY_TIME = 60 SECONDS 
 GO
-ALTER DATABASE [EventPlannerS1G2_TEST] SET DELAYED_DURABILITY = DISABLED 
+ALTER DATABASE [EventPlannerS1G2_DEMO] SET DELAYED_DURABILITY = DISABLED 
 GO
-ALTER DATABASE [EventPlannerS1G2_TEST] SET ACCELERATED_DATABASE_RECOVERY = OFF  
+ALTER DATABASE [EventPlannerS1G2_DEMO] SET ACCELERATED_DATABASE_RECOVERY = OFF  
 GO
-EXEC sys.sp_db_vardecimal_storage_format N'EventPlannerS1G2_TEST', N'ON'
+EXEC sys.sp_db_vardecimal_storage_format N'EventPlannerS1G2_DEMO', N'ON'
 GO
-ALTER DATABASE [EventPlannerS1G2_TEST] SET QUERY_STORE = ON
+ALTER DATABASE [EventPlannerS1G2_DEMO] SET QUERY_STORE = ON
 GO
-ALTER DATABASE [EventPlannerS1G2_TEST] SET QUERY_STORE (OPERATION_MODE = READ_WRITE, CLEANUP_POLICY = (STALE_QUERY_THRESHOLD_DAYS = 30), DATA_FLUSH_INTERVAL_SECONDS = 900, INTERVAL_LENGTH_MINUTES = 60, MAX_STORAGE_SIZE_MB = 1000, QUERY_CAPTURE_MODE = AUTO, SIZE_BASED_CLEANUP_MODE = AUTO, MAX_PLANS_PER_QUERY = 200, WAIT_STATS_CAPTURE_MODE = ON)
+ALTER DATABASE [EventPlannerS1G2_DEMO] SET QUERY_STORE (OPERATION_MODE = READ_WRITE, CLEANUP_POLICY = (STALE_QUERY_THRESHOLD_DAYS = 30), DATA_FLUSH_INTERVAL_SECONDS = 900, INTERVAL_LENGTH_MINUTES = 60, MAX_STORAGE_SIZE_MB = 1000, QUERY_CAPTURE_MODE = AUTO, SIZE_BASED_CLEANUP_MODE = AUTO, MAX_PLANS_PER_QUERY = 200, WAIT_STATS_CAPTURE_MODE = ON)
 GO
-USE [EventPlannerS1G2_TEST]
+USE [EventPlannerS1G2_DEMO]
 GO
 /****** Object:  User [S1G2User]    Script Date: 2/21/2025 12:20:21 AM ******/
 CREATE USER [S1G2User] FOR LOGIN [S1G2User] WITH DEFAULT_SCHEMA=[dbo]
 GO
+GRANT EXECUTE TO S1G2User;
+
 /****** Object:  User [
 
 ]    Script Date: 2/21/2025 12:20:21 AM ******/
@@ -292,12 +294,12 @@ CREATE TABLE [dbo].[EventService](
 	[ServiceID] [int] NOT NULL
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[HostEvents]    Script Date: 2/21/2025 12:20:21 AM ******/
+/****** Object:  Table [dbo].[HostsEvent]    Script Date: 2/21/2025 12:20:21 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE TABLE [dbo].[HostEvents](
+CREATE TABLE [dbo].[HostsEvent](
 	[PersonID] [int] NOT NULL,
 	[EventID] [int] NOT NULL,
 PRIMARY KEY CLUSTERED 
@@ -357,12 +359,12 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Reviews]    Script Date: 2/21/2025 12:20:21 AM ******/
+/****** Object:  Table [dbo].[Review]    Script Date: 2/21/2025 12:20:21 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE TABLE [dbo].[Reviews](
+CREATE TABLE [dbo].[Review](
 	[ID] [int] IDENTITY(1,1) NOT NULL,
 	[PersonID] [int] NOT NULL,
 	[VenueID] [int] NULL,
@@ -450,7 +452,7 @@ ALTER TABLE [dbo].[Person] ADD  DEFAULT ('') FOR [PasswordHash]
 GO
 ALTER TABLE [dbo].[Person] ADD  DEFAULT ('') FOR [PasswordSalt]
 GO
-ALTER TABLE [dbo].[Reviews] ADD  CONSTRAINT [DF_Reviews_PostedOn]  DEFAULT (getdate()) FOR [PostedOn]
+ALTER TABLE [dbo].[Review] ADD  CONSTRAINT [DF_Review_PostedOn]  DEFAULT (getdate()) FOR [PostedOn]
 GO
 ALTER TABLE [dbo].[AttendsEvent]  WITH CHECK ADD  CONSTRAINT [FK__AttendsEv__Event__5812160E] FOREIGN KEY([EventID])
 REFERENCES [dbo].[Event] ([ID])
@@ -470,23 +472,23 @@ GO
 ALTER TABLE [dbo].[EventService]  WITH CHECK ADD FOREIGN KEY([ServiceID])
 REFERENCES [dbo].[Service] ([ID])
 GO
-ALTER TABLE [dbo].[HostEvents]  WITH CHECK ADD  CONSTRAINT [FK__HostEvent__Event__4D94879B] FOREIGN KEY([EventID])
+ALTER TABLE [dbo].[HostsEvent]  WITH CHECK ADD  CONSTRAINT [FK__HostEvent__Event__4D94879B] FOREIGN KEY([EventID])
 REFERENCES [dbo].[Event] ([ID])
 GO
-ALTER TABLE [dbo].[HostEvents] CHECK CONSTRAINT [FK__HostEvent__Event__4D94879B]
+ALTER TABLE [dbo].[HostsEvent] CHECK CONSTRAINT [FK__HostEvent__Event__4D94879B]
 GO
-ALTER TABLE [dbo].[HostEvents]  WITH CHECK ADD FOREIGN KEY([PersonID])
+ALTER TABLE [dbo].[HostsEvent]  WITH CHECK ADD FOREIGN KEY([PersonID])
 REFERENCES [dbo].[Person] ([ID])
 GO
-ALTER TABLE [dbo].[Reviews]  WITH CHECK ADD  CONSTRAINT [FK__Reviews__EventID__114A936A] FOREIGN KEY([EventID])
+ALTER TABLE [dbo].[Review]  WITH CHECK ADD  CONSTRAINT [FK__Review__EventID__114A936A] FOREIGN KEY([EventID])
 REFERENCES [dbo].[Event] ([ID])
 GO
-ALTER TABLE [dbo].[Reviews] CHECK CONSTRAINT [FK__Reviews__EventID__114A936A]
+ALTER TABLE [dbo].[Review] CHECK CONSTRAINT [FK__Review__EventID__114A936A]
 GO
-ALTER TABLE [dbo].[Reviews]  WITH CHECK ADD FOREIGN KEY([PersonID])
+ALTER TABLE [dbo].[Review]  WITH CHECK ADD FOREIGN KEY([PersonID])
 REFERENCES [dbo].[Person] ([ID])
 GO
-ALTER TABLE [dbo].[Reviews]  WITH CHECK ADD FOREIGN KEY([VenueID])
+ALTER TABLE [dbo].[Review]  WITH CHECK ADD FOREIGN KEY([VenueID])
 REFERENCES [dbo].[Venue] ([ID])
 GO
 ALTER TABLE [dbo].[Service]  WITH CHECK ADD FOREIGN KEY([VendorID])
@@ -507,9 +509,9 @@ ALTER TABLE [dbo].[Person]  WITH CHECK ADD  CONSTRAINT [ImpossibleBirthday] CHEC
 GO
 ALTER TABLE [dbo].[Person] CHECK CONSTRAINT [ImpossibleBirthday]
 GO
-ALTER TABLE [dbo].[Reviews]  WITH CHECK ADD CHECK  (([VenueID] IS NULL AND [EventID] IS NOT NULL OR [VenueID] IS NOT NULL AND [EventID] IS NULL))
+ALTER TABLE [dbo].[Review]  WITH CHECK ADD CHECK  (([VenueID] IS NULL AND [EventID] IS NOT NULL OR [VenueID] IS NOT NULL AND [EventID] IS NULL))
 GO
-ALTER TABLE [dbo].[Reviews]  WITH CHECK ADD CHECK  (([Rating]>=(1) AND [Rating]<=(5)))
+ALTER TABLE [dbo].[Review]  WITH CHECK ADD CHECK  (([Rating]>=(1) AND [Rating]<=(5)))
 GO
 /****** Object:  StoredProcedure [dbo].[AddPendingEventInvitation]    Script Date: 2/21/2025 12:20:21 AM ******/
 SET ANSI_NULLS ON
@@ -571,8 +573,6 @@ BEGIN
 
 	INSERT INTO PendingEventInvitation(PersonEmail, EventId, InvitationId)
 	VALUES(@Email, @EventId, @InvitationId)
-
-	RETURN 0
 
 END
 
@@ -663,7 +663,7 @@ BEGIN
 	END
 
 	-- check to see if the review meets uniqueness requirement
-	IF EXISTS(SELECT 1 FROM Reviews WHERE (((VenueID IS NOT NULL AND VenueID = @VenueID) AND PersonID = @PersonID) OR 
+	IF EXISTS(SELECT 1 FROM Review WHERE (((VenueID IS NOT NULL AND VenueID = @VenueID) AND PersonID = @PersonID) OR 
 										  ((EventID IS NOT NULL AND EventID = @EventID) AND PersonID = @PersonID)))
 	BEGIN;
 		THROW 50004, 'Error: You have already reviewed this', 3;
@@ -674,11 +674,10 @@ BEGIN
 		THROW 52004, 'Error: The rating must be between 1 and 5', 4;
 
     -- Insert values
-    INSERT INTO Reviews (PersonID, VenueID, EventID, Title, Rating, [Description], PostedOn)
+    INSERT INTO Review (PersonID, VenueID, EventID, Title, Rating, [Description], PostedOn)
     VALUES (@PersonID, @VenueID, @EventID, @Title, @Rating, @Description, GETDATE());
 
 	PRINT 'Successfully created Review'
-	RETURN 0
 
 END
 
@@ -765,7 +764,6 @@ BEGIN
     VALUES (@Name, @Description, @Price, @VendorID);
 
 	PRINT 'Sucessfully added a new service'
-	RETURN 0
 END;
 GO
 /****** Object:  StoredProcedure [dbo].[AddServiceToEvent]    Script Date: 2/21/2025 12:20:21 AM ******/
@@ -851,7 +849,6 @@ BEGIN
 	INSERT INTO [Transaction](PersonID, [Type], Amount, PaidOn)
 	VALUES (@PersonId, 1, @Price, @Now)
 
-    RETURN 0;
 END;
 GO
 /****** Object:  StoredProcedure [dbo].[GetFinancialInfoForHost]    Script Date: 2/21/2025 12:20:21 AM ******/
@@ -929,7 +926,6 @@ BEGIN
 
 	SET @PaymentId = @EventPaymentId
 
-    RETURN 0;
 END;
 
 GO
@@ -996,7 +992,6 @@ BEGIN
 	INSERT INTO [Transaction](PersonID, [Type], Amount, PaidOn)
 	VALUES (@PersonId, 0, @Price, @Now)
 
-    RETURN 0;
 END;
 
 GO
@@ -1028,7 +1023,6 @@ BEGIN
     SET RSVPStatus = 1
     WHERE PersonID = @PersonID AND EventID = @EventID;
 
-    RETURN 0;
 END;
 GO
 /****** Object:  StoredProcedure [dbo].[CancelRegistration]    Script Date: 2/21/2025 12:20:21 AM ******/
@@ -1091,7 +1085,6 @@ BEGIN
 	WHERE PersonID = @PersonID AND EventID = @EventID
 
 	PRINT 'Registration deleted successfully'
-	RETURN 0
 
 END
 GO
@@ -1100,7 +1093,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-create   procedure [dbo].[CheckIn]
+ALTER   procedure [dbo].[CheckIn]
 (
 	@PersonId int,
 	@CheckInId char(50)
@@ -1148,14 +1141,13 @@ BEGIN
 	DECLARE @EventId int
 	SELECT @EventId = ID FROM Event WHERE CheckInId = @CheckInId
 
-	IF NOT EXISTS (SELECT 1 FROM Event WHERE ID = @EventID AND isPublic = 0)
+	IF NOT EXISTS (
+		SELECT 1 
+		FROM AttendsEvent ae
+		JOIN Event e ON e.ID = ae.EventID
+		WHERE (e.ID = @EventId AND e.isPublic=1) OR (ae.EventID = @EventId AND ae.PersonID = @PersonId AND ae.Invited = 1))
 	BEGIN;
-        THROW 50004, 'You can only check in to private events', 1;
-	END
-
-	IF NOT EXISTS (SELECT 1 FROM AttendsEvent WHERE EventID = @EventID AND PersonID = @PersonID AND Invited = 1)
-	BEGIN;
-		THROW 50005, 'You are not invited to the event', 1;
+		THROW 50004, 'You are not invited to the event', 1;
 	END
 
 	DECLARE @StartTime datetime
@@ -1243,7 +1235,6 @@ BEGIN
     INSERT INTO AttendsEvent (PersonID, EventID, Invited, RSVPStatus, Attendance, PaymentId)
     VALUES (@PersonID, @EventID, 1, 2, NULL, @PaymentId);  -- Invited=1 represents invited, RSVPStatus=2 represents no response yet
 
-    RETURN 0;
 END;
 GO
 
@@ -1301,8 +1292,6 @@ BEGIN
 	DELETE FROM PendingEventInvitation WHERE InvitationId = @InvitationId   -- Purposefully deleting before inviting so that if Invite throws, we don't keep the record
 	EXEC InviteUserToEvent @EventId, @PersonId, @PaymentId 
 
-	RETURN 0
-
 end
 GO
 /****** Object:  StoredProcedure [dbo].[CompletePendingInvitation]    Script Date: 2/21/2025 12:20:21 AM ******/
@@ -1315,7 +1304,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE     PROCEDURE [dbo].[CreateEvent]
+ALTER     PROCEDURE [dbo].[CreateEvent]
     @Name NVARCHAR(100),
     @StartTime DATETIME,
     @EndTime DATETIME,
@@ -1394,7 +1383,7 @@ BEGIN
 	IF EXISTS(
 		SELECT 1
 		FROM [Event]
-		WHERE (VenueID = @VenueID) AND ((StartTime <= @StartTime AND EndTime >= @StartTime) OR (StartTime <= @EndTime AND EndTime >= @EndTime) OR (StartTime <= @EndTime AND EndTime >= @StartTime)))
+		WHERE (VenueID = @VenueID) AND ((StartTime <= @StartTime AND EndTime >= @StartTime) OR (StartTime <= @EndTime AND EndTime >= @EndTime)))
 	BEGIN;
 		THROW 50007, 'An event already occupies this block', 1;
 	END
@@ -1425,10 +1414,9 @@ BEGIN
 
     -- get newly created EventID
     SET @EventID = SCOPE_IDENTITY();  
-	Insert INTO HostEvents (PersonID, EventID)
+	Insert INTO HostsEvent (PersonID, EventID)
 	VALUES (@HostPersonID, @EventID);
 
-    RETURN 0;
 END;
 GO
 /****** Object:  StoredProcedure [dbo].[CreatePerson]    Script Date: 2/21/2025 12:20:21 AM ******/
@@ -1540,7 +1528,6 @@ BEGIN
 	
 	SET @PersonID = SCOPE_IDENTITY();
 
-	RETURN 0
 END;
 GO
 /****** Object:  StoredProcedure [dbo].[CreatePrivateEvent]    Script Date: 2/21/2025 12:20:21 AM ******/
@@ -1548,7 +1535,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE   PROCEDURE [dbo].[CreatePrivateEvent]
+ALTER   PROCEDURE [dbo].[CreatePrivateEvent]
     @Name NVARCHAR(100),
     @StartTime DATETIME,
     @EndTime DATETIME,
@@ -1624,16 +1611,23 @@ BEGIN
     IF @RegistrationDeadline >= @StartTime
         THROW 50005, 'Error: Registration deadline must be before event start time.', 5;
 
+	IF EXISTS(
+		SELECT 1
+		FROM [Event]
+		WHERE (VenueID = @VenueID) AND ((StartTime <= @StartTime AND EndTime >= @StartTime) OR (StartTime <= @EndTime AND EndTime >= @EndTime)))
+	BEGIN;
+		THROW 50006, 'An event already occupies this block', 1;
+	END
+
     -- create private event（isPublic = 0）
     INSERT INTO Event (Name, StartTime, EndTime, VenueID, isPublic, Price, RegistrationDeadline, PaymentStatus, PaymentId)
     VALUES (@Name, @StartTime, @EndTime, @VenueID, 0, @Price, @RegistrationDeadline, @PaymentStatus, @PaymentId);
 
     -- get newly created EventID
     SET @EventID = SCOPE_IDENTITY();  
-	Insert INTO HostEvents (PersonID, EventID)
+	Insert INTO HostsEvent (PersonID, EventID)
 	VALUES (@HostPersonID, @EventID);
 
-    RETURN 0;
 END;
 GO
 /****** Object:  StoredProcedure [dbo].[DeletePerson]    Script Date: 2/21/2025 12:20:21 AM ******/
@@ -1683,7 +1677,6 @@ BEGIN
     DELETE FROM Person WHERE ID = @PersonID;
 
 	PRINT 'Person successfully deleted'
-	RETURN 0
 END;
 GO
 /****** Object:  StoredProcedure [dbo].[DeleteService]    Script Date: 2/21/2025 12:20:21 AM ******/
@@ -1727,7 +1720,6 @@ BEGIN
     DELETE FROM Service WHERE ID = @ServiceID;
 
 	PRINT 'Service deleted successfully'
-	RETURN 0
 END;
 GO
 /****** Object:  StoredProcedure [dbo].[GetAllServices]    Script Date: 2/21/2025 12:20:21 AM ******/
@@ -1818,7 +1810,7 @@ BEGIN
 		;throw 50002, 'Event not found', 2;
 	END
 
-	IF (SELECT COUNT(PersonId) FROM HostEvents WHERE PersonID = @PersonId AND EventID = @EventId) = 0
+	IF (SELECT COUNT(PersonId) FROM HostsEvent WHERE PersonID = @PersonId AND EventID = @EventId) = 0
 	BEGIN;
 		;throw 50003, 'User not authorized to get the ID', 1;
 	END
@@ -1896,7 +1888,6 @@ BEGIN
     WHERE 
         e.ID = @EventID;
 
-    RETURN 0;
 END;
 GO
 /****** Object:  StoredProcedure [dbo].[GetEventID]    Script Date: 2/21/2025 12:20:21 AM ******/
@@ -2116,7 +2107,6 @@ BEGIN
     FROM AttendsEvent
     WHERE EventId = @EventId AND PersonID = @GuestId
 
-    RETURN 0;
 END;
 
 GO
@@ -2136,7 +2126,7 @@ BEGIN
     Stored Procedure: GetActiveHostedEvents
 
     Purpose:
-    Retrieves all active events hosted by a specific user using the HostEvents table. 
+    Retrieves all active events hosted by a specific user using the HostsEvent table. 
     Active events are defined as those where the event start time is in the future.
 
     Parameters:
@@ -2175,7 +2165,7 @@ BEGIN
         e.isPublic,
         e.PaymentStatus
     FROM 
-        HostEvents he
+        HostsEvent he
     INNER JOIN 
         Event e ON he.EventID = e.ID
     INNER JOIN 
@@ -2183,7 +2173,6 @@ BEGIN
     WHERE 
         he.PersonID = @personID
 
-    RETURN 0;
 END;
 GO
 /****** Object:  StoredProcedure [dbo].[GetInvitationsForUser]    Script Date: 2/21/2025 12:20:21 AM ******/
@@ -2215,7 +2204,6 @@ BEGIN
 		AND e.isPublic = 0          
         AND ae.Invited = 1;
 
-    RETURN 0;
 END;
 GO
 /****** Object:  StoredProcedure [dbo].[GetInvitedEvents]    Script Date: 2/21/2025 12:20:21 AM ******/
@@ -2289,7 +2277,6 @@ BEGIN
         AND e.isPublic = 0  -- Ensure it's a private event
 
     PRINT 'Invited events retrieved successfully'
-    RETURN 0
 END
 
 GO
@@ -2626,7 +2613,7 @@ BEGIN
 		;throw 50101, 'Event not available for public', 1;
 	END
 
-	IF EXISTS(SELECT 1 FROM HostEvents WHERE PersonID = @PersonID AND EventID = @EventID)
+	IF EXISTS(SELECT 1 FROM HostsEvent WHERE PersonID = @PersonID AND EventID = @EventID)
 	BEGIN
 		;throw 50102, 'Hosts cannot register for their own events', 1;
 	END
@@ -2635,7 +2622,6 @@ BEGIN
 	VALUES(@PersonID, @EventID, 0, 0, NULL, @PaymentID)   -- Invited is false because the event is public
 
 	PRINT 'Registration created successfully'
-	RETURN 0
 
 END
 GO
@@ -2732,7 +2718,7 @@ BEGIN
            r.Description AS Comment, 
            r.PostedOn, 
            CONCAT(p.FirstName, ' ', p.LastName) AS ReviewerName
-    FROM Reviews r
+    FROM Review r
     JOIN [Event] e ON r.EventID = e.ID
     JOIN Person p ON r.PersonID = p.ID
     WHERE r.EventID = @EventID AND e.EndTime < GETDATE()
@@ -2779,7 +2765,7 @@ BEGIN
            r.Description AS Comment, 
            r.PostedOn, 
            CONCAT(p.FirstName, ' ', p.LastName) AS ReviewerName
-    FROM Reviews r
+    FROM Review r
     JOIN Venue v ON r.VenueID = v.ID
     JOIN Person p ON r.PersonID = p.ID
     WHERE r.VenueID = @VenueID
@@ -2821,7 +2807,6 @@ BEGIN
 
         -- Return success message
         PRINT 'Email updated successfully.';
-		RETURN 0;
     END
     ELSE
     BEGIN;
@@ -2900,7 +2885,6 @@ BEGIN
     WHERE PersonID = @PersonID AND EventID = @EventID;
 
     PRINT 'Payment status updated successfully';
-    RETURN 0;
 END;
 GO
 /****** Object:  StoredProcedure [dbo].[UpdateName]    Script Date: 2/21/2025 12:20:21 AM ******/
@@ -2940,7 +2924,6 @@ BEGIN
 
         -- Return success message
         PRINT 'Name updated successfully.';
-		RETURN 0;
     END
     ELSE
     BEGIN;
@@ -2983,13 +2966,49 @@ BEGIN
 
         -- Return success message
         PRINT 'PhoneNo updated successfully.';
-		RETURN 0;
     END
     ELSE
     BEGIN;
         THROW 51000, 'User Not Found', 1;
     END
 END;
+GO
+/****** Object:  StoredProcedure [dbo].[GetServicesByEvent]    Script Date: 2/21/2025 3:34:02 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER PROCEDURE [dbo].[GetServicesByEvent] (
+	@EventID int
+)
+AS
+BEGIN
+----------------------------------------------------------------------------------
+---
+---  Returns a table of all the services for a single event
+---
+---  Parameters:
+---     @EventID				int
+---
+---  Returns:
+---     0 on success
+---
+---  Throws:
+---     50001 if required field is NULL
+---     50002 if EventID does not exist
+---
+------------------------------------------------------------------------------------
+	IF @EventID IS NULL
+		THROW 50001, 'EventID cannot be null', 1;
+	IF NOT EXISTS (SELECT 1 FROM [Event] WHERE ID = @EventID)
+		THROW 50002, 'Event must exist', 1;
+	
+	SELECT s.Description, s.Name as ServiceName, s.Price, v.Name as VendorName
+	FROM [Service] s
+	JOIN Vendor v on s.VendorID = v.ID
+	JOIN EventService es on es.ServiceID = s.ID
+	WHERE es.EventID = @EventID
+END
 GO
 /****** Object:  StoredProcedure [dbo].[UpdateRSVPStatus]    Script Date: 2/21/2025 12:20:21 AM ******/
 SET ANSI_NULLS ON
@@ -3066,7 +3085,6 @@ BEGIN
     WHERE PersonID = @PersonID AND EventID = @EventID;
 
     PRINT 'RSVP status updated successfully';
-    RETURN 0;
 END;
 GO
 /****** Object:  StoredProcedure [dbo].[ValidateUserLogin]    Script Date: 2/21/2025 12:20:21 AM ******/
@@ -3095,5 +3113,5 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'0 represents n
 GO
 USE [master]
 GO
-ALTER DATABASE [EventPlannerS1G2_TEST] SET  READ_WRITE 
+ALTER DATABASE [EventPlannerS1G2_DEMO] SET  READ_WRITE 
 GO
