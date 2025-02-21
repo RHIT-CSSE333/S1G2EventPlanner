@@ -607,7 +607,7 @@ public class Main {
         int userId = user.intValue();
         EventsService eventsService = new EventsService(dbService);
 
-        EventSprocReturnType returnVal = eventsService.registerForEvent(userId, eventId);
+        EventSprocReturnType returnVal = eventsService.registerForEvent(userId, eventId, HelperService.generateRandomIdOfLength50());
 
         if (returnVal.success) {
             ctx.render("success.ftl");
@@ -856,9 +856,9 @@ public class Main {
 
         try {
             paymentId = HelperService.generateRandomIdOfLength50();
-            checkInId = HelperService.generateRandomIdOfLength50();
 
             if ("private".equals(eventType)) {
+                checkInId = HelperService.generateRandomIdOfLength50();
                 eventCreated = eventsService.createEvent(name, startTime, endTime, venueId, price, registrationDeadline, userId, paymentId, false, checkInId);
 
             } else if ("public".equals(eventType)) {

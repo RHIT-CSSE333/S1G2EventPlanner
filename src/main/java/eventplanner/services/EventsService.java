@@ -242,17 +242,18 @@ public class EventsService {
         return events;
     }
 
-    public EventSprocReturnType registerForEvent(int personId, int eventId) {
+    public EventSprocReturnType registerForEvent(int personId, int eventId, String paymentId) {
         Connection conn = dbService.getConnection();
         if (conn == null) {
             return new EventSprocReturnType(false, "Internal Server Error (no connection to db)");
         }
 
         try {
-            CallableStatement stmt = conn.prepareCall("{? = call RegisterForEvent(?, ?)}");
+            CallableStatement stmt = conn.prepareCall("{? = call RegisterForEvent(?, ?, ?)}");
             stmt.registerOutParameter(1, Types.INTEGER);
             stmt.setInt(2, personId);
             stmt.setInt(3, eventId);
+            stmt.setString(4, paymentId);
             stmt.execute();
 
             return new EventSprocReturnType(true, "");
