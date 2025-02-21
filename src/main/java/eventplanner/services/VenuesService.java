@@ -82,8 +82,8 @@ public class VenuesService {
                     rs.getString("VenueAddress"),
                     rs.getInt("MaxCapacity"),
                     dateFormat.format(new Date(rs.getTimestamp("RegistrationDeadline").getTime())),
-                        rs.getInt("isPublic") == 0 ? false : true,
-                        rs.getInt("PaymentStatus") == 0 ? false : true
+                        true,
+                        rs.getInt("PaymentStatus") != 0
                 );
                 events.add(event);
             }
