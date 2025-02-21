@@ -82,6 +82,61 @@
 
     <!-- Back to Events -->
     <p class="back-link"><a href="/events">Back to Events</a></p>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const createEventForm = document.getElementById('createEventForm');
+            const startTimeInput = document.getElementById('startTime');
+            const endTimeInput = document.getElementById('endTime');
+            const registrationDeadlineInput = document.getElementById('registrationDeadline');
+
+            startTimeInput.addEventListener('change', function () {
+                const startTime = new Date(startTimeInput.value);
+                const now = new Date();
+                const threeHoursFromNow = new Date(now.getTime() + 3 * 60 * 60 * 1000);
+
+                if (startTime < threeHoursFromNow) {
+                    alert('Event cannot start less than 3 hours from now.');
+                    startTimeInput.value = '';
+                    return;
+                }
+
+                const registrationDeadline = new Date(startTime.getTime() - 24 * 60 * 60 * 1000);
+                registrationDeadline.setMinutes(registrationDeadline.getMinutes() - registrationDeadline.getTimezoneOffset());
+                registrationDeadlineInput.value = registrationDeadline.toISOString().slice(0, 16);
+            });
+
+            endTimeInput.addEventListener('change', function () {
+                const startTime = new Date(startTimeInput.value);
+                const endTime = new Date(endTimeInput.value);
+
+                if (endTime <= startTime) {
+                    alert('Event should last at least an hour.');
+                    endTimeInput.value = '';
+                    return;
+                }
+
+                const oneHourAfterStartTime = new Date(startTime.getTime() + 60 * 60 * 1000);
+                if (endTime < oneHourAfterStartTime) {
+                    alert('Event should last at least an hour.');
+                    endTimeInput.value = '';
+                }
+            });
+
+            createEventForm.addEventListener('submit', function (event) {
+                const startTime = new Date(startTimeInput.value);
+                const endTime = new Date(endTimeInput.value);
+                const registrationDeadline = new Date(registrationDeadlineInput.value);
+
+                if (registrationDeadline >= startTime) {
+                    alert('Registration should end before the event starts.');
+                    event.preventDefault();
+                    return;
+                }
+            });
+        });
+    </script>
+
 </div>
 </body>
 </html>

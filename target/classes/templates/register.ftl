@@ -67,7 +67,7 @@
     document.addEventListener("DOMContentLoaded", function () {
         const dobInput = document.getElementById("dob");
         dobInput.addEventListener("change", function () {
-            const today = new Date().toISOString().split("T")[0]; 
+            const today = new Date().toISOString().split("T")[0];
             if (dobInput.value >= today) {
                 dobInput.setCustomValidity("Date of Birth must be in the past");
             } else {
