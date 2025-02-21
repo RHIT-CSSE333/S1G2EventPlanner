@@ -19,7 +19,7 @@
             </div>
             <div>
                 <label for="phoneNo">Phone Number:</label>
-                <input type="tel" id="phoneNo" name="phone" value ="${phone}" required>
+                <input type="tel" id="phoneNo" name="phone" pattern="\d{10}" value ="${phone}" required>
             </div>
         </div>
 
@@ -63,6 +63,20 @@
     <!-- Back to Login -->
     <p class="register-link">Already have an account? <a href="/login">Login here.</a></p>
 </div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const dobInput = document.getElementById("dob");
+        dobInput.addEventListener("change", function () {
+            const today = new Date().toISOString().split("T")[0]; 
+            if (dobInput.value >= today) {
+                dobInput.setCustomValidity("Date of Birth must be in the past");
+            } else {
+                dobInput.setCustomValidity("");
+            }
+        });
+    });
+</script>
+
 <script src="js/script.js"></script>
 </body>
 </html>
