@@ -46,8 +46,6 @@
                         <th>Address</th>
                         <th>Type</th>
                         <th></th>
-                        <th></th>
-                        <th></th>
                     <#else>
                         <th>Name</th>
                         <th>Start Time</th>
@@ -72,8 +70,6 @@
                             <td>${event.venueAddress}</td>
                             <td><#if event.isPublic>Public<#else>Private</#if></td>
                             <td><a href="/event/${event.id}/cancel">Cancel registration</a></td>
-                            <td><a href="/event/${event.id}/review">Add Event Review</a></td>
-                            <td><a href="/venue/${event.venueId}/review">Add Venue Review</a></td>
 
                         <#else>
                             <td>${event.name}</td>

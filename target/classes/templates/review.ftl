@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Leave a Review</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
     <h1>Leave a Review</h1>
@@ -20,9 +20,9 @@
 
         <input type="hidden" id="postedOn" name="postedOn" value="${.now?string("yyyy-MM-dd HH:mm:ss")}">
 
-        <button type="submit">Submit Review</button>
+        <button type="submit">Submit Review</button><br><br>
+        <a href="/">Return</a>
     </div>
     </form>
-    <a href="/">Return</a>
 </body>
 </html>

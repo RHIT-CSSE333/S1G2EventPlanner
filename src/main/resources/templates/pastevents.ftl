@@ -30,6 +30,8 @@
                      <th>Start Time</th>
                     <th>Venue</th>
                     <th>Address</th>
+                    <th>Event Review</th>
+                    <th>Venue Review</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -39,6 +41,8 @@
                         <td>${event.startTime}</td>
                         <td>${event.venueName}</td>
                         <td>${event.venueAddress}</td>
+                        <td><a href="/event/${event.id}/review">Add Event Review</a></td>
+                        <td><a href="/venue/${event.venueId}/review">Add Venue Review</a></td>
                     </tr>
                 </#list>
                 </tbody>
