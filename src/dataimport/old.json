@@ -19,7 +19,8 @@
                         "state": "NY"
                     },
                     "attendees": [
-                        "cathy.w"
+                        "cathy.w",
+                        "bob.m"
                     ],
                     "vendor_services": [
                         {
@@ -41,32 +42,7 @@
             "last_name": "Smith",
             "date_of_birth": "1985-07-20",
             "email": "bob.smith@example.com",
-            "phone_number": "+1-555-234-5678",
-            "events_hosted": [
-                {
-                    "name": "Alice & Bob Wedding",
-                    "start_time": "2025-06-01 14:00:00",
-                    "end_time": "2025-06-01 20:00:00",
-                    "venue": {
-                        "name": "The Grand Hall",
-                        "city": "New York",
-                        "state": "NY"
-                    },
-                    "attendees": [
-                        "cathy.w"
-                    ],
-                    "vendor_services": [
-                        {
-                            "vendor": "Party Time Catering",
-                            "services": [
-                                "Catering Package",
-                                "Flower Arrangements",
-                                "DJ Services"
-                            ]
-                        }
-                    ]
-                }
-            ]
+            "phone_number": "+1-555-234-5678"
         },
         {
             "unique_username": "cathy.w",
