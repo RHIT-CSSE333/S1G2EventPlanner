@@ -329,7 +329,7 @@ public class EventsService {
                     dateFormat.format(new Date(rs.getTimestamp("StartTime").getTime())),
                     null,
                     -1,
-                    -1,
+                    rs.getInt("VenueId"),
                     rs.getString("VenueName"),
                     rs.getString("Address"),
                     -1,
