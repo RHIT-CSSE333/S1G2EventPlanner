@@ -90,19 +90,31 @@ GO
 /****** Object:  User [S1G2User]    Script Date: 2/21/2025 12:20:21 AM ******/
 CREATE USER [S1G2User] FOR LOGIN [S1G2User] WITH DEFAULT_SCHEMA=[dbo]
 GO
-/****** Object:  User [jinx]    Script Date: 2/21/2025 12:20:21 AM ******/
+/****** Object:  User [
+
+]    Script Date: 2/21/2025 12:20:21 AM ******/
 CREATE USER [jinx] FOR LOGIN [jinx] WITH DEFAULT_SCHEMA=[dbo]
+GO
+CREATE USER [rogersj2] FOR LOGIN [rogersj2] WITH DEFAULT_SCHEMA=[dbo]
 GO
 /****** Object:  User [anisima]    Script Date: 2/21/2025 12:20:21 AM ******/
 --CREATE USER [anisima] FOR LOGIN [anisima] WITH DEFAULT_SCHEMA=[dbo]
 --GO
-ALTER ROLE [db_owner] ADD MEMBER [S1G2User]
+ALTER ROLE [db_datareader] ADD MEMBER [S1G2User]
+GO
+ALTER ROLE [db_datawriter] ADD MEMBER [S1G2User]
 GO
 ALTER ROLE [db_owner] ADD MEMBER [jinx]
 GO
 ALTER ROLE [db_ddladmin] ADD MEMBER [jinx]
 GO
 ALTER ROLE [db_datawriter] ADD MEMBER [jinx]
+GO
+ALTER ROLE [db_owner] ADD MEMBER [rogersj2]
+GO
+ALTER ROLE [db_ddladmin] ADD MEMBER [rogersj2]
+GO
+ALTER ROLE [db_datawriter] ADD MEMBER [rogersj2]
 GO
 --ALTER ROLE [db_owner] ADD MEMBER [anisima]
 GO
