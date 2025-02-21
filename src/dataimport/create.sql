@@ -1153,7 +1153,7 @@ BEGIN
 	DECLARE @StartTime datetime
 	SELECT @StartTime = StartTime FROM Event WHERE ID = @EventId
 
-	IF @StartTime BETWEEN GETDATE() AND DATEADD(HOUR, 1, GETDATE())
+	IF @StartTime BETWEEN GETDATE() AND DATEADD(HOUR, 4, GETDATE())
 	BEGIN
 		-- StartDate is within the next hour
 		UPDATE AttendsEvent SET Attendance = 1
