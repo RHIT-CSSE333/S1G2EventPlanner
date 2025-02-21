@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 import eventplanner.models.Event;
+import eventplanner.models.Service;
 
 public class EventsService {
     public class EventReturnType {
@@ -345,6 +346,38 @@ public class EventsService {
         }
 
         return events;
+    }
+
+    public List<Service> getEventServices(int eventID) {
+        List<Service> services = new ArrayList<>();
+        String query = "{CALL GetServicesByEvent(?)}";
+
+        Connection conn = null;
+        CallableStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = dbService.getConnection();
+            stmt = conn.prepareCall(query);
+            stmt.setInt(1, eventID);
+            rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Service service = new Service(
+                    -1,
+                    rs.getString("ServiceName"),
+                    rs.getString("Description"),
+                    rs.getDouble("Price"),
+                    -1
+                );
+
+                services.add(service);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching event services: " + e.getMessage());
+        }
+
+        return services;
     }
 
     public List<Event> getHostedEvents(int userId) {

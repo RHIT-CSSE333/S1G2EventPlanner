@@ -64,7 +64,7 @@
                 <#list events as event>
                     <tr>
                         <#if userSpecific>
-                            <td>${event.name}</td>
+                            <td><a href="/event/${event.id}/services">${event.name}</a></td>
                             <td>${event.startTime}</td>
                             <td>${event.venueName}</td>
                             <td>${event.venueAddress}</td>
@@ -78,7 +78,7 @@
                             </td>
 
                         <#else>
-                            <td>${event.name}</td>
+                            <td><a href="/event/${event.id}/services">${event.name}</a></td>
                             <td>${event.startTime}</td>
                             <td>${event.endTime}</td>
                             <td>${event.price}</td>
@@ -128,7 +128,7 @@
                     <tbody>
                     <#list pastEvents as pastEvent>
                         <tr>
-                            <td>${pastEvent.name}</td>
+                            <td><a href="/event/${pastEvent.id}/services">${pastEvent.name}</a></td>
                             <td>${pastEvent.startTime}</td>
                             <td>${pastEvent.endTime}</td>
                             <td><a href="/venue/${pastEvent.venueId}">${pastEvent.venueName}</a></td>

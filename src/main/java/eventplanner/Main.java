@@ -95,11 +95,9 @@ public class Main {
             app.get("/transactions", Main::handleTransactions);
             app.get("/vendors", Main::handleVendors);
             app.get("/vendors/{id}/services", Main::handleServices);
-
+            app.get("/event/{eventId}/services", Main::handleEventServices);
             app.get("/qr/{eventId}", Main::handleShowCheckInQR);
-
             app.get("/checkin/{checkInId}", Main::handleCheckIn); 
-
             app.post("/info/updateName", Main::handleUpdateName);
             app.post("/info/updateEmail", Main::handleUpdateEmail);
             app.post("/info/updatePhoneNo", Main::handleUpdatePhoneNo);
@@ -120,6 +118,22 @@ public class Main {
             e.printStackTrace();
         }
 
+    }
+
+    private static void handleEventServices(@NotNull Context ctx) {
+        Integer user = ctx.sessionAttribute("userId");
+        if (user == null) {
+            ctx.redirect("/login");
+            return;
+        }
+
+        int eventId = Integer.parseInt(ctx.pathParam("eventId"));
+        EventsService eventsService = new EventsService(dbService);
+
+        List<Service> services = eventsService.getEventServices(eventId);
+
+        ctx.render("eventservices.ftl", Map.of("services", services, 
+        "message", services.isEmpty() ? "No available services at the moment." : ""));
     }
 
     private static void handleIndex(Context ctx) {
