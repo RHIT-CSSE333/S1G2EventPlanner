@@ -20,7 +20,7 @@
 
         <input type="hidden" id="postedOn" name="postedOn" value="${.now?string("yyyy-MM-dd HH:mm:ss")}">
 
-        <button type="submit">Submit Review</button><br><br>
+        <button class="submit-btn" type="submit">Submit Review</button><br><br>
         <a href="/">Return</a>
     </div>
     </form>
